@@ -104,7 +104,7 @@ export const getAllDiscussionData = async () => {
 
   // Rest data fetching...
   while (pageInfo.hasNextPage) {
-    const filter = `first:${80},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
+    const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
     await getNext_100_DiscussionData(filter).then((data) => {
       allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
       pageInfo = data.data.repository?.discussions.pageInfo;
