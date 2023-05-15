@@ -113,5 +113,5 @@ export const getAllDiscussionData = async () => {
     })
   }
 
-  return uniqueArray;
+  return allDiscussionData;
 }
