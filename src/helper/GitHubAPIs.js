@@ -1,11 +1,7 @@
-import { queries } from '@testing-library/react';
-
-const axios = require('axios').default;
-const { graphql } = require('graphql');
-
 const apiUrl = 'https://api.github.com/graphql';
 const variables = {
-  accessToken: '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',
+  // accessToken: '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', 
+  accessToken: "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"
 };
 
 const createQuery = (filter) => {
@@ -107,13 +103,13 @@ export const getAllDiscussionData = async () => {
   });
 
   // Rest data fetching...
-  // while (pageInfo.hasNextPage) {
-  //   const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
-  //   await getNext_100_DiscussionData(filter).then((data) => {
-  //     allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
-  //     pageInfo = data.data.repository?.discussions.pageInfo;
-  //   })
-  // }
+  while (pageInfo.hasNextPage) {
+    const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
+    await getNext_100_DiscussionData(filter).then((data) => {
+      allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
+      pageInfo = data.data.repository?.discussions.pageInfo;
+    })
+  }
 
   return allDiscussionData;
 }

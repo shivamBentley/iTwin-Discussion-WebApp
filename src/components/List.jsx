@@ -1,5 +1,5 @@
 import { Table, Anchor, TablePaginator, tableFilters } from '@itwin/itwinui-react'
-import React, { useMemo, useCallback, useEffect } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import './style.scss';
 
 function List({ discussionData, isLoading }) {

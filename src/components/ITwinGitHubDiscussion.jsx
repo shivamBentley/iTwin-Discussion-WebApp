@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
-  VerticalTabs,
   HorizontalTabs,
-  HorizontalTabsProps,
-  VerticalTabsProps,
   Tab,
 } from '@itwin/itwinui-react';
 import List from './List';
