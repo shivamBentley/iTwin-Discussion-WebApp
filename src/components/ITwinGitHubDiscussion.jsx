@@ -98,7 +98,6 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
   }, [currentIndexData , activeTitle])
 
   return (<>
-    {JSON.stringify(index)}
     <div style={{
       display: 'flex',
       alignItems: 'center',

@@ -5,9 +5,7 @@ const apiUrl = 'https://api.github.com/graphql';
  * 
  */
 const variables = {
-  // accessToken: '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'
-  // accessToken: "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"
-  accessToken: "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"
+  accessToken: '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'
 };
 
 const createQuery = (filter) => {
