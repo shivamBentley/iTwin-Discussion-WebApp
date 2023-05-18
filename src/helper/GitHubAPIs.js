@@ -5,7 +5,7 @@ const apiUrl = 'https://api.github.com/graphql';
  * 
  */
 const variables = {
-  accessToken: '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'
+  accessToken: process.env.ACCESS_TOKEN
 };
 
 const createQuery = (filter) => {
