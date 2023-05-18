@@ -1,7 +1,13 @@
 const apiUrl = 'https://api.github.com/graphql';
+
+/**
+ * GitHub GraphQL API has limitation so if from on accessToke it's not loading data try with other Token;
+ * 
+ */
 const variables = {
-  // accessToken: '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', 
-  accessToken: "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"
+  // accessToken: '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'
+  // accessToken: "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"
+  accessToken: "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"
 };
 
 const createQuery = (filter) => {
@@ -42,6 +48,7 @@ const createQuery = (filter) => {
                 }
                 AnswerCreatedAt: createdAt
                 AnswerUrl: url
+                isAnswer
               }
     
               comments(last: 20) {
