@@ -10,6 +10,7 @@ import List from './List';
 import HeaderComponent from './HeaderComponent';
 import { GetAnsweredData, GetCommentedData, GetNoRepliedData, GetUnAnsweredData, filterDiscussionDataByTeam, } from '../helper/util'
 import { Teams } from '../helper/team';
+import ExportToExcel from './ExportToExcel';
 
 function ITwinGitHubDiscussion({ discussionData, isLoading }) {
   const [index, setIndex] = React.useState(0);
@@ -17,7 +18,7 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
   const [listData, setListData] = useState([]);
   const [currentIndexData, setCurrentIndexData] = useState([])
   const [status, setStatus] = useState(false);
-  const [visibility , setVisibility] = useState(false)
+  const [visibility, setVisibility] = useState(false)
 
   const getTeamWiseDiscussionData = useCallback(() => {
     if (isLoading) return [];
@@ -84,14 +85,14 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
   }
 
 
-  const notify = () =>{
+  const notify = () => {
     const iTwinDiscussionData = JSON.parse(localStorage.getItem('iTwinDiscussionData'))
     const status = {
       error: false,
       updated: false,
       msg: ''
     }
-    
+
     setVisibility(true)
     setTimeout(() => {
       setVisibility(false)
@@ -108,7 +109,7 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
   }
 
   useEffect(() => {
-    
+
     switch (index) {
       case 0:
         setCurrentIndexData(discussionData);
@@ -131,9 +132,9 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
 
 
   return (<>
-    { status.updated && visibility && <Alert type='positive' > New data update </Alert>}
-    { !status.updated && visibility && <Alert type='informational' > Old data Loaded</Alert>}
-    { status.error && visibility && <Alert type='negative' > Access Token Error </Alert>}
+    {status.updated && visibility && <Alert type='positive' > New data update </Alert>}
+    {!status.updated && visibility && <Alert type='informational' > Old data Loaded</Alert>}
+    {status.error && visibility && <Alert type='negative' > Access Token Error </Alert>}
 
     <div style={{
       display: 'flex',
@@ -148,7 +149,7 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
     <div style={{ height: '90vh', position: 'relative', }}>
       <div style={{
         position: 'absolute',
-        right: '50px',
+        right: '100px',
         top: '5px',
         zIndex: '1'
       }}>
@@ -156,6 +157,16 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
           {activeTitle}
         </DropdownButton>
       </div>
+
+      <div style={{
+        position: 'absolute',
+        right: '10px',
+        top: '5px',
+        zIndex: '1'
+      }}>
+        <ExportToExcel discussionData={listData} filename={index === 0 ? `General - ${activeTitle}` : `BDN - ${activeTitle}`} />
+      </div>
+
       {BorderlessTabs()}
     </div>
   </>

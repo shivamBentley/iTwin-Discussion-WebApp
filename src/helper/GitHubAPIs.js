@@ -5,7 +5,7 @@ const apiUrl = 'https://api.github.com/graphql';
  * 
  */
 const variables = {
-  accessToken: "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"
+  accessToken: process.env.ACCESS_TOKEN
 };
 
 // Query for RateLimit
