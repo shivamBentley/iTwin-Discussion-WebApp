@@ -5,9 +5,39 @@ const apiUrl = 'https://api.github.com/graphql';
  * 
  */
 const variables = {
-  accessToken: process.env.ACCESS_TOKEN
+  accessToken: "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"
 };
 
+// Query for RateLimit
+const rateLimitQuery = (filter) => {
+  return `
+     query {
+      rateLimit {
+        limit
+        cost
+        remaining
+        resetAt
+        nodeCount
+        used
+      }
+     }
+    `;
+}
+
+// Query for total discussion data count 
+const discussionCountQuery = (filter) => {
+  return `
+     query {
+      repository(name: "itwinjs-core", owner: "itwin") {
+        discussions {
+          totalCount
+        }
+      }
+     }
+    `;
+}
+
+//Query to fetch discussion data 
 const createQuery = (filter) => {
   return `
     query {
@@ -117,4 +147,43 @@ export const getAllDiscussionData = async () => {
   }
 
   return allDiscussionData;
+}
+
+export const getRateLimitData = () => {
+  const query = rateLimitQuery();
+  return fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${variables.accessToken}`,
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  })
+    .then(response => response.json())
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+
+export const getTotalDiscussionCount = () => {
+  const query = discussionCountQuery();
+  return fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${variables.accessToken}`,
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  })
+    .then(response => response.json())
+    .catch(error => {
+      console.error('Error:', error);
+    });
 }
