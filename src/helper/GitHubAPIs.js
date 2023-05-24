@@ -187,3 +187,7 @@ export const getTotalDiscussionCount = () => {
       console.error('Error:', error);
     });
 }
+
+export const getLocalStorageDiscussionData = () => {
+  return JSON.parse(localStorage.getItem('iTwinDiscussionData'))
+}
