@@ -1,6 +1,6 @@
 export const Teams = [
     {
-        BDN: [
+        iTwinPlatformDeveloperSuccess: [
             { GitHubLogin: "pratikshan85" }
         ]
     },

@@ -112,7 +112,8 @@ export const GetNoRepliedData = (discussionData) => {
  * @param {Array} discussionData 
  * @returns {Set} All member login id. 
  */
-export const getMembers = (discussionData) => {
+export const getAllDevelopers = (discussionData) => {
+    console.log(discussionData)
     const members = new Set();
     discussionData.forEach((obj) => {
         const comments = obj.comments?.nodes;
