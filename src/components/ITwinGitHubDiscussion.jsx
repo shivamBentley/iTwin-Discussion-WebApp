@@ -87,7 +87,7 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
         setListData(GetNoRepliedData(currentIndexData));
         break;
       default:
-        console.log("Running default case");
+        // console.log("Running default case");
         break;
     }
   }
@@ -125,12 +125,15 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
       case 1:
         setCurrentIndexData(getTeamWiseDiscussionData())
         break;
+      case 2:
+        // console.log("Smart filter Running.. ");
+        break;
       default:
         console.log("Running default case from useEffect switch");
         break;
     }
 
-    dispatch(setFilteredDiscussionData({filteredDiscussionData:discussionData}))
+    dispatch(setFilteredDiscussionData({ filteredDiscussionData: discussionData }))
 
 
     notify();
@@ -158,10 +161,10 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
       }}>
         <HeaderComponent />
       </div>
-      <div style={{ height: '90vh', position: 'relative',  }}>
+      <div style={{ height: '90vh', position: 'relative', }}>
         {index !== 2 && <div style={{
           position: 'absolute',
-          right: '150px',
+          right: '100px',
           top: '5px',
           zIndex: '1'
         }}>
@@ -172,7 +175,7 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
 
         <div style={{
           position: 'absolute',
-          right: '70px',
+          right: '10px',
           top: '5px',
           zIndex: '1'
         }}>
@@ -181,11 +184,11 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
 
         <div style={{
           position: 'absolute',
-          right: '10px',
+          right: '100px',
           top: '5px',
           zIndex: '1'
         }}>
-          <DraggableAndResizable discussionData={listData} />
+          {index === 2 && <DraggableAndResizable discussionData={listData} />}
         </div>
 
         {BorderlessTabs()}

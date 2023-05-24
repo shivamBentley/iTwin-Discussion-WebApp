@@ -98,7 +98,6 @@ export const MultiInputFilter = ({ types, setTypes, developers, setDeveloper }) 
                             ))
                         }
                     </div>
-                    <p>{developers.length}</p>
                 </div>
             </div>
         </div>
