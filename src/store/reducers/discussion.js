@@ -1,34 +1,19 @@
 // types
 import { createSlice } from '@reduxjs/toolkit';
 
-/* Project Imports */
-import {
-    //getter function
-    getLocalStorageDiscussionData,
-
-} from '../../helper/GitHubAPIs';
-import { getAllDevelopers } from '../../helper/util';
-
 const localStorageDiscussionData = JSON.parse(localStorage.getItem('iTwinDiscussionData'));
 
 // initial state
 const initialState = {
     discussionData: (localStorageDiscussionData),
-    developers: getAllDevelopers(localStorageDiscussionData.discussionData),
+    developers: [],
     repoName: '',
     owner: '',
-    exportToExcelData: [],
-    listData: [], // to show the table
+    filteredDiscussionData: [], // to show the table
     filter: {
         status: false,
-        typeFilter: {
-            status: false,
-            filter: []
-        },
-        developerFilter: {
-            status: false,
-            filter: []
-        }
+        typeFilterKey: [],
+        developerFilterKey: []
     }
 };
 
@@ -40,8 +25,7 @@ const discussion = createSlice({
     reducers: {
         setDiscussionData(state, action) {
             const { discussionData } = action.payload;
-            console.log(discussionData)
-            // state.discussionData = discussionData;
+            state.discussionData = discussionData;
         },
         setDevelopers(state, action) {
             const { developers } = action.payload;
@@ -62,9 +46,9 @@ const discussion = createSlice({
             state.exportToExcelData = exportToExcelData;
         },
 
-        setListData(state, action) {
-            const { listData } = action.payload;
-            state.listData = listData;
+        setFilteredDiscussionData(state, action) {
+            const { filteredDiscussionData } = action.payload;
+            state.filteredDiscussionData = filteredDiscussionData;
         },
         setFilter(state, action) {
             const { filter } = action.payload;
@@ -81,6 +65,6 @@ export const {
     setRepo,
     setOwner,
     setExportToExcelData,
-    setListData,
+    setFilteredDiscussionData,
     setFilter
 } = discussion.actions;

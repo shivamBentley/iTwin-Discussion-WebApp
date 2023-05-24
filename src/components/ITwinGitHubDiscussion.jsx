@@ -11,6 +11,9 @@ import HeaderComponent from './HeaderComponent';
 import { GetAnsweredData, GetCommentedData, GetNoRepliedData, GetUnAnsweredData, filterDiscussionDataByTeam, } from '../helper/util'
 import { Teams } from '../helper/team';
 import ExportToExcel from './ExportToExcel';
+import { DraggableAndResizable } from './filterModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFilteredDiscussionData } from '../store/reducers/discussion';
 
 function ITwinGitHubDiscussion({ discussionData, isLoading }) {
   const [index, setIndex] = React.useState(0);
@@ -19,10 +22,12 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
   const [currentIndexData, setCurrentIndexData] = useState([])
   const [status, setStatus] = useState(false);
   const [visibility, setVisibility] = useState(false)
+  const filteredData = useSelector((state) => state.discussion.filteredDiscussionData)
+  const dispatch = useDispatch();
 
   const getTeamWiseDiscussionData = useCallback(() => {
     if (isLoading) return [];
-    return filterDiscussionDataByTeam(discussionData, Teams[0].BDN)
+    return filterDiscussionDataByTeam(discussionData, Teams[0].iTwinPlatformDeveloperSuccess)
   }, [discussionData, isLoading])
 
   const BorderlessTabs = (args) => {
@@ -32,6 +37,8 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
           return <List discussionData={listData} isLoading={isLoading} />
         case 1:
           return <List discussionData={listData} isLoading={isLoading} />
+        case 2:
+          return <List discussionData={filteredData} isLoading={isLoading} />
         default:
           console.log("Running default case");
           break;
@@ -42,7 +49,8 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
       <HorizontalTabs
         labels={[
           <Tab key={1} label='All Discussion' />,
-          <Tab key={2} label='BDN Team ' />,
+          <Tab key={2} label='iTwin Platform Developer Success ' />,
+          <Tab key={3} label='Smart Filter' />,
         ]}
         type='borderless'
         {...args}
@@ -122,6 +130,9 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
         break;
     }
 
+    dispatch(setFilteredDiscussionData({filteredDiscussionData:discussionData}))
+
+
     notify();
   }, [discussionData, index])
 
@@ -131,45 +142,55 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
 
 
 
-  return (<>
-    {status.updated && visibility && <Alert type='positive' > New data update </Alert>}
-    {!status.updated && visibility && <Alert type='informational' > Old data Loaded</Alert>}
-    {status.error && visibility && <Alert type='negative' > Access Token Error </Alert>}
-
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '8vh',
-      backgroundColor: 'lightgray',
-      padding: '10px 0 0 0'
-    }}>
-      <HeaderComponent />
-    </div>
-    <div style={{ height: '90vh', position: 'relative', }}>
-      <div style={{
-        position: 'absolute',
-        right: '100px',
-        top: '5px',
-        zIndex: '1'
-      }}>
-        <DropdownButton size='small' menuItems={menuItems}>
-          {activeTitle}
-        </DropdownButton>
-      </div>
+  return (
+    <>
+      {status.updated && visibility && <Alert type='positive' > New data update </Alert>}
+      {!status.updated && visibility && <Alert type='informational' > Old data Loaded</Alert>}
+      {status.error && visibility && <Alert type='negative' > Access Token Error </Alert>}
 
       <div style={{
-        position: 'absolute',
-        right: '10px',
-        top: '5px',
-        zIndex: '1'
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '8vh',
+        backgroundColor: 'lightgray',
+        padding: '10px 0 0 0'
       }}>
-        <ExportToExcel discussionData={listData} filename={index === 0 ? `General - ${activeTitle}` : `BDN - ${activeTitle}`} />
+        <HeaderComponent />
       </div>
+      <div style={{ height: '90vh', position: 'relative',  }}>
+        {index !== 2 && <div style={{
+          position: 'absolute',
+          right: '150px',
+          top: '5px',
+          zIndex: '1'
+        }}>
+          <DropdownButton size='small' menuItems={menuItems}>
+            {activeTitle}
+          </DropdownButton>
+        </div>}
 
-      {BorderlessTabs()}
-    </div>
-  </>
+        <div style={{
+          position: 'absolute',
+          right: '70px',
+          top: '5px',
+          zIndex: '1'
+        }}>
+          <ExportToExcel discussionData={index === 2 ? filteredData : listData} filename={index === 0 ? `General - ${activeTitle}` : `BDN - ${activeTitle}`} />
+        </div>
+
+        <div style={{
+          position: 'absolute',
+          right: '10px',
+          top: '5px',
+          zIndex: '1'
+        }}>
+          <DraggableAndResizable discussionData={listData} />
+        </div>
+
+        {BorderlessTabs()}
+      </div>
+    </>
   )
 }
 

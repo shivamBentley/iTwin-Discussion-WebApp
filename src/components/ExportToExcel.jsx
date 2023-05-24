@@ -38,6 +38,7 @@ function ExportToExcel({ discussionData , filename}) {
                 sheet="tablexls"
                 buttonText="Download" />
             <table id="table-to-xls" style={{ display: 'none' }}>
+                <thead>
                 <tr>
                     <th>Title</th>
                     <th>Question BY</th>
@@ -46,8 +47,10 @@ function ExportToExcel({ discussionData , filename}) {
                     <th>Created</th>
                     <th>Updated</th>
                 </tr>
+                </thead>
+                <tbody>
                 {
-                    discussionData.map((obj) => {
+                    discussionData.map((obj , index) => {
                         const totalComment = obj.comments?.totalCount;
                         let totalReplies = 0;
                         obj.comments.nodes.forEach(comment => {
@@ -56,7 +59,7 @@ function ExportToExcel({ discussionData , filename}) {
                         const isAnswer = obj.answer?.isAnswer
                         const answeredBy = obj.answer?.author.DeveloperAnswered;
 
-                        return <tr>
+                        return <tr key={index}>
                             <td>{<Anchor href={obj.DiscussionUrl} target="_blank">{obj.title}</Anchor>}</td>
                             <td>{<Anchor href={obj.author.DeveloperQuestionedGithubUrl} target="_blank">{obj.author.DeveloperQuestioned} </Anchor>}</td>
                             <td>{`Comments (${totalComment}) - Replies (${totalReplies})`}</td>
@@ -66,6 +69,7 @@ function ExportToExcel({ discussionData , filename}) {
                         </tr>
                     })
                 }
+                </tbody>
             </table>
         </div>
     )
