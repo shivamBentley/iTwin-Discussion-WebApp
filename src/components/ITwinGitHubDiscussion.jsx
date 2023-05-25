@@ -6,12 +6,12 @@ import {
   MenuItem,
   Alert
 } from '@itwin/itwinui-react';
-import List from './List';
+import ListComponent from './ListComponent';
 import HeaderComponent from './HeaderComponent';
 import { GetAnsweredData, GetCommentedData, GetNoRepliedData, GetUnAnsweredData, filterDiscussionDataByTeam, } from '../helper/util'
 import { Teams } from '../helper/team';
 import ExportToExcel from './ExportToExcel';
-import { DraggableAndResizable } from './filterModal';
+import { FilterModal } from './Filter/FilterModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFilteredDiscussionData } from '../store/reducers/discussion';
 
@@ -34,11 +34,11 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
     const getContent = () => {
       switch (index) {
         case 0:
-          return <List discussionData={listData} isLoading={isLoading} />
+          return <ListComponent discussionData={listData} isLoading={isLoading} />
         case 1:
-          return <List discussionData={listData} isLoading={isLoading} />
+          return <ListComponent discussionData={listData} isLoading={isLoading} />
         case 2:
-          return <List discussionData={filteredData} isLoading={isLoading} />
+          return <ListComponent discussionData={filteredData} isLoading={isLoading} />
         default:
           console.log("Running default case");
           break;
@@ -188,7 +188,7 @@ function ITwinGitHubDiscussion({ discussionData, isLoading }) {
           top: '5px',
           zIndex: '1'
         }}>
-          {index === 2 && <DraggableAndResizable discussionData={listData} />}
+          {index === 2 && <FilterModal discussionData={listData} />}
         </div>
 
         {BorderlessTabs()}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Dialog } from '@itwin/itwinui-react';
 import { MultiInputFilter } from './MultiInputFilter';
-import { getAllDevelopers } from '../helper/util';
+import { getAllDevelopers } from '../../helper/util';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFilter, setFilteredDiscussionData } from '../store/reducers/discussion';
+import { setFilter, setFilteredDiscussionData } from '../../store/reducers/discussion';
 
-export const DraggableAndResizable = ({ isLoading }) => {
+export const FilterModal = ({ isLoading }) => {
     const [isOpen, setIsOpen] = React.useState(false);
     const [types, setTypes] = useState({
         answer: false,
@@ -62,7 +62,7 @@ export const DraggableAndResizable = ({ isLoading }) => {
                 onClose={onClose}
                 closeOnEsc
                 isDismissible
-            // isDraggable
+            isDraggable
             // isResizable
             >
                 <Dialog.Main>

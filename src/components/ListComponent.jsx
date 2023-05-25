@@ -1,8 +1,8 @@
 import { Table, Anchor, TablePaginator, tableFilters } from '@itwin/itwinui-react'
 import React, { useMemo, useCallback } from 'react'
-import './style.scss';
+import './styles/tableStyle.scss';
 
-function List({ discussionData, isLoading }) {
+function ListComponent({ discussionData, isLoading }) {
 
     const columns = useMemo(
         () => [
@@ -117,4 +117,4 @@ function List({ discussionData, isLoading }) {
     )
 }
 
-export default List
+export default ListComponent

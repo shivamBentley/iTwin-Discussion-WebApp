@@ -11,7 +11,6 @@ const initialState = {
     owner: '',
     filteredDiscussionData: [], // to show the table
     filter: {
-        status: false,
         typeFilterKey: [],
         developerFilterKey: []
     }
