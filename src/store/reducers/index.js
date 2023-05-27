@@ -2,10 +2,10 @@
 import { combineReducers } from 'redux';
 
 // project import
-import discussion from './discussion';
+import discussions from './discussions';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
-const reducers = combineReducers({ discussion });
+const reducers = combineReducers({ discussions });
 
 export default reducers;

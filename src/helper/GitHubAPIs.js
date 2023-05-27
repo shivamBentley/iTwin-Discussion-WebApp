@@ -5,7 +5,7 @@ const apiUrl = 'https://api.github.com/graphql';
  * 
  */
 const variables = {
-  accessToken: process.env.ACCESS_TOKEN
+  accessToken: "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"
 };
 
 // Query for RateLimit
@@ -38,10 +38,10 @@ const discussionCountQuery = (filter) => {
 }
 
 //Query to fetch discussion data 
-const createQuery = (filter) => {
+const createQuery = (owner, repositoryName, filter) => {
   return `
     query {
-        repository(owner: "iTwin", name: "itwinjs-core") {
+        repository(owner: "${owner}", name: "${repositoryName}") {
             discussions(${filter}){
             totalCount
     
@@ -107,8 +107,8 @@ const createQuery = (filter) => {
     `;
 }
 
-const getNext_100_DiscussionData = (filter) => {
-  const query = createQuery(filter);
+const getNext_100_DiscussionData = (owner, repositoryName, filter) => {
+  const query = createQuery(owner, repositoryName, filter);
   return fetch(apiUrl, {
     method: 'POST',
     headers: {
@@ -127,25 +127,24 @@ const getNext_100_DiscussionData = (filter) => {
 }
 
 
-export const getAllDiscussionData = async () => {
+export const getAllDiscussionData = async (owner, repositoryName) => {
   let allDiscussionData = [];
 
   // First 100 data fetch ...
   let pageInfo;
-  await getNext_100_DiscussionData(`first:100, orderBy: { field:CREATED_AT, direction: DESC }`).then((data) => {
+  await getNext_100_DiscussionData(owner, repositoryName, `first:100, orderBy: { field:CREATED_AT, direction: DESC }`).then((data) => {
     allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
     pageInfo = data.data.repository?.discussions.pageInfo;
   });
 
   // Rest data fetching...
-  while (pageInfo.hasNextPage) {
-    const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
-    await getNext_100_DiscussionData(filter).then((data) => {
-      allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
-      pageInfo = data.data.repository?.discussions.pageInfo;
-    })
-  }
-
+  // while (pageInfo.hasNextPage) {
+  //   const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
+  //   await getNext_100_DiscussionData(owner, repositoryName,filter).then((data) => {
+  //     allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
+  //     pageInfo = data.data.repository?.discussions.pageInfo;
+  //   })
+  // }
   return allDiscussionData;
 }
 
