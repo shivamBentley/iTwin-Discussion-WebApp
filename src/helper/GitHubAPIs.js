@@ -138,13 +138,13 @@ export const getAllDiscussionData = async (owner, repositoryName) => {
   });
 
   // Rest data fetching...
-  // while (pageInfo.hasNextPage) {
-  //   const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
-  //   await getNext_100_DiscussionData(owner, repositoryName,filter).then((data) => {
-  //     allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
-  //     pageInfo = data.data.repository?.discussions.pageInfo;
-  //   })
-  // }
+  while (pageInfo.hasNextPage) {
+    const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
+    await getNext_100_DiscussionData(owner, repositoryName,filter).then((data) => {
+      allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
+      pageInfo = data.data.repository?.discussions.pageInfo;
+    })
+  }
   return allDiscussionData;
 }
 

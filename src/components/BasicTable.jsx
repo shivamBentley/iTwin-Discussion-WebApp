@@ -1,4 +1,4 @@
-import { Anchor, Headline, Table } from "@itwin/itwinui-react";
+import { Anchor, Headline } from "@itwin/itwinui-react";
 import { useSelector } from "react-redux";
 import './styles/basicTable.scss'
 import { useState } from "react";
@@ -16,15 +16,10 @@ export const BasicTable = () => {
         switch (type) {
             case 'Commented':
                 return 'skyblue'
-                break;
-
             case 'No Reply':
                 return '#ED2B2A'
-                break;
-
             default:
                 return '#82CD47'
-                break;
         }
     }
 
@@ -36,7 +31,7 @@ export const BasicTable = () => {
             setData(discussionData);
         }
 
-    }, [filteredData, discussionData])
+    }, [filteredData, discussionData, isFiltered])
 
     return (
         <div id='main-table'>

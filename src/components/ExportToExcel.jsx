@@ -1,31 +1,38 @@
 import { Anchor } from '@itwin/itwinui-react';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useSelector } from 'react-redux';
 
 function ExportToExcel() {
 
-    const discussionData =  useSelector((state)=>state.discussions.filteredDiscussionData);
+    const discussionData = useSelector((state) => state.discussions.discussionData);
+    const filteredData = useSelector((state) => state.discussions.filteredDiscussionData);
+    const isFiltered = useSelector((state) => state.discussions.filter);
+    const repositoryName = useSelector((state) => state.discussions.repositoryName);
 
-    const getStatus = (obj) => {
-        const answeredBy = obj.answer?.author.DeveloperAnswered;
-        const utcTimeString = obj.answer?.AnswerCreatedAt;
-        const answeredCreatedAy = new Date(utcTimeString);
 
-        const answeredCreatedAyInLocalTime = answeredCreatedAy.toLocaleString(undefined, { timeZone: 'UTC' });
-        return <>
-            {
-                obj.answer ? <div style={{ color: '#82CD47' }}>
-                    <Anchor href={obj.answer.AnswerUrl} target="_blank">Answered by {answeredBy} </Anchor>
-                    <p >{answeredCreatedAyInLocalTime}</p>
-                </div>
-                    : (
-                        obj.comments.totalCount !== 0 ? <div style={{ color: 'skyblue' }}>Commented</div>
-                            : <div style={{ color: '#ED2B2A' }}>No Reply</div>
-                    )
-            }
-        </>;
+    const [data, setData] = useState([]);
+
+    const getCellColor = (type) => {
+        switch (type) {
+            case 'Commented':
+                return 'skyblue'
+            case 'No Reply':
+                return '#ED2B2A'
+            default:
+                return '#82CD47'
+        }
     }
+
+    useEffect(() => {
+        console.log('filtered ', isFiltered)
+        if (isFiltered.isAny) {
+            setData(filteredData);
+        } else {
+            setData(discussionData);
+        }
+
+    }, [filteredData, discussionData, isFiltered])
 
     return (
         <div>
@@ -33,41 +40,57 @@ function ExportToExcel() {
                 id="test-table-xls-button"
                 className="download-table-xls-button"
                 table="table-to-xls"
-                filename= { 'text'}
+                filename={`${repositoryName}`}
                 sheet="tablexls"
                 buttonText="Download" />
             <table id="table-to-xls" style={{ display: 'none' }}>
                 <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Question BY</th>
-                    <th>Comments & Replies</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Updated</th>
-                </tr>
+                    <tr>
+                        <th width={'2%'}>SL</th>
+                        <th width={'23%'}>Title</th>
+                        <th width={'15%'}>Question By</th>
+                        <th width={'10%'}>Comments</th>
+                        <th width={'10%'}>Replies</th>
+                        <th width={'10%'}>Status</th>
+                        <th width={'10%'}>Closed</th>
+                        <th width={'10%'}>Updated</th>
+                        <th width={'10%'}>Created</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {
-                    discussionData.map((obj , index) => {
-                        const totalComment = obj.comments?.totalCount;
-                        let totalReplies = 0;
-                        obj.comments.nodes.forEach(comment => {
-                            totalReplies += comment.replies.totalCount;
-                        });
-                        const isAnswer = obj.answer?.isAnswer
-                        const answeredBy = obj.answer?.author.DeveloperAnswered;
+                    {
+                        data.map((data, index) => {
+                            //Comments & Replies 
+                            const totalComment = data.comments.nodes.length;
+                            let totalReplies = 0;
+                            data.comments.nodes.forEach(comment => {
+                                totalReplies += comment.replies.totalCount;
+                            });
 
-                        return <tr key={index}>
-                            <td>{<Anchor href={obj.DiscussionUrl} target="_blank">{obj.title}</Anchor>}</td>
-                            <td>{<Anchor href={obj.author.DeveloperQuestionedGithubUrl} target="_blank">{obj.author.DeveloperQuestioned} </Anchor>}</td>
-                            <td>{`Comments (${totalComment}) - Replies (${totalReplies})`}</td>
-                            <td> {getStatus(obj)}</td>
-                            <td>{obj.createdAt}</td>
-                            <td>{obj.updatedAt}</td>
-                        </tr>
-                    })
-                }
+                            // Status 
+                            const answeredBy = data.answer?.author.DeveloperAnswered;
+
+                            // closed 
+                            const answeredCreatedAy = new Date(data.answer?.AnswerCreatedAt).toLocaleString(undefined, { timeZone: 'UTC' });
+                            const createdAt = new Date(data.createdAt).toLocaleString(undefined, { timeZone: 'UTC' });
+                            const updatedAt = new Date(data.updatedAt).toLocaleString(undefined, { timeZone: 'UTC' });
+
+                            //cellColor 
+                            const statusCell = data.answer ? answeredBy : (totalComment !== 0 ? 'Commented' : "No Reply")
+
+                            return <tr>
+                                <td width={'2%'}>{index + 1}</td>
+                                <td width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
+                                <td className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
+                                <td className="align-col-text-center" width={'10%'} >{totalComment}</td>
+                                <td className="align-col-text-center" width={'10%'}>{totalReplies}</td>
+                                <td width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
+                                <td width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
+                                <td width={'10%'}>{createdAt}</td>
+                                <td width={'10%'}>{updatedAt}</td>
+                            </tr>
+                        })
+                    }
                 </tbody>
             </table>
         </div>
