@@ -1,10 +1,11 @@
 import { Anchor } from '@itwin/itwinui-react';
 import React from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import { useSelector } from 'react-redux';
 
+function ExportToExcel() {
 
-function ExportToExcel({ discussionData , filename}) {
-
+    const discussionData =  useSelector((state)=>state.discussions.filteredDiscussionData);
 
     const getStatus = (obj) => {
         const answeredBy = obj.answer?.author.DeveloperAnswered;
@@ -26,15 +27,13 @@ function ExportToExcel({ discussionData , filename}) {
         </>;
     }
 
-
-
     return (
         <div>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
                 className="download-table-xls-button"
                 table="table-to-xls"
-                filename= { filename}
+                filename= { 'text'}
                 sheet="tablexls"
                 buttonText="Download" />
             <table id="table-to-xls" style={{ display: 'none' }}>

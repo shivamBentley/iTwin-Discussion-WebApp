@@ -4,7 +4,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { getAllDiscussionData, getRateLimitData } from './helper/GitHubAPIs';
 import { iTwinDetails } from './db/local-database';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDiscussionData, setOwner, setRepositoryName } from './store/reducers/discussions';
+import { setDevelopers, setDiscussionData, setOwner, setRepositoryName } from './store/reducers/discussions';
+import { getAllDevelopers } from './helper/util';
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
             owner: 'iTwin',
             repositories: repositoriesData
           }
-          // console.log(repositoriesData)
+          console.log(repoName, repositoriesData)
           localStorage.setItem('iTwinData', JSON.stringify(iTwinData));
         })
           .catch((err) => {
@@ -45,9 +46,15 @@ function App() {
   //update data in store 
   const setDefaultDataInStore = useCallback(() => {
     const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
-    dispatch(setDiscussionData({ discussionData: iTwinData.repositories[0].discussionData }));
-    dispatch(setRepositoryName({ repositoryName: iTwinData.repositories[0].repositoryName }));
+    const discussionData = iTwinData.repositories[iTwinData.repositories.length - 1].discussionData;
+    const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(discussionData)).map((developer) => ({ isChecked: false, name: developer }));
+    const devFilter = { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox }
+    console.log('developers from app.js ', devFilter)
+    //dispatch default data to store ...
+    dispatch(setDiscussionData({ discussionData: discussionData }));
+    dispatch(setRepositoryName({ repositoryName: iTwinData.repositories[iTwinData.repositories.length - 1].repositoryName }));
     dispatch(setOwner({ owner: iTwinData.owner }));
+    dispatch(setDevelopers({ developers:devFilter  }));
   }, [])
 
 

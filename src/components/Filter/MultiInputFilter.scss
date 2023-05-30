@@ -1,0 +1,56 @@
+.filter-main-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: -10px 10px;
+
+    .first-div {
+        width: 50%;
+        
+        div {
+            .filter-checkBox {
+                margin-top: -25px;
+                display: flex;
+                max-width: 80%;
+                justify-content: space-around;
+                flex-wrap: wrap;
+            }
+
+        }
+    }
+
+    .second-div {
+        width: 50%;
+        border-left: 1px solid skyblue;
+        padding-left: 10px;
+
+        div {
+            .filter-checkBox {
+                // margin-top: -25px;
+            }
+        }
+
+        .developer-filter-checkBox {
+            border: 1px solid skyblue;
+            padding-left: 10px;
+            max-height: 200px;
+            overflow: hidden scroll;
+        }
+    }
+
+    .filter-subtitle {
+        font-size: 1.25rem;
+        // border-bottom: 1px solid skyblue;
+    }
+
+    .select-repo {
+        display: flex;
+        justify-content: left;
+
+        div {
+            text-align: center;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+    }
+}

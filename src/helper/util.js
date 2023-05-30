@@ -1,3 +1,23 @@
+function arrayUnion(arr1, arr2, equalityFunc) {
+    var union = arr1.concat(arr2);
+
+    for (var i = 0; i < union.length; i++) {
+        for (var j = i + 1; j < union.length; j++) {
+            if (equalityFunc(union[i], union[j])) {
+                union.splice(j, 1);
+                j--;
+            }
+        }
+    }
+
+    return union;
+}
+
+function comparatorFunc(g1, g2) {
+    return g1.DiscussionUrl === g2.DiscussionUrl;
+}
+
+
 export const filterDataByGithubLoginID = (discussionData, targetName) => {
     const filteredData = [];
     discussionData.forEach((obj) => {
@@ -215,3 +235,163 @@ export const getFilteredDataByDeveloperAndStatusType = (discussionData, gitHubLo
 
     return filteredDataByLoginIds;
 }
+
+
+export const getAskedDataByDeveloper = (discussionData, developerLoginId) => {
+
+    const filteredData = [];
+    discussionData.forEach((data) => {
+        if (data?.author.DeveloperQuestioned === developerLoginId) {
+            filteredData.push(data);
+        }
+    })
+
+    return filteredData;
+}
+
+export const getRepliedDataByDeveloper = (discussionData, developerLoginId) => {
+    const filteredData = [];
+    discussionData.forEach((data) => {
+        const comments = data?.comments;
+        let isReplied = false;
+        if (comments && comments.totalCount !== 0) {
+            comments.nodes.forEach((comment) => {
+                const replies = comment.replies;
+                if (replies.totalCount !== 0) {
+                    replies.nodes.forEach((rep) => {
+                        if (rep.author.DeveloperRepliedToComment === developerLoginId)
+                            isReplied = true;
+                    })
+                }
+            })
+        }
+        if (isReplied)
+            filteredData.push(data);
+    })
+    return filteredData;
+}
+
+export const getCommentedOnlyDataByDeveloper = (discussionData, developerLoginId) => {
+    const filteredData = [];
+    discussionData.forEach((data) => {
+        const comments = data?.comments;
+        let isCommented = false;
+        if (comments.totalCount !== 0) {
+            comments.nodes.forEach((comment) => {
+                if (comment.author.DeveloperCommented === developerLoginId)
+                    isCommented = true;
+            })
+        }
+
+        if (isCommented && (data.answer?.author.DeveloperAnswered !== developerLoginId || !data.answer))
+            filteredData.push(data);
+    })
+    return filteredData;
+
+}
+
+export const getAnsweredDataByDeveloper = (discussionData, developerLoginId) => {
+    const filteredData = [];
+    discussionData.forEach((data) => {
+        const answer = data?.answer;
+        if (answer && answer.totalCount !== 0) {
+            if (answer?.author.DeveloperAnswered === developerLoginId) {
+                filteredData.push(data);
+            }
+        }
+    })
+    return filteredData;
+}
+
+export const getFilteredDataOnFilter = (discussionData, devFilter, typeFilter) => {
+
+    if (devFilter.length === 0 && typeFilter.length === 0) return discussionData;
+
+    // devFilter and type filter 
+    else if (devFilter.length !== 0 && typeFilter.length !== 0) {
+        let resultFilteredData = [];
+
+        devFilter.forEach((devLoginId) => {
+
+            let dataForCurrentMember = [];
+            typeFilter.forEach((type) => {
+                let filteredTypeData = [];
+                switch (type) {
+                    case 'answer':
+                        filteredTypeData = getAnsweredDataByDeveloper(discussionData, devLoginId);
+                        break;
+
+                    case 'replies':
+                        filteredTypeData = getRepliedDataByDeveloper(discussionData, devLoginId);
+                        break;
+
+                    case 'comments':
+                        filteredTypeData = getCommentedOnlyDataByDeveloper(discussionData, devLoginId);
+                        break;
+
+                    case 'asked':
+                        filteredTypeData = getAskedDataByDeveloper(discussionData, devLoginId);
+                        break;
+
+                    default:
+                        break;
+                }
+
+                dataForCurrentMember = arrayUnion(dataForCurrentMember, filteredTypeData, comparatorFunc);
+            })
+
+            resultFilteredData = arrayUnion(resultFilteredData, dataForCurrentMember, comparatorFunc);
+        })
+
+        return resultFilteredData;
+    }
+
+
+    // only dev filter ....
+    else if (devFilter.length === 0 && typeFilter.length !== 0) {
+        let resultData = [];
+        typeFilter.forEach((type) => {
+            let filteredTypeData = [];
+            switch (type) {
+                case 'answer':
+                    filteredTypeData = GetAnsweredData(discussionData);
+                    break;
+
+                case 'replies':
+                    // filteredTypeData = getRepliedDataByDeveloper(discussionData, devLoginId);
+                    break;
+
+                case 'comments':
+                    filteredTypeData = GetCommentedData(discussionData);
+                    break;
+
+                case 'asked':
+                    // filteredTypeData = getAskedDataByDeveloper(discussionData, devLoginId);
+                    break;
+
+                default:
+                    break;
+            }
+            resultData = arrayUnion(resultData, filteredTypeData, comparatorFunc);
+        })
+        return resultData;
+    }
+
+    // only type filter ....
+    else if (devFilter.length !== 0 && typeFilter.length === 0) {
+        let resultData = [];
+        devFilter.forEach((devLoginId) => {
+            let currentData = [];
+            resultData = arrayUnion(resultData, filterDataByGithubLoginID(discussionData, devLoginId), comparatorFunc)
+        })
+
+        return resultData;
+    }
+
+    else return discussionData;
+}
+
+
+
+
+

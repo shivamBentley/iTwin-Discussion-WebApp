@@ -6,7 +6,10 @@ import { createSlice } from '@reduxjs/toolkit';
 // initial state
 const initialState = {
     discussionData: [],
-    developers: [],
+    developers: {
+        isAny: false,
+        dataWithCheckBox: []
+    },
     repositoryName: '',
     owner: 'iTwin',
     filteredDiscussionData: [],
