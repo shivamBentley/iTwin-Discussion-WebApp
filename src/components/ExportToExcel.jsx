@@ -58,7 +58,7 @@ function ExportToExcel() {
                 </thead>
                 <tbody>
                     {
-                        data.map((data, index) => {
+                        data?.map((data, index) => {
                             //Comments & Replies 
                             const totalComment = data.comments.nodes.length;
                             let totalReplies = 0;
