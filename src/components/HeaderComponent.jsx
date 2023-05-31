@@ -7,7 +7,8 @@ import './styles/ExportToExcel.scss'
 
 function HeaderComponent({ title }) {
 
-    const repoName = useSelector((state) => state.discussions.repositoryName)
+    const repoName = useSelector((state) => state.discussions.repositoryName);
+    const rateLimit = useSelector((state) => state.discussions.rateLimit)
     return (
         <div style={{ position: 'relative' }}>
             <div style={{
@@ -27,6 +28,20 @@ function HeaderComponent({ title }) {
             </div>
             <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
                 <ExportToExcel />
+            </div>
+            <div style={{ 
+                position: 'absolute', 
+                bottom: '10px', 
+                left: '10px', 
+                border:'1px solid white', 
+                borderRadius:'3px',
+                padding:'1px 10px',
+                fontSize:'1rem',
+                fontWeight:'600',
+                backgroundColor:'red',
+                color:'#d8fafa'
+                }}>
+                <>Remaining Points -{rateLimit.remaining}</>
             </div>
         </div>
     )

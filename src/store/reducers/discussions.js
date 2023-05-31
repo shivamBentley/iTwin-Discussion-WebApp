@@ -20,7 +20,8 @@ const initialState = {
         developerFilterKey: [],
         isTeamFilter: false,
         isSelectAllFilter: false
-    }
+    },
+    rateLimit: {}
 };
 
 // ==============================|| SLICE - discussionData ||============================== //
@@ -64,6 +65,10 @@ const discussions = createSlice({
             const { isLoading } = action.payload;
             state.isLoading = isLoading;
         },
+        setRateLimit(state, action) {
+            const { rateLimit } = action.payload;
+            state.rateLimit = rateLimit;
+        }
     }
 });
 
@@ -77,5 +82,6 @@ export const {
     setExportToExcelData,
     setFilteredDiscussionData,
     setFilter,
-    setLoading
+    setLoading,
+    setRateLimit
 } = discussions.actions;

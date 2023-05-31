@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { getAllDiscussionData, getRateLimitData } from './helper/GitHubAPIs';
 import { iTwinDetails } from './db/local-database';
 import { useDispatch } from 'react-redux';
-import { setDevelopers, setDiscussionData, setLoading, setOwner, setRepositoryName } from './store/reducers/discussions';
+import { setDevelopers, setDiscussionData, setLoading, setOwner, setRateLimit, setRepositoryName } from './store/reducers/discussions';
 import { getAllDevelopers } from './helper/util';
 import { BasicModal } from './components/BasicModal';
 
@@ -36,7 +36,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
   }
 
   //update data in store 
-  const setDefaultDataInStore = useCallback((isOldDataUpdate , remainingPoint) => {
+  const setDefaultDataInStore = useCallback((isOldDataUpdate, remainingPoint) => {
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
     const discussionData = iTwinData.repositories[0].discussionData;
     const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(discussionData)).map((developer) => ({ isChecked: false, name: developer }));
@@ -69,6 +69,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
 
     getRateLimitData().then((data) => {
+      dispatch(setRateLimit({ rateLimit: data.data?.rateLimit }));
       if (data.data?.rateLimit.remaining === 0) {
         console.error("Rate Limit Exceeded", data.data?.rateLimit)
 
@@ -95,7 +96,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
           //updating old data form local Storage 
           setTitle(`Loading data from localStorage.... `)
 
-          setDefaultDataInStore(true ,data.data?.rateLimit.remaining);
+          setDefaultDataInStore(true, data.data?.rateLimit.remaining);
           dispatch(setLoading({ isLoading: false }));
           console.log("New data loading paused. Old data updating in store...")
         }
