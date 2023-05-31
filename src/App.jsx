@@ -34,8 +34,8 @@ function App() {
             repositories: newRepositoriesData,
             lastUpdate: currentTime
         }
-
-        localStorage.setItem('iTwinData', JSON.stringify(newITwinData));
+        if (repositories.length === 1)
+            localStorage.setItem('iTwinData', JSON.stringify(newITwinData));
     }
 
     return (<>
