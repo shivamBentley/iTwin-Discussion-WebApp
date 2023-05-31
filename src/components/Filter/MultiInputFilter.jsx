@@ -28,8 +28,8 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
             return <MenuItem key={index} onClick={() => {
                 dispatch(setRepositoryName({ repositoryName: repo }));
                 updateDeveloperDataInStore();
-                setTeam("Select Team");
-                dispatch(setFilter({ filter: { ...filter, developerFilterKey: [] } }));
+                // setTeam("Select Team");
+                // dispatch(setFilter({ filter: { ...filter, developerFilterKey: [] } }));
                 close();
             }}
 
@@ -188,7 +188,6 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
     }
 
     const filterDiscussionData = (discussionData) => {
-        console.log('filtering data from store')
         if (filter.isAny) {
             // if isSelectAll filter 
             const isSelectAllFilterTrue = filter.isSelectAllFilter;
@@ -215,8 +214,6 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         const selectedRepo = iTwinData.repositories.filter(repoDetails => repoDetails.repositoryName === activeRepository);
         // update developers
         const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo[0].discussionData)).map((obj) => ({ isChecked: false, name: obj }))
-        // console.log(allDeveLopersWithCheckBox);
-
         dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox } }));
     }
 
@@ -231,8 +228,6 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         // update developers
         if (!developers.isAny) {
             const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo[0].discussionData)).map((obj) => ({ isChecked: false, name: obj }))
-            // console.log(allDeveLopersWithCheckBox);
-
             dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox } }));
         }
 

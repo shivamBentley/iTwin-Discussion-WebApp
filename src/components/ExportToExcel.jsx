@@ -25,7 +25,6 @@ function ExportToExcel() {
     }
 
     useEffect(() => {
-        console.log('filtered ', isFiltered)
         if (isFiltered.isAny) {
             setData(filteredData);
         } else {
@@ -78,7 +77,7 @@ function ExportToExcel() {
                             //cellColor 
                             const statusCell = data.answer ? answeredBy : (totalComment !== 0 ? 'Commented' : "No Reply")
 
-                            return <tr>
+                            return <tr key={index}>
                                 <td width={'2%'}>{index + 1}</td>
                                 <td width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
                                 <td className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>

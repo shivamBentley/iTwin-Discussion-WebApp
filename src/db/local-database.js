@@ -24,21 +24,24 @@ export const iTwinDetails = {
     repositories: ['itwinjs-core', 'iTwinUI', 'viewer']
 }
 
-const iTwinData = {
-    owner: 'iTwin',
-    repositories: [
-        {
-            repositoryName: 'itwinjs-core',
-            discussionData: [],
-            totalCount: '',
-            lastUpdate: ''
-        },
-        {
-            repositoryName: 'iTwin-UI',
-            discussionData: [],
-            totalCount: '',
-            lastUpdate: ''
-        }
-    ],
-
-}
+/**
+ * This is the format we are using to store data in localStorage of web browser.
+    const iTwinData = {
+        owner: 'iTwin',
+        repositories: [
+            {
+                repositoryName: 'itwinjs-core',
+                discussionData: [],
+                totalCount: '',
+                lastUpdate: ''
+            },
+            {
+                repositoryName: 'iTwin-UI',
+                discussionData: [],
+                totalCount: '',
+                lastUpdate: ''
+            }
+        ],
+        lastUpdate:''
+    }
+ */

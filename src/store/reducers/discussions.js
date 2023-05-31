@@ -60,6 +60,10 @@ const discussions = createSlice({
             const { filter } = action.payload;
             state.filter = filter;
         },
+        setLoading(state, action) {
+            const { isLoading } = action.payload;
+            state.isLoading = isLoading;
+        },
     }
 });
 
@@ -72,5 +76,6 @@ export const {
     setOwner,
     setExportToExcelData,
     setFilteredDiscussionData,
-    setFilter
+    setFilter,
+    setLoading
 } = discussions.actions;
