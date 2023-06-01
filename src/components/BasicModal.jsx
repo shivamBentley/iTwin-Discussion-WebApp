@@ -50,9 +50,11 @@ export const BasicModal = ({
                 closeOnEsc={false}
                 closeOnExternalClick={false}
             >
-                <ModalContent style={{ height: '250px', overflowY: 'scroll' }}>
+                <ModalContent style={{ height: '200px', msOverflowY: 'scroll' }}>
                     {messages.map((message) => (showPositive(message)))}
-                    <div style={{
+                    
+                </ModalContent>
+                <div style={{
                         color:'red', 
                         fontSize:'0.95rem',
                         fontWeight:'600',
@@ -62,7 +64,6 @@ export const BasicModal = ({
                         marginTop:'24px'
                         }}
                     >Please don't Refresh the page, until process get completed</div>
-                </ModalContent>
             </Modal>
         </>
     );

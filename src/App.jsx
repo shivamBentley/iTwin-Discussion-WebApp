@@ -6,7 +6,6 @@ function App() {
 
     const [repoStatus, setRepoStatus] = useState(() => {
         const result = iTwinDetails.repositories.map((rep) => ({ status: 'informational', name: rep }))
-        console.log('running useState for multiple filt in --------------------')
         return (result);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -19,7 +18,7 @@ function App() {
         setRepositories(newRepoList);
 
         const newRepoStatus = repoStatus.map((rep) => {
-            if (rep.name === repoName) return { ...rep, status: 'positive' }
+            if (rep.name === repoName) return { name:`${rep.name} downloaded successfully`, status: 'positive' }
             else return rep;
         })
         setRepoStatus(newRepoStatus);

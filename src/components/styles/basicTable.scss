@@ -1,52 +1,151 @@
-#main-table {
-    height: 80vh;
-    overflow: scroll;
+div {
 
-    table {
-        font-size: large;
-        border-collapse: collapse;
+    #main-table {
+        overflow-y: hidden;
+        position: relative;
+        top: 3px;
 
-        thead {
-            tr {
-                position: sticky;
-                top: 0;
+        table {
+            font-size: large;
+            border-collapse: collapse;
 
-                th {
+            thead {
+                tr {
+                    position: sticky;
+                    top: 0;
 
-                    padding: 15px 10px;
-                    background-color: rgb(86, 94, 97);
-                    color: whitesmoke;
-                    font-weight: 400;
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    th {
+
+                        padding: 15px 10px;
+                        background-color: #565e61;
+                        color: whitesmoke;
+                        font-weight: 400;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    }
+
+                    :hover {
+                        background-color: #8d8f90
+                    }
+                }
+            }
+
+            tbody {
+
+                tr {
+                    td {
+                        padding: 8px;
+                        border-bottom: 1px solid rgb(206, 189, 189);
+
+                    }
+
+                    .align-col-text-center {
+                        text-align: center;
+                    }
+
+                    background-color:white;
+
                 }
 
                 :hover {
-                    background-color: #8d8f90
-                }
-            }
-        }
-
-        tbody {
-
-            tr {
-                td {
-                    padding: 8px;
-                    border-bottom: 1px solid rgb(206, 189, 189);
-
+                    background-color: #eefaff
                 }
 
-                .align-col-text-center {
-                    text-align: center;
-                }
-
-                background-color:white;
-
             }
-
-            :hover {
-                background-color: #eefaff
-            }
-
         }
     }
+
+    .table-nav {
+
+
+        div {
+            position: relative;
+
+            nav {
+                height: 100%;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+
+
+                ul {
+                    list-style: none;
+                    display: flex;
+                    flex-direction: row;
+
+                    // max-width: 80%;
+                    // background-color:yellow;
+                    .page-item {
+                        padding: 4px 6px;
+                        margin: 0;
+
+                        a {
+                            font-size: 1rem;
+                            color: white;
+                            text-decoration: none;
+                        }
+
+                    }
+
+                    .step-button {
+                        border: 1px solid whitesmoke;
+                        border-radius: 10px;
+                        margin: 0 10px;
+                    }
+
+                    .active {
+                        border: 1px solid whitesmoke;
+                        border-radius: 50px;
+                        color: #555;
+                    }
+
+
+                }
+
+            }
+
+            .paginator-dropdown {
+                color: white;
+                position: absolute;
+                top: 35%;
+                right: 30px;
+                display: flex;
+                justify-content: space-between;
+                overflow: scroll;
+            }
+
+
+            .row-data-info{
+                color: white;
+                position: absolute;
+                top: 35%;
+                left: 30px;
+            }
+        }
+
+
+    }
+}
+
+/* Designing for scroll-bar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #565e61;
+    // border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: black
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+
 }

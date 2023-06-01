@@ -50,8 +50,8 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       })
       setTimeout(() => {
         setRepoStatus(newReposStatus);
-        setTitle(`Updating store. (Remaining Points - ${remainingPoint})`)
-      }, 2000);
+        setTitle(`Ready for use.`)
+      }, 3000);
     }
     //dispatch default data to store ...
     dispatch(setDiscussionData({ discussionData: discussionData }));
@@ -87,14 +87,14 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
 
         if (!iTwinData || iTwinData.lastUpdate + 3600000 < currentTime) {
           if (repositories.length > 0) {
-            console.log('updating data for repository : ', repositories[0])
-            setTitle(`Downloading new data... , Remaining Point: ${data.data?.rateLimit.remaining} . `)
+            console.log('Downloading latest data for repository : ', repositories[0])
+            setTitle(`Downloading latest data... `)
             updateDataInLocalStorage();
             dispatch(setLoading({ isLoading: false }));
           }
         } else {
           //updating old data form local Storage 
-          setTitle(`Loading data from localStorage.... `)
+          setTitle(`Loading data.... `)
 
           setDefaultDataInStore(true, data.data?.rateLimit.remaining);
           dispatch(setLoading({ isLoading: false }));

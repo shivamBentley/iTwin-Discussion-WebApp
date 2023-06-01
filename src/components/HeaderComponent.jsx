@@ -10,38 +10,38 @@ function HeaderComponent({ title }) {
     const repoName = useSelector((state) => state.discussions.repositoryName);
     const rateLimit = useSelector((state) => state.discussions.rateLimit)
     return (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' , height:'100%'}}>
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '8vh',
+                height: '100%',
                 backgroundColor: 'lightgray',
                 padding: '10px 0 0 0'
             }}>
-                <div>
-                    <Title>{repoName}</Title>
+
+                <Title>{repoName}</Title>
+
+                <div style={{ position: 'absolute', bottom: '10px', right: '100px' }}>
+                    <FilterModal />
                 </div>
-            </div>
-            <div style={{ position: 'absolute', bottom: '10px', right: '100px' }}>
-                <FilterModal />
-            </div>
-            <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
-                <ExportToExcel />
-            </div>
-            <div style={{ 
-                position: 'absolute', 
-                bottom: '10px', 
-                left: '10px', 
-                border:'1px solid white', 
-                borderRadius:'3px',
-                padding:'1px 10px',
-                fontSize:'1rem',
-                fontWeight:'600',
-                backgroundColor:'red',
-                color:'#d8fafa'
+                <div style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
+                    <ExportToExcel />
+                </div>
+                <div style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    left: '10px',
+                    border: '1px solid white',
+                    borderRadius: '3px',
+                    padding: '1px 10px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    backgroundColor: 'red',
+                    color: '#d8fafa'
                 }}>
-                <>Remaining Points -{rateLimit.remaining}</>
+                    <>Remaining Points -{rateLimit.remaining}</>
+                </div>
             </div>
         </div>
     )
