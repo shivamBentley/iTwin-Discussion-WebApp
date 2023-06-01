@@ -265,13 +265,13 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
                     <div className='selectType-div'>
                         <Headline className="filter-subtitle" style={{ marginTop: '-25px' }}>Select Type</Headline>
                         <div className="filter-checkBox">
-                            {types.map((obj) => <Checkbox label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelTypeClick} style={{ marginRight: '10px' }} />)}
+                            {types.map((obj, index) => <Checkbox key={index} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelTypeClick} style={{ marginRight: '10px' }} />)}
                         </div>
                     </div>
                     <div>
                         <Headline className="filter-subtitle">Select In All</Headline>
                         <div className="filter-checkBox">
-                            {selectInAll.map((obj) => <Checkbox label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelSelectInAllClick} style={{ marginRight: '10px' }} />)}
+                            {selectInAll.map((obj, index) => <Checkbox key={index} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelSelectInAllClick} style={{ marginRight: '10px' }} />)}
                         </div>
                     </div>
                     <div >

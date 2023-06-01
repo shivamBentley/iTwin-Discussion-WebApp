@@ -20,7 +20,7 @@ function HeaderComponent({ title }) {
                 padding: '10px 0 0 0'
             }}>
 
-                <Title>{repoName}</Title>
+                <Title style={{fontSize:'2rem', fontWeight:'400'}}>{repoName}</Title>
 
                 <div style={{ position: 'absolute', bottom: '10px', right: '100px' }}>
                     <FilterModal />
