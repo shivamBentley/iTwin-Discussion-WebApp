@@ -18,7 +18,7 @@ function App() {
         setRepositories(newRepoList);
 
         const newRepoStatus = repoStatus.map((rep) => {
-            if (rep.name === repoName) return { name:`${rep.name} downloaded successfully`, status: 'positive' }
+            if (rep.name === repoName) return { name: `${rep.name} downloaded successfully`, status: 'positive' }
             else return rep;
         })
         setRepoStatus(newRepoStatus);
@@ -29,7 +29,7 @@ function App() {
         setRepositoriesData(newRepositoriesData);
         const currentTime = new Date().getTime();
         const newITwinData = {
-            owner: 'iTwin',
+            owner: iTwinDetails.owner,
             repositories: newRepositoriesData,
             lastUpdate: currentTime
         }

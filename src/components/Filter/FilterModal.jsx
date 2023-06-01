@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Dialog } from '@itwin/itwinui-react';
-import { getAllDevelopers } from '../../helper/util';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDevelopers, setFilter, setFilteredDiscussionData } from '../../store/reducers/discussions';
 import MultiInputFilter from './MultiInputFilter'
@@ -31,11 +30,6 @@ export const FilterModal = () => {
     };
 
     const onClose = (event) => {
-        closeDialog();
-    };
-
-    const filterButtonHandle = (e) => {
-
         closeDialog();
     };
 

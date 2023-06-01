@@ -35,7 +35,6 @@ div {
                     td {
                         padding: 8px;
                         border-bottom: 1px solid rgb(206, 189, 189);
-
                     }
 
                     .align-col-text-center {
@@ -43,11 +42,14 @@ div {
                     }
 
                     background-color:white;
-
                 }
 
-                :hover {
-                    background-color: #eefaff
+                .data-row:nth-child(even) {
+                    background-color: #f7f7f7
+                }
+
+                .data-row:hover {
+                    background-color: hwb(197 89% 0%)
                 }
 
             }
@@ -80,10 +82,12 @@ div {
                         padding: 4px 6px;
                         margin: 0;
 
-                        a {
+                        button {
                             font-size: 1rem;
                             color: white;
-                            text-decoration: none;
+                            background-color: transparent;
+                            cursor: pointer;
+                            border: none;
                         }
 
                     }
@@ -116,7 +120,7 @@ div {
             }
 
 
-            .row-data-info{
+            .row-data-info {
                 color: white;
                 position: absolute;
                 top: 35%;
@@ -128,24 +132,25 @@ div {
     }
 }
 
+
 /* Designing for scroll-bar */
-::-webkit-scrollbar {
+#main-table::-webkit-scrollbar {
     width: 10px;
 }
 
 /* Track */
-::-webkit-scrollbar-track {
+#main-table::-webkit-scrollbar-track {
     background: #565e61;
     // border-radius: 5px;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+#main-table::-webkit-scrollbar-thumb {
     background: black
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+#main-table::-webkit-scrollbar-thumb:hover {
     background: #555;
 
 }

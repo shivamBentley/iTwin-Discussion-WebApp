@@ -1,4 +1,4 @@
-import { Anchor, DropdownButton, Headline, MenuItem, TablePaginator } from "@itwin/itwinui-react";
+import { Anchor, DropdownButton, MenuItem } from "@itwin/itwinui-react";
 import { useSelector } from "react-redux";
 import './styles/basicTable.scss'
 import { useState } from "react";
@@ -25,7 +25,7 @@ export const BasicTable = () => {
     }
 
     const [dataLength, setDataLength] = useState(0);
-    const [firstIndex, setFistIndex] = useState(1);
+    const firstIndex = 1;
     const [lastIndex, setLastIndex] = useState(0);
     const [Indexes, setIndexes] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(1);
@@ -53,62 +53,38 @@ export const BasicTable = () => {
         setIndexes(newIndexes)
     }
 
-    // paginator 
-    const basicDropDown = (args) => {
-        const handleClick = (rows, close) => () => {
-            setRowsPerPage(rows)
-            close();
 
-            //update Indexes ...
-            const numberOfIndexes = Math.ceil(dataLength / rows);
-            setLastIndex(numberOfIndexes);
-            const initialIndex = [];
-            if (numberOfIndexes - 2 > 0) {
-                for (var i = 2; (numberOfIndexes > i && i <= 6); i++) {
-                    initialIndex.push(i);
-                }
-                setIndexes(initialIndex)
+    const handleClick = (rows, close) => () => {
+        setRowsPerPage(rows)
+        close();
+
+        //update Indexes ...
+        const numberOfIndexes = Math.ceil(dataLength / rows);
+        setLastIndex(numberOfIndexes);
+        const initialIndex = [];
+        if (numberOfIndexes - 2 > 0) {
+            for (var i = 2; (numberOfIndexes > i && i <= 6); i++) {
+                initialIndex.push(i);
             }
-            else {
-                setIndexes({})
-            }
+            setIndexes(initialIndex)
+        }
+        else {
+            setIndexes({})
+        }
 
-            setCurrentIndex(firstIndex)
-            //update Data ...
-        };
-
-        const menuItems = (close) => [
-            <MenuItem key={0} onClick={handleClick(25, close)}>
-                25 per page
-            </MenuItem>,
-            <MenuItem key={1} onClick={handleClick(50, close)}>
-                50 per page
-            </MenuItem>,
-            <MenuItem key={2} onClick={handleClick(100, close)}>
-                100 per page
-            </MenuItem>,
-        ];
-
-        return (
-            <DropdownButton
-                menuItems={menuItems}
-                size="small"
-                style={{
-                    backgroundColor: '#565e61',
-                    border: 'none',
-                    color: 'white',
-                }}
-            >
-                {rowsPerPage}
-            </DropdownButton>
-        );
+        setCurrentIndex(firstIndex)
     };
+
+    const menuItems = (close) => {
+        return [25, 50, 100].map((size) => <MenuItem key={0} onClick={handleClick(size, close)}>{size} per page</MenuItem>);
+    }
 
     const updateData = (data) => {
         const end = currentIndex * rowsPerPage;
         const start = end - rowsPerPage;
         const newDataSet = data.slice(start, end);
         setData(newDataSet);
+
     }
 
     useEffect(() => {
@@ -116,14 +92,15 @@ export const BasicTable = () => {
             setDataLength(filteredData.length)
             updateData(filteredData)
 
+
         } else {
             setDataLength(discussionData.length)
             updateData(discussionData);
 
+
         }
 
-
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [discussionData, isFiltered, filteredData, currentIndex, rowsPerPage])
 
     useEffect(() => {
@@ -135,6 +112,8 @@ export const BasicTable = () => {
                 initialIndex.push(i);
             }
         setIndexes(initialIndex)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dataLength, rowsPerPage])
 
     return (
@@ -180,7 +159,7 @@ export const BasicTable = () => {
                                                 //cellColor 
                                                 const statusCell = data.answer ? answeredBy : (totalComment !== 0 ? 'Commented' : "No Reply")
 
-                                                return <tr key={index}>
+                                                return <tr key={index} className="data-row">
                                                     <td width={'2%'}>{(currentIndex - 1) * rowsPerPage + index + 1}</td>
                                                     <td width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
                                                     <td className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
@@ -205,12 +184,12 @@ export const BasicTable = () => {
                     <nav style={{}}>
                         <ul className="pagination">
                             <li className="page-item step-button">
-                                <a href="#" className="page-link" onClick={() => { if (currentIndex !== firstIndex) { setCurrentIndex(currentIndex - 1); slideWindow(currentIndex - 1); } }}>Prev</a>
+                                <button href="#" className="page-link" onClick={() => { if (currentIndex !== firstIndex) { setCurrentIndex(currentIndex - 1); slideWindow(currentIndex - 1); } }}>Prev</button>
                             </li>
 
 
-                            <li className={`page-item ${currentIndex == firstIndex ? "active" : ''}`} >
-                                <a href="#" className="page-item" onClick={() => { setCurrentIndex(firstIndex); slideWindow(firstIndex); }}>{firstIndex}</a>
+                            <li className={`page-item ${currentIndex === firstIndex ? "active" : ''}`} >
+                                <button href="#" className="page-item" onClick={() => { setCurrentIndex(firstIndex); slideWindow(firstIndex); }}>{firstIndex}</button>
                             </li>
 
                             {(Indexes.length > 0 && Indexes[0] !== firstIndex + 1) && <div style={{ color: 'white', paddingTop: '4px', fontSize: '1rem' }}>...</div>}
@@ -218,8 +197,8 @@ export const BasicTable = () => {
                                 Indexes.length > 0 && <>
                                     {
                                         Indexes.map((num, index) => (
-                                            <li className={`page-item ${currentIndex == Indexes[index] ? "active" : ''}`} key={index}>
-                                                <a href="#" className="page-item" onClick={(e) => { setCurrentIndex(Indexes[index]); slideWindow(Indexes[index]); }}>{Indexes[index]}</a>
+                                            <li className={`page-item ${currentIndex === Indexes[index] ? "active" : ''}`} key={index}>
+                                                <button href="#" className="page-item" onClick={(e) => { setCurrentIndex(Indexes[index]); slideWindow(Indexes[index]); }}>{Indexes[index]}</button>
                                             </li>
                                         ))
                                     }
@@ -227,24 +206,35 @@ export const BasicTable = () => {
                             }
                             {Indexes.length > 0 && Indexes[Indexes.length - 1] !== lastIndex - 1 && <div style={{ color: 'white', paddingTop: '4px', fontSize: '1rem' }}>...</div>}
 
-                            {dataLength > rowsPerPage && <li li className={`page-item ${currentIndex == lastIndex ? "active" : ''}`} >
-                                <a href="#" className="page-item" onClick={() => { setCurrentIndex(lastIndex); slideWindow(lastIndex); }}>{lastIndex}</a>
+                            {dataLength > rowsPerPage && <li li className={`page-item ${currentIndex === lastIndex ? "active" : ''}`} >
+                                <button href="#" className="page-item" onClick={() => { setCurrentIndex(lastIndex); slideWindow(lastIndex); }}>{lastIndex}</button>
                             </li>}
 
 
                             <li className="page-item step-button">
-                                <a href="#" className="page-link" onClick={() => { if (currentIndex !== lastIndex) { setCurrentIndex(currentIndex + 1); slideWindow(currentIndex + 1); } }}>Next</a>
+                                <button href="#" className="page-link" onClick={() => { if (currentIndex !== lastIndex) { setCurrentIndex(currentIndex + 1); slideWindow(currentIndex + 1); } }}>Next</button>
                             </li>
                         </ul>
                     </nav>
                     <div className="paginator-dropdown">
-                        <div>Rows per page </div>
+                        <div>Rows per page</div>
                         <div>
-                            {basicDropDown()}
+                            <DropdownButton
+                                menuItems={menuItems}
+                                size="small"
+                                style={{
+                                    backgroundColor: '#565e61',
+                                    color: 'white',
+                                    border: '1px solid whitesmoke',
+                                    marginLeft: '5px',
+                                }}
+                            >
+                                {rowsPerPage}
+                            </DropdownButton>
                         </div>
                     </div>
                     <div className="row-data-info">
-                        <div>{`Rows From- ${(currentIndex - 1) * rowsPerPage + 1} to ${currentIndex * rowsPerPage}`}</div>
+                        <div>{`Rows From - ${(currentIndex - 1) * rowsPerPage + 1} to ${currentIndex * rowsPerPage} of ( ${dataLength} )`}</div>
                     </div>
                 </div>
             </div>

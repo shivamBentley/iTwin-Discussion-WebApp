@@ -235,10 +235,13 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         if (filter.isAny) {
             filterDiscussionData(selectedRepo[0].discussionData);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeRepository, filter])
 
     useEffect(() => {
         filterDiscussionData(discussionData);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter])
 
 
@@ -247,6 +250,8 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
             return obj.name.toLowerCase().includes(filterKey.toLowerCase())
         })
         setFilterData(filteredData);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [developers])
 
 
@@ -283,6 +288,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
                                         developers.dataWithCheckBox.map((obj, index) => {
                                             if (obj.isChecked)
                                                 return <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={handelDevClick} />
+                                            else return null
                                         })
                                     }
                                 </div> :

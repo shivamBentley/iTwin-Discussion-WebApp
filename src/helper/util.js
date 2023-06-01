@@ -138,7 +138,7 @@ export const getAllDevelopers = (discussionData) => {
     discussionData.forEach((obj) => {
         const comments = obj.comments?.nodes;
         members.add(obj.author?.DeveloperQuestioned);
-        if (comments && comments.length != 0) {
+        if (comments && comments.length !== 0) {
             comments.forEach((comment) => {
                 members.add(comment.author?.DeveloperCommented);
             })
@@ -381,7 +381,6 @@ export const getFilteredDataOnFilter = (discussionData, devFilter, typeFilter) =
     else if (devFilter.length !== 0 && typeFilter.length === 0) {
         let resultData = [];
         devFilter.forEach((devLoginId) => {
-            let currentData = [];
             resultData = arrayUnion(resultData, filterDataByGithubLoginID(discussionData, devLoginId), comparatorFunc)
         })
 

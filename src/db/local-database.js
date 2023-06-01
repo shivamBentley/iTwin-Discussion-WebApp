@@ -20,7 +20,7 @@ export const Teams = [
 ]
 
 export const iTwinDetails = {
-    owner: 'itwin',
+    owner: 'iTwin',
     repositories: ['itwinjs-core', 'iTwinUI', 'viewer']
 }
 
