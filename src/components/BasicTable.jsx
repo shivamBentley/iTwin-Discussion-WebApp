@@ -134,10 +134,9 @@ export const BasicTable = () => {
                             <th width={'10%'}>Created</th>
                         </tr>
                     </thead>{
-                        isLoading ? <p
-                            style={{ position: 'absolute', top: '50%', left: '50%' }}>Loding...</p> :
+                        isLoading ? <tbody><tr><td style={{ position: 'absolute', top: '50%', left: '50%' }}>Loding...</td></tr></tbody> :
                             <>
-                                {data?.length === 0 ? <p style={{ position: 'absolute', top: '50%', left: '50%', color: 'red', fontWeight: '600', fontSize: '1.25rem' }}>No Data</p> :
+                                {data?.length === 0 ? <tbody><tr ><td style={{ position: 'absolute', top: '50%', left: '50%', color: 'red', fontWeight: '600', fontSize: '1.25rem' }}>No Data</td></tr></tbody> :
                                     <tbody className="list-table-body" >
                                         {
                                             data.map((data, index) => {
@@ -206,7 +205,7 @@ export const BasicTable = () => {
                             }
                             {Indexes.length > 0 && Indexes[Indexes.length - 1] !== lastIndex - 1 && <div style={{ color: 'white', paddingTop: '4px', fontSize: '1rem' }}>...</div>}
 
-                            {dataLength > rowsPerPage && <li li className={`page-item ${currentIndex === lastIndex ? "active" : ''}`} >
+                            {dataLength > rowsPerPage && <li className={`page-item ${currentIndex === lastIndex ? "active" : ''}`} >
                                 <button href="#" className="page-item" onClick={() => { setCurrentIndex(lastIndex); slideWindow(lastIndex); }}>{lastIndex}</button>
                             </li>}
 
