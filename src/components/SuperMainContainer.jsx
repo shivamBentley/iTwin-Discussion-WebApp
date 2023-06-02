@@ -1,11 +1,12 @@
-import Main from "./components/Main";
+import Main from "./Main";
 import React, { useCallback, useEffect, useState } from 'react'
-import { getAllDiscussionData, getRateLimitData } from './helper/GitHubAPIs';
-import { iTwinDetails } from './db/local-database';
+import { getAllDiscussionData, getRateLimitData } from '../helper/GitHubAPIs';
+import { iTwinDetails } from '../db/local-database';
 import { useDispatch } from 'react-redux';
-import { setDevelopers, setDiscussionData, setLoading, setOwner, setRateLimit, setRepositoryName } from './store/reducers/discussions';
-import { getAllDevelopers } from './helper/util';
-import { BasicModal } from './components/BasicModal';
+import { setDevelopers, setDiscussionData, setLoading, setOwner, setRateLimit, setRepositoryName } from '../store/reducers/discussions';
+import { getAllDevelopers } from '../helper/util';
+import { BasicModal } from './BasicModal';
+import { Config } from "../db/Config";
 
 const storeName = 'iTwinData';
 function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRepoFromReposListAndUpdateITwindData }) {
@@ -85,7 +86,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
         // fetch all data that is stored in localStorage if available
         const iTwinData = JSON.parse(localStorage.getItem(storeName))
 
-        if (!iTwinData || iTwinData.lastUpdate + 3600000 < currentTime) {
+        if (!iTwinData || (iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000) < currentTime) {
           if (repositories.length > 0) {
             console.log('Downloading latest data for repository : ', repositories[0])
             setTitle(`Downloading latest data... `)

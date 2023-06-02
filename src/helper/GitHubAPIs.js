@@ -1,3 +1,5 @@
+import { Config } from "../db/Config";
+
 const apiUrl = 'https://api.github.com/graphql';
 
 /**
@@ -5,7 +7,7 @@ const apiUrl = 'https://api.github.com/graphql';
  * 
  */
 const variables = {
-  accessToken: ""
+  accessToken: Config.ACCESS_TOKEN
 };
 
 // Query for RateLimit
@@ -140,8 +142,10 @@ export const getAllDiscussionData = async (owner, repositoryName) => {
   // Rest data fetching...
   while (pageInfo.hasNextPage) {
     const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
+    
+    // eslint-disable-next-line
     await getNext_100_DiscussionData(owner, repositoryName,filter).then((data) => {
-      allDiscussionData = allDiscussionData.concat(data.data.repository.discussions.nodes);
+      allDiscussionData = allDiscussionData.concat(data.data?.repository.discussions.nodes);
       pageInfo = data.data.repository?.discussions.pageInfo;
     })
   }
