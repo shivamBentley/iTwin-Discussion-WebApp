@@ -8,7 +8,7 @@ export const Config = {
      *  step 2 : setting > developer setting > personal access token > Token(classic). You can choose (Fine grained token) also. 
      *  step 3 : Generate new Token OR Generate new token (classic)
      *  step 4 : Please copy token, you won't be able to see this generated token again.
-     *  step 5 : Paste copied token below at line 15. 
+     *  step 5 : Paste copied token below at line 14. 
      */
 
     ACCESS_TOKEN: "your token",

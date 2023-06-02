@@ -21,7 +21,8 @@ const initialState = {
         isTeamFilter: false,
         isSelectAllFilter: false
     },
-    rateLimit: {}
+    rateLimit: {},
+    lastUpdated: ''
 };
 
 // ==============================|| SLICE - discussionData ||============================== //
@@ -68,6 +69,10 @@ const discussions = createSlice({
         setRateLimit(state, action) {
             const { rateLimit } = action.payload;
             state.rateLimit = rateLimit;
+        },
+        setLastUpdated(state, action) {
+            const { lastUpdated } = action.payload;
+            state.lastUpdated = lastUpdated;
         }
     }
 });
@@ -83,5 +88,6 @@ export const {
     setFilteredDiscussionData,
     setFilter,
     setLoading,
-    setRateLimit
+    setRateLimit,
+    setLastUpdated
 } = discussions.actions;

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { getAllDiscussionData, getRateLimitData } from '../helper/GitHubAPIs';
 import { iTwinDetails } from '../db/local-database';
 import { useDispatch } from 'react-redux';
-import { setDevelopers, setDiscussionData, setLoading, setOwner, setRateLimit, setRepositoryName } from '../store/reducers/discussions';
+import { setDevelopers, setDiscussionData, setLastUpdated, setLoading, setOwner, setRateLimit, setRepositoryName } from '../store/reducers/discussions';
 import { getAllDevelopers } from '../helper/util';
 import { BasicModal } from './BasicModal';
 import { Config } from "../db/Config";
@@ -59,16 +59,15 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
     dispatch(setRepositoryName({ repositoryName: iTwinData.repositories[0].repositoryName }));
     dispatch(setOwner({ owner: iTwinData.owner }));
     dispatch(setDevelopers({ developers: devFilter }));
+    dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-
-  useEffect(() => {
+  const fetchDataAndUpdateInStore = () => {
     const currentTime = new Date().getTime();
     // update store with old data if available
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
-
     getRateLimitData().then((data) => {
       dispatch(setRateLimit({ rateLimit: data.data?.rateLimit }));
       if (data.data?.rateLimit.remaining === 0) {
@@ -103,9 +102,19 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
         }
       }
     });
+  }
 
+  useEffect(() => {
+    fetchDataAndUpdateInStore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repositories])
+
+  useEffect(() => {
+    setInterval(() => {
+      //fetch data and update in store ....
+      fetchDataAndUpdateInStore();
+    }, Config.TIME_TO_REFRESH_DATA * 60 * 1000);
+  }, [])
 
   return (
     <div className="App">
