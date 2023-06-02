@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Dialog } from '@itwin/itwinui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDevelopers, setFilter, setFilteredDiscussionData } from '../../store/reducers/discussions';
+import { setDevelopers, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
 import MultiInputFilter from './MultiInputFilter'
 import './MultiInputFilter.scss'
+import { useCallback } from 'react';
 
 export const FilterModal = () => {
     const [isOpen, setIsOpen] = React.useState(false);
@@ -33,7 +34,7 @@ export const FilterModal = () => {
         closeDialog();
     };
 
-    const resetButtonHandle = () => {
+    const resetButtonHandle = useCallback(() => {
         // reset type filter
         const newTypeFilter = types.map((obj) => ({ ...obj, isChecked: false }));
         setTypes(newTypeFilter);
@@ -56,8 +57,10 @@ export const FilterModal = () => {
                 isSelectAllFilter: false
             }
         }))
-        dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }))
-    };
+        dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }));
+        dispatch(setLoading({ isLoading: true }));
+
+    },[]);
 
     return (
         <>

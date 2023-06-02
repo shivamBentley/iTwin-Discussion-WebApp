@@ -1,14 +1,16 @@
 import { Anchor, DropdownButton, MenuItem } from "@itwin/itwinui-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import './styles/basicTable.scss'
 import { useState } from "react";
 import { useEffect } from "react";
+import { setLoading } from "../store/reducers/discussions";
 export const BasicTable = () => {
 
     const discussionData = useSelector((state) => state.discussions.discussionData);
     const filteredData = useSelector((state) => state.discussions.filteredDiscussionData);
     const isFiltered = useSelector((state) => state.discussions.filter);
     const isLoading = useSelector((state) => state.discussions.isLoading);
+    const dispatch = useDispatch();
 
     const [data, setData] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(50)
@@ -76,7 +78,7 @@ export const BasicTable = () => {
     };
 
     const menuItems = (close) => {
-        return [25, 50, 100].map((size) => <MenuItem key={0} onClick={handleClick(size, close)}>{size} per page</MenuItem>);
+        return [25, 50, 100].map((size, index) => <MenuItem key={index} onClick={handleClick(size, close)}>{size} per page</MenuItem>);
     }
 
     const updateData = (data) => {
@@ -85,19 +87,18 @@ export const BasicTable = () => {
         const newDataSet = data.slice(start, end);
         setData(newDataSet);
 
+        setTimeout(() => {
+            dispatch(setLoading({ isLoading: false }));
+        }, (newDataSet.length * 1.5));
     }
 
     useEffect(() => {
         if (isFiltered.isAny) {
             setDataLength(filteredData.length)
             updateData(filteredData)
-
-
         } else {
             setDataLength(discussionData.length)
             updateData(discussionData);
-
-
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

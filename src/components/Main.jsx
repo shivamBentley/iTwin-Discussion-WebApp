@@ -9,7 +9,6 @@ function Main() {
       </div>
       <div style={{ height: '85%', width: '100vw' }}>
         <BasicTable />
-
       </div>
     </div>
   )

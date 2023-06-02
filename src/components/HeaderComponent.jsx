@@ -40,7 +40,7 @@ function HeaderComponent({ title }) {
                     backgroundColor: 'red',
                     color: '#d8fafa'
                 }}>
-                    <>Remaining Points -{rateLimit.remaining}</>
+                    <>Remaining Points: {rateLimit.remaining}</>
                 </div>
             </div>
         </div>

@@ -2,7 +2,8 @@ export const Teams = [
     {
         teamName: 'iTwinPlatformDeveloperSuccess',
         teamMembers: [
-            { GitHubLogin: "pratikshan85" }
+            { GitHubLogin: "pratikshan85" },
+            { GitHubLogin: "NancyMcCallB" }
         ]
     },
     {
