@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+# Getting Started with iTwin-Discussion-WebApp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This App is designed to Analyze Discussion Data on Github Account. 
 
-## Available Scripts
+## Setup with Tech Stack
 
-In the project directory, you can run:
+### Prerequisite
+1. [Node.js](https://nodejs.org/en)
+2. [git](https://git-scm.com/)
 
-### `npm start`
+### Clone the Repository
+Clone the Repository from here Open[https://github.com/shivamBentley/iTwin-Discussion-WebApp](https://github.com/shivamBentley/iTwin-Discussion-WebApp).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Setting up with files
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+There two file to setup 
 
-### `npm test`
+### Config.js 
+1. ACCESS_TOKEN:  Set access token. 
+    
+    if you don't have github access token create new access token by following below steps.
+        
+        You can create an access token from here link - https://github.com/settings/tokens
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+                 OR
+    
+        Go to : https://github.com
+        step 1 : login
+        step 2 : setting > developer setting > personal access token > Token(classic). You can choose (Fine grained token) also. 
+        step 3 : Generate new Token OR Generate new token (classic)
+        step 4 : Please copy token, you won't be able to see this generated token again.
+        step 5 : Paste copied token below at line 15. 
 
-### `npm run build`
+2. TIME_TO_REFRESH_DATA: TIME_TO_REFRESH_DATA is a number in minute 
+    
+    This ensure if data is older than this much time when you refresh the page it will automatically download latest data and save in local storage.
+    Default time is 60 Minute. 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### local-databases.js
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. iTwinDetails : This contain the information about the github account ( owner & repositories ) names for which you want to Analyze the discussion data.
+owner: It's owner id 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   step 1: Go to anyone's github profile page. 
+   
+   step 2: copy name from URL. 
+   
+   Example - [https://github.com/iTwin](https://github.com/iTwin) This is iTwin github account. Name after (https://github.com/) is iTwin that is owner. 
 
-### `npm run eject`
+repositories: It is array container repositories names.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    Example : 
+        iTwinDetails = {
+            owner: 'iTwin',
+            repositories: ['itwinjs-core', 'iTwinUI', 'viewer']
+        }
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Teams : This is used to select multiple developer to Analyze discussion data. This will help to create group by giving name and by giving GitHubLogin id's.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+    Example:
 
-## Learn More
+        Teams = [
+            {
+                teamName: 'Team 1',
+                teamMembers: [
+                    { GitHubLogin: "pratikshan85" },
+                    { GitHubLogin: "NancyMcCallB" }
+                ]
+            },
+            {
+                teamName: 'Team 2',
+                teamMembers: [
+                    { GitHubLogin: "neuralmax" }
+                ]
+            }
+        ]
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Run Application
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Use npm start to run the project.
