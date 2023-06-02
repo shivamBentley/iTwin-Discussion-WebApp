@@ -41,7 +41,7 @@ function HeaderComponent({ title }) {
                     backgroundColor: 'green',
                     color: '#d8fafa'
                     }}>
-                    <>{new Date(lastUpdated).toLocaleString(undefined, { timeZone: 'UTC' })}</>
+                    <>{new Date(lastUpdated).toLocaleString()}</>
                 </div>
                 <div style={{
                     position: 'absolute',

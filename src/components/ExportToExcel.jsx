@@ -70,9 +70,9 @@ function ExportToExcel() {
                             const answeredBy = data.answer?.author.DeveloperAnswered;
 
                             // closed 
-                            const answeredCreatedAy = new Date(data.answer?.AnswerCreatedAt).toLocaleString(undefined, { timeZone: 'UTC' });
-                            const createdAt = new Date(data.createdAt).toLocaleString(undefined, { timeZone: 'UTC' });
-                            const updatedAt = new Date(data.updatedAt).toLocaleString(undefined, { timeZone: 'UTC' });
+                            const answeredCreatedAy = new Date(data.answer?.AnswerCreatedAt).toLocaleString();
+                            const createdAt = new Date(data.createdAt).toLocaleString();
+                            const updatedAt = new Date(data.updatedAt).toLocaleString();
 
                             //cellColor 
                             const statusCell = data.answer ? answeredBy : (totalComment !== 0 ? 'Commented' : "No Reply")
