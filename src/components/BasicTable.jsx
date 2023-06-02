@@ -87,6 +87,9 @@ export const BasicTable = () => {
         const newDataSet = data.slice(start, end);
         setData(newDataSet);
 
+        // When Repository changes then set currentIndex to 1 
+        if (Math.ceil(data.length / rowsPerPage) !== lastIndex) setCurrentIndex(1);
+
         setTimeout(() => {
             dispatch(setLoading({ isLoading: false }));
         }, (newDataSet.length * 1.5));
