@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# Confgi
+/src/db/Config.js
+
 # production
 /build
 
