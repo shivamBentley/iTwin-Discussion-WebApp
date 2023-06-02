@@ -13,9 +13,9 @@ export const FilterModal = () => {
     //Type filter 
     const [types, setTypes] = useState([
         { isChecked: false, name: 'answer', label: 'Answered' },
-        { isChecked: false, name: 'replies', label: 'Replied' },
-        { isChecked: false, name: 'comments', label: 'Comments' },
+        { isChecked: false, name: 'comments', label: 'Commented' },
         { isChecked: false, name: 'asked', label: 'Asked' },
+        { isChecked: false, name: 'replies', label: "Comment's Reply" },
     ])
 
     //selectInALl filter 

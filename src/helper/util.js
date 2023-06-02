@@ -23,6 +23,11 @@ export const filterDataByGithubLoginID = (discussionData, targetName) => {
     discussionData.forEach((obj) => {
         let status = false;
 
+        //if any question asked by developer
+        if(obj.author.DeveloperQuestioned === targetName){
+            status = true;
+        }
+
         //if any reply by any bentley developer
         const answerBy = obj.answer?.author.DeveloperAnswered;
         if (answerBy === targetName) {
@@ -106,6 +111,22 @@ export const GetCommentedData = (discussionData) => {
 
         if (status) {
             filteredData.push(obj);
+        }
+    })
+    return filteredData;
+}
+
+export const getAllRepliedData = (discussionData) => {
+    const filteredData = [];
+    discussionData.forEach((obj) => {
+        const comments = obj.comments?.nodes;
+        if (comments && comments.length !== 0) {
+            comments.forEach((comment) => {
+                const replies = comment.replies;
+                if (replies && replies.totalCount !== 0) {
+                    filteredData.push(obj);
+                }
+            })
         }
     })
     return filteredData;
@@ -358,7 +379,7 @@ export const getFilteredDataOnFilter = (discussionData, devFilter, typeFilter) =
                     break;
 
                 case 'replies':
-                    // filteredTypeData = getRepliedDataByDeveloper(discussionData, devLoginId);
+                    filteredTypeData = getAllRepliedData(discussionData);
                     break;
 
                 case 'comments':
@@ -366,7 +387,7 @@ export const getFilteredDataOnFilter = (discussionData, devFilter, typeFilter) =
                     break;
 
                 case 'asked':
-                    // filteredTypeData = getAskedDataByDeveloper(discussionData, devLoginId);
+                    filteredTypeData = discussionData;
                     break;
 
                 default:
@@ -377,7 +398,7 @@ export const getFilteredDataOnFilter = (discussionData, devFilter, typeFilter) =
         return resultData;
     }
 
-    // only type filter ....
+    // only dev filter ....
     else if (devFilter.length !== 0 && typeFilter.length === 0) {
         let resultData = [];
         devFilter.forEach((devLoginId) => {
