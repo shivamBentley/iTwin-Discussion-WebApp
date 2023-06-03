@@ -7,6 +7,8 @@ import { setDevelopers, setDiscussionData, setLastUpdated, setLoading, setOwner,
 import { getAllDevelopers } from '../helper/util';
 import { BasicModal } from './BasicModal';
 import { Config } from "../db/Config";
+import { ToastNotify } from "./ToastNotify";
+import { removeToast, setToastState } from "../store/reducers/toast";
 
 const storeName = 'iTwinData';
 function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRepoFromReposListAndUpdateITwindData }) {
@@ -16,6 +18,9 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
   const [title, setTitle] = useState('')
 
   const updateDataInLocalStorage = () => {
+
+    // show Toast data is updated in store
+    dispatch(setToastState({ newState: { id: `${repositories[0]}`, title: `${repositories[0]} downloading...`, status: 'downloading', autoClose: false, isOpen: true } }))
 
     if (repositories.length > 0) {
       const currentTime = new Date().getTime();
@@ -29,6 +34,11 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
           lastUpdate: currentTime
         }
         removeRepoFromReposListAndUpdateITwindData(repositories[0], repoData);
+
+        // show Toast data is updated in store
+        dispatch(removeToast({ id: `${repositories[0]}` }));
+        dispatch(setToastState({ newState: { id: `${repositories[0]}`, title: `${repositories[0]} downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
+
       })
         .catch((err) => {
           console.error('ERROR:', err);
@@ -37,12 +47,18 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
   }
 
   //update data in store 
-  const setDefaultDataInStore = useCallback((isOldDataUpdate, remainingPoint) => {
+  const setDefaultDataInStore = useCallback((isOldDataUpdate) => {
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
     const discussionData = iTwinData.repositories[0].discussionData;
     const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(discussionData)).map((developer) => ({ isChecked: false, name: developer }));
     const devFilter = { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox }
 
+    //dispatch default data to store ...
+    dispatch(setDiscussionData({ discussionData: discussionData }));
+    dispatch(setRepositoryName({ repositoryName: iTwinData.repositories[0].repositoryName }));
+    dispatch(setOwner({ owner: iTwinData.owner }));
+    dispatch(setDevelopers({ developers: devFilter }));
+    dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
 
     //updating repoStatus for modal
     if (isOldDataUpdate) {
@@ -54,13 +70,6 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
         setTitle(`Ready for use.`)
       }, 3000);
     }
-    //dispatch default data to store ...
-    dispatch(setDiscussionData({ discussionData: discussionData }));
-    dispatch(setRepositoryName({ repositoryName: iTwinData.repositories[0].repositoryName }));
-    dispatch(setOwner({ owner: iTwinData.owner }));
-    dispatch(setDevelopers({ developers: devFilter }));
-    dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -70,18 +79,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
     getRateLimitData().then((data) => {
       dispatch(setRateLimit({ rateLimit: data.data?.rateLimit }));
-      if (data.data?.rateLimit.remaining === 0) {
-        console.error("Rate Limit Exceeded", data.data?.rateLimit)
-
-        if (iTwinData) {
-          setDefaultDataInStore();
-          dispatch(setLoading({ isLoading: false }));
-          console.log("iTwinData found in local storage. Old data updating in store...")
-        } else {
-          console.error("You don't have old iTwin data in localStorage")
-        }
-
-      } else {
+      {
         // fetch all data that is stored in localStorage if available
         const iTwinData = JSON.parse(localStorage.getItem(storeName))
 
@@ -96,10 +94,21 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
           //updating old data form local Storage 
           setTitle(`Loading data.... `)
 
-          setDefaultDataInStore(true, data.data?.rateLimit.remaining);
+          setDefaultDataInStore(true);
           dispatch(setLoading({ isLoading: false }));
           console.log("New data loading paused. Old data updating in store...")
+          dispatch(setToastState({ newState: { title: `Updating List ...`, status: 'success', autoClose: 5000, isOpen: true, id: 'updating List' } }))
+
         }
+      }
+    }).catch((err) => {
+      console.error("Rate Limit Exceeded")
+      if (iTwinData) {
+        setDefaultDataInStore(false);
+        dispatch(setLoading({ isLoading: false }));
+        console.log("iTwinData found in local storage. Old data updating in store...")
+      } else {
+        console.error("You don't have old iTwin data in localStorage")
       }
     });
   }
@@ -114,11 +123,14 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       //fetch data and update in store ....
       fetchDataAndUpdateInStore();
     }, Config.TIME_TO_REFRESH_DATA * 60 * 1000);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div className="App">
       <Main />
+      <ToastNotify />
       <BasicModal
         isOpen={true}
         title={title}
