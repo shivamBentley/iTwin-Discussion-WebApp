@@ -20,7 +20,7 @@ function HeaderComponent({ title }) {
                 <div className='header-child download'><ExportToExcel /></div>
                 <div className='header-child last-update'><>{new Date(lastUpdated).toLocaleString()}</></div>
                 <div className='header-child remaining'><>Remaining Points: {rateLimit.remaining}</></div>
-                <div className='header-child reset-time'><>Reset Time: {new Date(rateLimit.resetAt).toLocaleString().substr(11, 10)}</></div>
+                <div className='header-child reset-time'><>Reset Time: {new Date(rateLimit.resetAt).toLocaleString().substr(9, 12)}</></div>
             </div>
         </div>
     )
