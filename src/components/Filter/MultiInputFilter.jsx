@@ -37,6 +37,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
             >{repo}</MenuItem>
         })
         return menuItems;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const getMenuItemsForTeam = useCallback((close) => {
@@ -76,6 +77,8 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
             close();
         }}>None</MenuItem>)
         return menuItems;
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const isAnyOtherFilter = useCallback((FilterType) => {
@@ -91,6 +94,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
             default:
                 break;
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const handelTypeClick = (e) => {
@@ -227,6 +231,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         // update developers
         const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo[0].discussionData)).map((obj) => ({ isChecked: false, name: obj }))
         dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox } }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // update store

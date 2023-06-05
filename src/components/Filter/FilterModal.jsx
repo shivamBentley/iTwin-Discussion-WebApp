@@ -60,7 +60,8 @@ export const FilterModal = () => {
         dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }));
         dispatch(setLoading({ isLoading: true }));
 
-    },[]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <>
