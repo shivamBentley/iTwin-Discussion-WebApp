@@ -1,5 +1,6 @@
 export const Teams = [
     {
+        id: 1,
         teamName: 'iTwinPlatformDeveloperSuccess',
         teamMembers: [
             { GitHubLogin: "pratikshan85" },
@@ -7,12 +8,14 @@ export const Teams = [
         ]
     },
     {
+        id: 2,
         teamName: 'TestOne',
         teamMembers: [
             { GitHubLogin: "NancyMcCallB" }
         ]
     },
     {
+        id: 3,
         teamName: 'TestTwo',
         teamMembers: [
             { GitHubLogin: "neuralmax" }

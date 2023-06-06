@@ -12,16 +12,16 @@ export const FilterModal = () => {
 
     //Type filter 
     const [types, setTypes] = useState([
-        { isChecked: false, name: 'answer', label: 'Answered' },
-        { isChecked: false, name: 'comments', label: 'Commented' },
-        { isChecked: false, name: 'asked', label: 'Asked' },
-        { isChecked: false, name: 'replies', label: "Comment's Reply" },
+        { id: 1, isChecked: false, name: 'answer', label: 'Answered' },
+        { id: 2, isChecked: false, name: 'comments', label: 'Commented' },
+        { id: 3, isChecked: false, name: 'asked', label: 'Asked' },
+        { id: 4, isChecked: false, name: 'replies', label: "Comment's Reply" },
     ])
 
     //selectInALl filter 
     const [selectInAll, setSelectInAll] = useState([
-        { isChecked: false, name: 'unanswered', label: 'Unanswered' },
-        { isChecked: false, name: 'noReply', label: 'No Reply' },
+        { id: 1, isChecked: false, name: 'unanswered', label: 'Unanswered' },
+        { id: 2, isChecked: false, name: 'noReply', label: 'No Reply' },
     ])
 
     const dispatch = useDispatch();
@@ -81,7 +81,7 @@ export const FilterModal = () => {
                 <Dialog.Main style={{ Width: '250px', height: '480px' }}>
                     <Dialog.TitleBar titleText='Filter discussion data' />
                     <Dialog.Content>
-                        <MultiInputFilter selectInAll={selectInAll} setSelectInAll={setSelectInAll} types={types} setTypes={setTypes} />
+                        <MultiInputFilter selectInAll={selectInAll} setSelectInAll={setSelectInAll} types={types} setTypes={setTypes} resetButtonHandle={resetButtonHandle} />
                     </Dialog.Content>
                     <Dialog.ButtonBar>
                         {/* <Button styleType='high-visibility' onClick={filterButtonHandle}>Filter</Button> */}

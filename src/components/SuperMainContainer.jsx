@@ -4,7 +4,7 @@ import { getAllDiscussionData, getRateLimitData } from '../helper/GitHubAPIs';
 import { iTwinDetails } from '../db/local-database';
 import { useDispatch } from 'react-redux';
 import { setDevelopers, setDiscussionData, setLastUpdated, setLoading, setOwner, setRateLimit, setRepositoryName } from '../store/reducers/discussions';
-import { getAllDevelopers } from '../helper/util';
+import { getAllDevelopers } from '../helper/discussion';
 import { BasicModal } from './BasicModal';
 import { Config } from "../db/Config";
 import { ToastNotify } from "./ToastNotify";

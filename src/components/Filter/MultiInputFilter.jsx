@@ -8,11 +8,11 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { Teams, iTwinDetails } from '../../db/local-database'
 import { setDevelopers, setDiscussionData, setFilteredDiscussionData, setLoading, setRepositoryName } from '../../store/reducers/discussions'
-import { GetNoRepliedData, GetUnAnsweredData, getAllDevelopers, getFilteredDataOnFilter } from '../../helper/util'
+import { GetNoRepliedData, GetUnAnsweredData, getAllDevelopers, getFilteredDataOnFilter } from '../../helper/discussion'
 import { setFilter } from '../../store/reducers/discussions'
 import { useCallback } from 'react'
 
-function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
+function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetButtonHandle }) {
 
     const activeRepository = useSelector((state) => state.discussions.repositoryName);
     const filter = useSelector(state => state.discussions.filter)
@@ -24,13 +24,12 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
     const discussionData = useSelector((state) => (state.discussions.discussionData))
 
     //menuItem list 
-    const getMenuItemsForRepo = useCallback((close) => {
+    const getMenuItemsForRepo = useCallback((close, currFilter) => {
         const menuItems = iTwinDetails.repositories.map((repo, index) => {
             return <MenuItem key={index} onClick={() => {
                 dispatch(setRepositoryName({ repositoryName: repo }));
                 updateDeveloperDataInStore(repo);
-                // setTeam("Select Team");
-                dispatch(setFilter({ filter: { ...filter, developerFilterKey: [] } }));
+                resetButtonHandle()
                 close();
             }}
 
@@ -38,11 +37,11 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         })
         return menuItems;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [filter, developers])
 
-    const getMenuItemsForTeam = useCallback((close) => {
-        const menuItems = Teams.map((obj, index) => {
-            return <MenuItem key={index} name={obj.teamName} onClick={(e) => {
+    const getMenuItemsForTeam = useCallback((close, currFilter) => {
+        const menuItems = Teams.map((obj) => {
+            return <MenuItem key={obj.id} name={obj.teamName} onClick={(e) => {
                 setTeam(obj.teamName);
 
                 const devFilterKeys = [];
@@ -59,7 +58,15 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
                 })
 
                 dispatch(setDevelopers({ developers: { isAny: true, dataWithCheckBox: newDevelopers } }));
-                dispatch(setFilter({ filter: { ...filter, developerFilterKey: devFilterKeys, isAny: devFilterKeys.length !== 0 || isAnyOtherFilter('isTeamFilter'), isTeamFilter: devFilterKeys !== 0 } }))
+                dispatch(setFilter({
+                    filter: {
+                        ...currFilter,
+                        developerFilterKey: devFilterKeys,
+                        isAny: devFilterKeys.length !== 0 || isAnyOtherFilter('isTeamFilter', currFilter),
+                        isTeamFilter: devFilterKeys !== 0,
+                        isSelectAllFilter: false
+                    }
+                }))
 
                 //clear select in all filter
                 clearSelectInAllFilter();
@@ -69,36 +76,38 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
             >{obj.teamName}</MenuItem>
         })
 
-        menuItems.unshift(<MenuItem key={'none-key'} onClick={() => {
-            setTeam("Select Team");
-            const newDevelopers = developers.dataWithCheckBox.map((devWithCheckBox) => ({ ...devWithCheckBox, isChecked: false }));
-            dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: newDevelopers } }));
-            dispatch(setFilter({ filter: { ...filter, developerFilterKey: [], isAny: isAnyOtherFilter('isTeamFilter'), isTeamFilter: false } }))
-            close();
-        }}>None</MenuItem>)
+        if (filter.isTeamFilter) {
+            menuItems.unshift(<MenuItem key={'none-key'} onClick={() => {
+                setTeam("Select Team");
+                const newDevelopers = developers.dataWithCheckBox.map((devWithCheckBox) => ({ ...devWithCheckBox, isChecked: false }));
+                dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: newDevelopers } }));
+                dispatch(setFilter({ filter: { ...currFilter, developerFilterKey: [], isAny: isAnyOtherFilter('isTeamFilter', currFilter), isTeamFilter: false } }))
+                close();
+            }}>None</MenuItem>)
+        }
         return menuItems;
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [filter, developers])
 
-    const isAnyOtherFilter = useCallback((FilterType) => {
+    const isAnyOtherFilter = useCallback((FilterType, currentFilter) => {
         switch (FilterType) {
             case 'typeFilterKey':
-                return filter.developerFilterKey?.length !== 0 || filter.isTeamFilter || filter.isSelectAllFilter
+                return currentFilter.developerFilterKey?.length !== 0 || currentFilter.isTeamFilter || currentFilter.isSelectAllFilter
             case 'developerFilterKey':
-                return filter.typeFilterKey?.length !== 0 || filter.isTeamFilter || filter.isSelectAllFilter
+                return currentFilter.typeFilterKey?.length !== 0 || currentFilter.isTeamFilter || currentFilter.isSelectAllFilter
             case 'isTeamFilter':
-                return filter.developerFilterKey?.length !== 0 || filter.typeFilterKey?.length !== 0 || filter.isSelectAllFilter
+                return currentFilter.typeFilterKey?.length !== 0 || currentFilter.isSelectAllFilter
             case 'isSelectAllFilter':
-                return filter.developerFilterKey?.length !== 0 || filter.isTeamFilter || filter.typeFilterKey?.length !== 0
+                return currentFilter.developerFilterKey?.length !== 0 || currentFilter.isTeamFilter || currentFilter.typeFilterKey?.length !== 0
             default:
                 break;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const handelTypeClick = (e) => {
-        const newTypes = types.map((obj) => {
+    const handelTypeClick = (e, typeCheckBox) => {
+        const newTypes = typeCheckBox.map((obj) => {
             if (obj.name === e.target.name) {
                 return ({ ...obj, isChecked: e.target.checked });
             } else return obj;
@@ -115,7 +124,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         })
 
         //updating store 
-        dispatch(setFilter({ filter: { ...filter, isAny: isAnyStatus || isAnyOtherFilter('typeFilterKey'), typeFilterKey: typeKeys, isSelectAllFilter: false } }));
+        dispatch(setFilter({ filter: { ...filter, isAny: isAnyStatus || isAnyOtherFilter('typeFilterKey', filter), typeFilterKey: typeKeys, isSelectAllFilter: false } }));
 
         setTypes(newTypes);
 
@@ -125,7 +134,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
     }
 
     // clearing filter of type and developer 
-    const clearTypeAndDevFilter = () => {
+    const clearTypeAndDevFilter = useCallback(() => {
 
         //reset type filter 
         const resetTypeFilter = types.map((obj) => ({ ...obj, isChecked: false }));
@@ -135,12 +144,12 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         const resetDevFilter = developers.dataWithCheckBox.map((obj) => ({ ...obj, isChecked: false }));
         setFilterDevList(resetDevFilter);
         dispatch(setDevelopers({ developers: { isTeamFilter: false, isAny: false, dataWithCheckBox: resetDevFilter } }));
-    }
+    }, [developers])
 
-    const clearSelectInAllFilter = () => {
+    const clearSelectInAllFilter = useCallback(() => {
         const newSelectInAll = selectInAll.map((obj) => ({ ...obj, isChecked: false }));
         setSelectInAll(newSelectInAll);
-    }
+    }, [selectInAll])
 
     const handelSelectInAllClick = (e) => {
         const newSelectInAll = selectInAll.map((obj) => {
@@ -159,13 +168,13 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
             // update filter in store 
             dispatch(setFilter({ filter: { ...filter, isAny: statusSelectInAll, isSelectAllFilter: statusSelectInAll, typeFilterKey: [], developerFilterKey: [], isTeamFilter: false } }));
         } else {
-            dispatch(setFilter({ filter: { ...filter, isAny: isAnyOtherFilter('isSelectAllFilter'), isSelectAllFilter: false } }));
+            dispatch(setFilter({ filter: { ...filter, isAny: isAnyOtherFilter('isSelectAllFilter', filter), isSelectAllFilter: false } }));
         }
     }
 
 
 
-    const handelDevClick = (e) => {
+    const handelDevClick = (e, currFilter) => {
         const newDevFilter = developers.dataWithCheckBox.map((obj) => {
             if (obj.name === e.target.name) {
                 return { ...obj, isChecked: e.target.checked }
@@ -184,7 +193,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         })
 
         //updating store 
-        dispatch(setFilter({ filter: { ...filter, isAny: isAnyStatus || isAnyOtherFilter('developerFilterKey'), developerFilterKey: developerKeys, isSelectAllFilter: false, isTeamFilter: false } }));
+        dispatch(setFilter({ filter: { ...currFilter, isAny: isAnyStatus || isAnyOtherFilter('developerFilterKey', currFilter), developerFilterKey: developerKeys, isSelectAllFilter: false, isTeamFilter: false } }));
         dispatch(setDevelopers({ developers: { isAny: isAnyStatus, dataWithCheckBox: newDevFilter } }));
 
         //clear select in all filter
@@ -271,7 +280,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [developers])
 
-
+    let count = 0;
     return (
         <div >
             <div className="filter-main-container">
@@ -279,7 +288,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
                     <div className='select-repo'>
                         <Headline className="filter-subtitle  ">Select Repository</Headline>
                         <div>
-                            <DropdownButton size='small' menuItems={getMenuItemsForRepo}>
+                            <DropdownButton size='small' menuItems={(close) => getMenuItemsForRepo(close, filter)}>
                                 {activeRepository}
                             </DropdownButton>
                         </div>
@@ -287,28 +296,32 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
                     <div className='selectType-div'>
                         <Headline className="filter-subtitle" style={{ marginTop: '-25px' }}>Select Type</Headline>
                         <div className="filter-checkBox">
-                            {types.map((obj, index) => <Checkbox key={index} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelTypeClick} style={{ marginRight: '10px' }} />)}
+                            {types.map((obj, index) => <Checkbox key={obj.id} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={(e) => handelTypeClick(e, types)} style={{ marginRight: '10px' }} />)}
                         </div>
                     </div>
                     <div>
                         <Headline className="filter-subtitle">Select In All</Headline>
                         <div className="filter-checkBox">
-                            {selectInAll.map((obj, index) => <Checkbox key={index} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelSelectInAllClick} style={{ marginRight: '10px' }} />)}
+                            {selectInAll.map((obj, index) => <Checkbox key={obj.id} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelSelectInAllClick} style={{ marginRight: '10px' }} />)}
                         </div>
                     </div>
                     <div >
                         <Headline className="filter-subtitle" >Selected Developers</Headline>
                         {
-                            developers.isAny ?
-                                <div style={{ maxWidth: '200px', maxHeight: '100px', overflow: 'scroll', marginTop: '-30px', border: '1px solid lightgray', paddingLeft: '5px' }}>
-                                    {
-                                        developers.dataWithCheckBox.map((obj, index) => {
-                                            if (obj.isChecked)
-                                                return <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={handelDevClick} />
-                                            else return null
-                                        })
-                                    }
-                                </div>
+                            developers.isAny && developers.dataWithCheckBox.length !== 0 ?
+                                <>
+                                    <div style={{ maxWidth: '200px', maxHeight: '100px', overflow: 'scroll', marginTop: '-30px', border: '1px solid lightgray', paddingLeft: '5px' }}>
+                                        {
+                                            developers.dataWithCheckBox.map((obj, index) => {
+                                                if (obj.isChecked) {
+                                                    count++;
+                                                    return <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={(e) => handelDevClick(e, filter)} />
+                                                } else return null
+                                            })
+                                        }
+                                    </div>
+                                    <p style={{ marginTop: '-1px' }}> Selected Developers:  {count}</p>
+                                </>
                                 : <div style={{ height: '50px', width: '180px', border: '0.5px solid red', textAlign: 'center', color: 'red', fontSize: '0.7rem', marginTop: '-30px', paddingTop: '10px' }}>No Developer</div>
                         }
                     </div>
@@ -317,7 +330,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
                     <div className='select-repo'>
                         <Headline className="filter-subtitle  ">Select Team</Headline>
                         <div className="">
-                            <DropdownButton size='small' menuItems={getMenuItemsForTeam}>
+                            <DropdownButton size='small' menuItems={(close) => getMenuItemsForTeam(close, filter)}>
                                 {activeTeam}
                             </DropdownButton>
                         </div>
@@ -331,7 +344,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll }) {
                                     <div style={{ maxHeight: '190px', overflow: 'scroll', border: '1px solid skyblue', paddingLeft: '5px' }}>
                                         {
                                             filteredDevList.map((obj, index) => (
-                                                <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={handelDevClick} />
+                                                <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={(e) => handelDevClick(e, filter)} />
                                             ))
                                         }
                                     </div>
