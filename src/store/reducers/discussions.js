@@ -21,6 +21,11 @@ const initialState = {
         isTeamFilter: false,
         isSelectAllFilter: false
     },
+    isSmartSearch: {
+        col: 0,
+        status: false,
+        data: []
+    },
     rateLimit: {},
     lastUpdated: ''
 };
@@ -73,6 +78,10 @@ const discussions = createSlice({
         setLastUpdated(state, action) {
             const { lastUpdated } = action.payload;
             state.lastUpdated = lastUpdated;
+        },
+        setSmartSearch(state, action) {
+            const {  searchDetails } = action.payload;
+            state.isSmartSearch = searchDetails;
         }
     }
 });
@@ -89,5 +98,6 @@ export const {
     setFilter,
     setLoading,
     setRateLimit,
-    setLastUpdated
+    setLastUpdated,
+    setSmartSearch
 } = discussions.actions;

@@ -10,6 +10,7 @@ export const BasicTable = () => {
     const filteredData = useSelector((state) => state.discussions.filteredDiscussionData);
     const isFiltered = useSelector((state) => state.discussions.filter);
     const isLoading = useSelector((state) => state.discussions.isLoading);
+    const isSmartSearch = useSelector((state) => state.discussions.isSmartSearch);
     const dispatch = useDispatch();
 
     const [data, setData] = useState([]);
@@ -96,7 +97,12 @@ export const BasicTable = () => {
     }
 
     useEffect(() => {
-        if (isFiltered.isAny) {
+        if (isSmartSearch.status) {
+            setDataLength(isSmartSearch.data.length)
+            updateData(isSmartSearch.data)
+        }
+
+        else if (isFiltered.isAny) {
             setDataLength(filteredData.length)
             updateData(filteredData)
         } else {
@@ -105,7 +111,7 @@ export const BasicTable = () => {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [discussionData, isFiltered, filteredData, currentIndex, rowsPerPage])
+    }, [discussionData, isFiltered, filteredData, currentIndex, rowsPerPage, isSmartSearch])
 
     useEffect(() => {
         const numberOfIndexes = Math.ceil(dataLength / rowsPerPage);
@@ -164,14 +170,14 @@ export const BasicTable = () => {
 
                                                 return <tr key={index} className="data-row">
                                                     <td width={'2%'}>{(currentIndex - 1) * rowsPerPage + index + 1}</td>
-                                                    <td width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
-                                                    <td className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
-                                                    <td className="align-col-text-center" width={'10%'} >{totalComment}</td>
-                                                    <td className="align-col-text-center" width={'10%'}>{totalReplies}</td>
-                                                    <td width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
-                                                    <td width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
-                                                    <td width={'10%'}>{createdAt}</td>
-                                                    <td width={'10%'}>{updatedAt}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 2 ? '#edfaff' : 'none'} ` }} width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} >{totalComment}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 5 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'}>{totalReplies}</td>
+                                                    <td /*style={{ backgroundColor: `${isSmartSearch.col === 6 ? '#edfaff' : 'none'} ` }}*/ width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 7 ? '#edfaff' : 'none'} ` }} width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 8 ? '#edfaff' : 'none'} ` }} width={'10%'}>{createdAt}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 9 ? '#edfaff' : 'none'} ` }} width={'10%'}>{updatedAt}</td>
                                                 </tr>
                                             })
                                         }
