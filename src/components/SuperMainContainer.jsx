@@ -8,7 +8,7 @@ import { getAllDevelopers } from '../helper/discussion';
 import { BasicModal } from './BasicModal';
 import { Config } from "../db/Config";
 import { ToastNotify } from "./ToastNotify";
-import { removeToast, setToastState } from "../store/reducers/toast";
+// import { removeToast, setToastState } from "../store/reducers/toast";
 
 const storeName = 'iTwinData';
 function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRepoFromReposListAndUpdateITwindData }) {
@@ -20,7 +20,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
   const updateDataInLocalStorage = () => {
 
     // show Toast data is updated in store
-    dispatch(setToastState({ newState: { id: `${repositories[0]}`, title: `${repositories[0]} downloading...`, status: 'downloading', autoClose: false, isOpen: true } }))
+    // dispatch(setToastState({ newState: { id: `${repositories[0]}`, title: `${repositories[0]} downloading...`, status: 'downloading', autoClose: false, isOpen: true } }))
 
     if (repositories.length > 0) {
       const currentTime = new Date().getTime();
@@ -36,8 +36,8 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
         removeRepoFromReposListAndUpdateITwindData(repositories[0], repoData);
 
         // show Toast data is updated in store
-        dispatch(removeToast({ id: `${repositories[0]}` }));
-        dispatch(setToastState({ newState: { id: `${repositories[0]}`, title: `${repositories[0]} downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
+        // dispatch(removeToast({ id: `${repositories[0]}` }));
+        // dispatch(setToastState({ newState: { id: `${repositories[0]}`, title: `${repositories[0]} downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
 
       })
         .catch((err) => {
@@ -82,8 +82,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       {
         // fetch all data that is stored in localStorage if available
         const iTwinData = JSON.parse(localStorage.getItem(storeName))
-
-        if (!iTwinData || (iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000) < currentTime) {
+        if (!iTwinData || (Config.AUTO_REFRESH && ((iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000)) < currentTime)) {
           if (repositories.length > 0) {
             console.log('Downloading latest data for repository : ', repositories[0])
             setTitle(`Downloading latest data... `)
@@ -93,11 +92,10 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
         } else {
           //updating old data form local Storage 
           setTitle(`Loading data.... `)
-
           setDefaultDataInStore(true);
           dispatch(setLoading({ isLoading: false }));
           console.log("New data loading paused. Old data updating in store...")
-          dispatch(setToastState({ newState: { title: `Updating List ...`, status: 'success', autoClose: 5000, isOpen: true, id: 'updating List' } }))
+          // dispatch(setToastState({ newState: { title: `Updating List ...`, status: 'success', autoClose: 5000, isOpen: true, id: 'updating List' } }))
 
         }
       }
@@ -117,15 +115,6 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
     fetchDataAndUpdateInStore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repositories])
-
-  useEffect(() => {
-    setInterval(() => {
-      //fetch data and update in store ....
-      fetchDataAndUpdateInStore();
-    }, Config.TIME_TO_REFRESH_DATA * 60 * 1000);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <div className="App">

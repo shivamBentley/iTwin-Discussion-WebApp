@@ -11,12 +11,13 @@ export const Config = {
      *  step 5 : Paste copied token below at line 14. 
      */
 
-    ACCESS_TOKEN: "your token",
+    ACCESS_TOKEN: "",
 
     /**
      * TIME_TO_REFRESH_DATA is a number in minute 
-     * This ensure if data is older that this much time when you refresh the page it will automatically download latest data and save in local storage.
+     * This ensure if data is older that this much time it will automatically download latest data and save in local storage.
      * Default time is 60 Minute. 
      */
-    TIME_TO_REFRESH_DATA: 60
+    TIME_TO_REFRESH_DATA: 15,
+    AUTO_REFRESH : false
 }

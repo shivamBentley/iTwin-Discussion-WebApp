@@ -97,8 +97,6 @@ export const smartFilter = (data, key) => {
             case 'col7':
                 filteredData = data.filter((obj) => {
                     const answeredCreatedAt = new Date(obj.answer?.AnswerCreatedAt).toLocaleString();
-                    console.log(answeredCreatedAt);
-
                     return answeredCreatedAt.toString().toLowerCase().includes(smartKey.searchKey.toLowerCase())
                 });
 
