@@ -15,7 +15,7 @@ Clone the Repository from here Open[https://github.com/shivamBentley/iTwin-Discu
 
 There two file to setup 
 
-### Config.js 
+### Config.js ( /src/db/Config.js)
 1. ACCESS_TOKEN:  Set access token. 
     
     if you don't have github access token create new access token by following below steps.
@@ -36,7 +36,7 @@ There two file to setup
     This ensure if data is older than this much time when you refresh the page it will automatically download latest data and save in local storage.
     Default time is 60 Minute. 
 
-### local-databases.js
+### local-databases.js ( /src/db/local-database.js)
 
 1. iTwinDetails : This contain the information about the github account ( owner & repositories ) names for which you want to Analyze the discussion data.
 owner: It's owner id 
@@ -79,4 +79,4 @@ repositories: It is array container repositories names.
 
 ## Run Application
 
-Use npm start to run the project.
+Use [npm start](https://create-react-app.dev/docs/getting-started/#scripts) to run the project.
