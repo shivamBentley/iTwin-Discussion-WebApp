@@ -13,9 +13,15 @@ export const ToastNotify = () => {
         if (toastState.isOpen) {
             toast(`${toastState.title}`, {
                 toastId: `${toastState.id}`,
-                isLoading: toastState.status === 'downloading' ? true : false
+                isLoading: toastState.status === 'downloading' ? true : false,
             });
+        }
 
+        else if (toastState.status === 'danger'){
+            toast(`${toastState.title}`, {
+                toastId: `${toastState.id}`,
+                type: toast.TYPE.ERROR
+            });
         }
 
         else if (toastState.status === 'successfullyDownloaded')

@@ -17,6 +17,7 @@ function Main() {
   const dispatch = useDispatch();
   const toastState = useSelector((state) => state.toast.toastState);
   const activeRepo = useSelector((state) => state.discussions.repositoryName);
+  const rateLimit = useSelector((state) => state.discussions.rateLimit);
 
   const data = useSelector((state) => {
     let res;;
@@ -46,54 +47,54 @@ function Main() {
   }
 
   const downloadLatestData = () => {
+    if (rateLimit.remaining) {
+      // get all repository and owner name 
+      const owner = iTwinDetails.owner
+      const repositories = iTwinDetails.repositories;
+      const currentTime = new Date().getTime();
+      const latestRepositoryData = [];
 
-    // get all repository and owner name 
-    const owner = iTwinDetails.owner
-    const repositories = iTwinDetails.repositories;
-    const currentTime = new Date().getTime();
-    const latestRepositoryData = [];
+      // show Toast data is updated in store
+      dispatch(setToastState({ newState: { id: 'downloadingLatestData', title: `Latest data downloading...`, status: 'downloading', autoClose: false, isOpen: true } }))
 
-    // show Toast data is updated in store
-    dispatch(setToastState({ newState: { id: 'downloadingLatestData', title: `Latest data downloading...`, status: 'downloading', autoClose: false, isOpen: true } }))
+      repositories.forEach(reposName => {
 
-    repositories.forEach(reposName => {
-
-      //save iTwin dat in localStorage
-      getAllDiscussionData(owner, reposName).then((data) => {
-        const latestData = {
-          repositoryName: reposName,
-          discussionData: data,
-          totalCount: data.length,
-          lastUpdate: currentTime
-        }
-        //updating latestRepositoryData
-        latestRepositoryData.push(latestData);
-
-        //updating localStorage when all repos data is downloaded
-        if (repositories.length === latestRepositoryData.length) {
-          const newITwinData = {
-            owner: iTwinDetails.owner,
-            repositories: latestRepositoryData,
+        //save iTwin dat in localStorage
+        getAllDiscussionData(owner, reposName).then((data) => {
+          const latestData = {
+            repositoryName: reposName,
+            discussionData: data,
+            totalCount: data.length,
             lastUpdate: currentTime
           }
-          localStorage.setItem('iTwinData', JSON.stringify(newITwinData));
+          //updating latestRepositoryData
+          latestRepositoryData.push(latestData);
 
-          // show Toast data is updated in store
-          dispatch(removeToast({ id: 'downloadingLatestData' }));
-          dispatch(setToastState({ newState: { id: 'downloadingLatestData', title: `Latest data downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
+          //updating localStorage when all repos data is downloaded
+          if (repositories.length === latestRepositoryData.length) {
+            const newITwinData = {
+              owner: iTwinDetails.owner,
+              repositories: latestRepositoryData,
+              lastUpdate: currentTime
+            }
+            localStorage.setItem('iTwinData', JSON.stringify(newITwinData));
+
+            // show Toast data is updated in store
+            dispatch(removeToast({ id: 'downloadingLatestData' }));
+            dispatch(setToastState({ newState: { id: 'downloadingLatestData', title: `Latest data downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
 
 
-          // find data for active repository 
-          console.log(activeRepo);
-          const selectedRepo = newITwinData.repositories.filter(repoDetails => repoDetails.repositoryName === activeRepo);
-          dispatch(setDiscussionData({ discussionData: selectedRepo[0].discussionData }))
+            // find data for active repository 
+            console.log(activeRepo);
+            const selectedRepo = newITwinData.repositories.filter(repoDetails => repoDetails.repositoryName === activeRepo);
+            dispatch(setDiscussionData({ discussionData: selectedRepo[0].discussionData }))
 
-        }
+          }
 
-        console.log('Latest data downloaded for repository: ', reposName);
-      })
-    });
-
+          console.log('Latest data downloaded for repository: ', reposName);
+        })
+      });
+    }
   }
 
   useEffect(() => {
@@ -115,7 +116,14 @@ function Main() {
   return (
     <div style={{ height: '100vh' }}>
       <div style={{ height: '15%', width: '100vw', }}>
-        <HeaderComponent filterKey={filterKey} handleSearch={handleSearch} />
+        <HeaderComponent
+          filterKey={filterKey}
+          handleSearch={handleSearch}
+          handleButtonClick={() => {
+            if (rateLimit.remaining === 0)
+              dispatch(setToastState({ newState: { id: 'noRemainingPoint', title: `You have ${rateLimit.remaining} point`, status: 'danger', autoClose: 5000, isOpen: false } }))
+            downloadLatestData();
+          }} />
       </div>
       <div style={{ height: '85%', width: '100vw' }}>
         <BasicTable />
