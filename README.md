@@ -9,7 +9,10 @@ This App is designed to Analyze Discussion Data on Github Account.
 2. [git](https://git-scm.com/)
 
 ### Clone the Repository
-Clone the Repository from here Open[https://github.com/shivamBentley/iTwin-Discussion-WebApp](https://github.com/shivamBentley/iTwin-Discussion-WebApp).
+Clone the Repository from here: [https://github.com/shivamBentley/iTwin-Discussion-WebApp](https://github.com/shivamBentley/iTwin-Discussion-WebApp).
+
+### Install dependencies
+To install packages or dependencies use the npm command: [npm install](https://docs.npmjs.com/cli/v8/commands/npm-install)
 
 ## Setting up with files
 
@@ -35,6 +38,13 @@ There two file to setup
     
     This ensure if data is older than this much time when you refresh the page it will automatically download latest data and save in local storage.
     Default time is 60 Minute. 
+    
+3. AUTO_REFRESH:
+ 
+   it is use to enable/disable the auto refresh data.
+   
+               AUTO_REFRESH: true - enable auto refreshing 
+               AUTO_REFRESH: false - disable auto refresing
 
 ### local-databases.js ( /src/db/local-database.js)
 
