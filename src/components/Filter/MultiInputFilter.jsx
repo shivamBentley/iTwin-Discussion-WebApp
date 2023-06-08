@@ -29,7 +29,8 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
             return <MenuItem key={index} onClick={() => {
                 dispatch(setRepositoryName({ repositoryName: repo }));
                 updateDeveloperDataInStore(repo);
-                resetButtonHandle()
+                resetButtonHandle();
+                setTeam('Select Team');
                 close();
             }}
 
@@ -144,11 +145,13 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
         const resetDevFilter = developers.dataWithCheckBox.map((obj) => ({ ...obj, isChecked: false }));
         setFilterDevList(resetDevFilter);
         dispatch(setDevelopers({ developers: { isTeamFilter: false, isAny: false, dataWithCheckBox: resetDevFilter } }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [developers])
 
     const clearSelectInAllFilter = useCallback(() => {
         const newSelectInAll = selectInAll.map((obj) => ({ ...obj, isChecked: false }));
         setSelectInAll(newSelectInAll);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectInAll])
 
     const handelSelectInAllClick = (e) => {
