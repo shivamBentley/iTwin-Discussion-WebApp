@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import './styles/basicTable.scss'
 import { useState } from "react";
 import { useEffect } from "react";
-import { setLoading } from "../store/reducers/discussions";
+import { setLoading, setRateLimit } from "../store/reducers/discussions";
+import { getRateLimitData } from "../helper/GitHubAPIs";
 export const BasicTable = () => {
 
     const discussionData = useSelector((state) => state.discussions.discussionData);
@@ -112,6 +113,16 @@ export const BasicTable = () => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [discussionData, isFiltered, filteredData, currentIndex, rowsPerPage, isSmartSearch])
+
+
+    useEffect(() => {
+        // update RateLimits 
+        getRateLimitData().then((data) => {
+            dispatch(setRateLimit({ rateLimit: data.data?.rateLimit }));
+        })
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [discussionData])
 
     useEffect(() => {
         const numberOfIndexes = Math.ceil(dataLength / rowsPerPage);
