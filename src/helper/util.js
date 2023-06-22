@@ -161,3 +161,30 @@ const globalFilter = (data, key) => {
 
     return filteredData;
 }
+
+export const insertObjInMap = (map, data) => {
+    if (!map) return map;
+    // check data key exist in map or not 
+    const key = data.developerName;
+    const found = map.get(key);
+    if (found) {
+        
+        map.set(key, {
+            ...found,
+             // eslint-disable-next-line
+            ['answeredUrl']: new Set([...found['answeredUrl'], ...data['answeredUrl']]),
+             // eslint-disable-next-line
+            ['otherUrl']: new Set([...found['otherUrl'], ...data['otherUrl']])
+        })
+    } else {
+        map.set(data.developerName, data);
+    }
+}
+
+export const mergeObjectMap = (mapA, mapB) => {
+    const result = new Map(mapA);
+    for (const data of mapB.values()) {
+        insertObjInMap(result, data);
+    }
+    return result;
+}

@@ -58,7 +58,7 @@ const createQuery = (owner, repositoryName, filter) => {
     
               DiscussionUrl: url
               title
-    
+              bodyText
               author {
                 DeveloperQuestioned: login
                 DeveloperQuestionedGithubUrl: url
@@ -90,6 +90,8 @@ const createQuery = (owner, repositoryName, filter) => {
                         DeveloperRepliedToComment: login
                         DeveloperRepliedToCommentGithubUrl: url
                       }
+
+                      DeveloperCommentsRepliedUrl: url
                   }
                     totalCount
                   }
@@ -98,8 +100,8 @@ const createQuery = (owner, repositoryName, filter) => {
                     DeveloperCommented: login
                     DeveloperCommentedGitHubUrl: url
                   }
-    
-                  DeveloperReplyUrl: url
+
+                  DeveloperCommentedUrl: url
                 }
               }
             }
@@ -142,9 +144,9 @@ export const getAllDiscussionData = async (owner, repositoryName) => {
   // Rest data fetching...
   while (pageInfo.hasNextPage) {
     const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
-    
+
     // eslint-disable-next-line
-    await getNext_100_DiscussionData(owner, repositoryName,filter).then((data) => {
+    await getNext_100_DiscussionData(owner, repositoryName, filter).then((data) => {
       allDiscussionData = allDiscussionData.concat(data.data?.repository.discussions.nodes);
       pageInfo = data.data.repository?.discussions.pageInfo;
     })
@@ -191,6 +193,3 @@ export const getTotalDiscussionCount = () => {
     });
 }
 
-export const getLocalStorageDiscussionData = () => {
-  return JSON.parse(localStorage.getItem('iTwinDiscussionData'))
-}

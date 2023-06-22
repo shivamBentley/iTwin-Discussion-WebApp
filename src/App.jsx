@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { iTwinDetails } from './db/local-database';
 import SuperMainContainer from './components/SuperMainContainer';
+import { createWordDictionary } from './helper/TrieClass';
+import { createDictionaryOfTagsWithDeveloperListAndAddTags } from './helper/TrieClass';
 
 function App() {
 
@@ -37,8 +39,18 @@ function App() {
             localStorage.setItem('iTwinData', JSON.stringify(newITwinData));
     }
 
+    useEffect(() => {
+        //creating Word Dictionary
+        createWordDictionary()
+
+        const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
+        if (iTwinData) {
+            iTwinData.repositories.forEach(repo => createDictionaryOfTagsWithDeveloperListAndAddTags(repo.discussionData));
+        }
+    }, [])
+
+
     return (<>
-        {/* {JSON.stringify(repoStatus)} */}
         <SuperMainContainer
             removeRepoFromReposListAndUpdateITwindData={removeRepoFromReposListAndUpdateITwindData}
             repositories={repositories}

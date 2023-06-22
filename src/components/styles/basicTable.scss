@@ -13,6 +13,7 @@ div {
                 tr {
                     position: sticky;
                     top: 0;
+                    z-index: 1;
 
                     th {
 
@@ -44,12 +45,27 @@ div {
                     background-color:white;
                 }
 
+                .title-tags-col {
+                    margin: 0;
+                    padding: 0;
+                    border-bottom: none;
+                    z-index: 0;
+                }
+
                 .data-row:nth-child(even) {
-                    background-color: #f7f7f7
+                    background-color: #f7f7f7;
+
+                    tr {
+                        background-color: #f7f7f7;
+                    }
+
                 }
 
                 .data-row:hover {
-                    background-color: hwb(197 89% 0%)
+                    td {
+                        background-color: hwb(197 89% 0%)
+                    }
+
                 }
 
             }

@@ -1,4 +1,4 @@
-import { arrayUnion, comparatorFunc, sortByDate } from "./util";
+import { arrayUnion, comparatorFunc, insertObjInMap, sortByDate } from "./util";
 
 export const filterDataByGithubLoginID = (discussionData, targetName) => {
     const filteredData = [];
@@ -131,7 +131,6 @@ export const GetNoRepliedData = (discussionData) => {
     return filteredData;
 }
 /**
- * 
  * @param {Array} discussionData 
  * @returns {Set} All member login id. 
  */
@@ -150,95 +149,6 @@ export const getAllDevelopers = (discussionData) => {
     // console.log('Commented or replied member', members)
     return members;
 }
-
-
-// /**
-//  * @param {Array<string>} Array of login id name;
-//  * @returns { Array<Object> } Array of Discussion data
-//  */
-// export const getFilteredDataByDeveloperAndStatusType = (discussionData, gitHubLoginIds, filterType) => {
-
-//     //filter by filterType - { commented, replies, answer }
-//     let filterByType = [];
-//     if (filterType.length === 0) {
-//         filterByType = filterByType.concat(discussionData);
-//     } else {
-//         discussionData.forEach((data) => {
-//             filterType.forEach((filter) => {
-//                 if (filter === 'comments') {
-//                     if (data.comments && data.comments.totalCount !== 0 && !data.answer?.isAnswer)
-//                         filterByType.push(data);
-//                 }
-//                 else if (filter === 'answer') {
-//                     if (data.answer && data.answer.totalCount !== 0)
-//                         filterByType.push(data);
-//                 }
-//                 else if (filter === 'replies') {
-//                     const commentsData = data.comments?.nodes;
-//                     if (commentsData && commentsData.totalCount !== 0) {
-//                         commentsData.forEach((commentObj) => {
-//                             if (commentObj.replies?.totalCount !== 0)
-//                                 filterByType.push(data);
-//                         })
-//                     }
-//                 }
-//             })
-//         })
-//     }
-
-//     let filteredDataByLoginIds = [];
-
-//     // filter by loginIds 
-//     if (gitHubLoginIds.length === 0) { filteredDataByLoginIds = filteredDataByLoginIds.concat(filterByType); }
-//     else {
-//         filterByType.forEach((data) => {
-
-//             let answeredBy = '';
-//             let commentsBy = [];
-//             let repliedBy = [];
-
-//             // check answer by developer exist
-//             const answer = data.answer;
-//             if (answer && answer.isAnswer) {
-//                 answeredBy = answer.author?.DeveloperAnswered
-//             }
-
-//             // developer commented 
-//             const comments = data.comments.nodes;
-//             if (comments && data.comments.totalCount !== 0) {
-//                 comments.forEach((comment) => {
-//                     commentsBy.push(comment.author?.DeveloperCommented);
-
-//                     //developer replied on comments
-//                     const replies = comment.nodes;
-//                     if (replies && comment.totalCount) {
-//                         repliedBy.push(replies.author.DeveloperRepliedToComment);
-//                     }
-
-//                 })
-//             }
-
-//             // if any gitHubLoginIds matches with answeredBy, commentsBy or repliedBy
-//             gitHubLoginIds.forEach((loginId) => {
-//                 if (loginId === answeredBy) filteredDataByLoginIds.push(data);
-//                 else if (commentsBy.length !== 0) {
-//                     commentsBy.forEach((commentBy) => {
-//                         if (commentBy === loginId) filteredDataByLoginIds.push(data);
-//                     })
-//                 }
-
-//                 else if (repliedBy.length !== 0) {
-//                     repliedBy.forEach((replyBy) => {
-//                         if (replyBy === loginId) filteredDataByLoginIds.push(data);
-//                     })
-//                 }
-//             })
-//         })
-//     }
-
-//     return filteredDataByLoginIds;
-// }
-
 
 export const getAskedDataByDeveloper = (discussionData, developerLoginId) => {
 
@@ -393,7 +303,69 @@ export const getFilteredDataOnFilter = (discussionData, devFilter, typeFilter) =
     else return sortByDate(discussionData);
 }
 
+/**
+ * @param {Object} A discussion data object 
+ * @returns {developerList {level_0 : new Set(), level_1:new Set()}} All developer categorize of types { commented , answered , replied , questioned}. 
+ */
+export const getTypeOfDeveloperInvolve = (discussionObject) => {
+    const developerAnswered = discussionObject.answer?.author.DeveloperAnswered;
+    const developerQuestioned = discussionObject.author?.DeveloperQuestioned;
 
+    const developerMap = new Map();
+    const uniqueDevList = new Set();
+    // extracting developer commented or replied on comment
+    const comments = discussionObject?.comments;
+    if (comments.totalCount !== 0) {
+        comments.nodes.forEach((comment) => {
 
+            // verify developer, if this is same who asked the question the skip
+            if (comment.author.DeveloperCommented !== developerQuestioned && comment.author.DeveloperCommented !== developerAnswered) {
+                // check developer exist in uniqueDevList 
+                const devName = comment.author.DeveloperCommented;
+                const isDevFound = uniqueDevList.has(devName);
+                if (!isDevFound) {
+                    insertObjInMap(developerMap, {
+                        developerName: devName,
+                        answeredUrl: new Set(),
+                        otherUrl: new Set([comment.DeveloperCommentedUrl])
+                    })
+                    uniqueDevList.add(devName);
+                }
+            }
 
+            // Developer Replied 
+            const replies = comment.replies;
+            if (replies.totalCount !== 0) {
+                replies.nodes.forEach((rep) => {
 
+                    // verify developer, if this is same who asked the question the skip
+                    if (rep.author.DeveloperRepliedToComment !== developerQuestioned && comment.author.DeveloperCommented !== developerAnswered) {
+                        // check developer exist in uniqueDevList 
+                        const devName = rep.author.DeveloperRepliedToComment
+                        const isDevFound = uniqueDevList.has(devName);
+                        if (!isDevFound) {
+                            insertObjInMap(developerMap, {
+                                developerName: devName,
+                                answeredUrl: new Set(),
+                                otherUrl: new Set([rep.DeveloperCommentsRepliedUrl])
+                            })
+                            uniqueDevList.add(devName);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    //clearing the set 
+    uniqueDevList.clear();
+
+    return {
+        level_0: developerAnswered ? new Map([[developerAnswered, {
+            developerName: developerAnswered,
+            answeredUrl: new Set([discussionObject.answer.AnswerUrl]),  // only answered url 
+            otherUrl: new Set()
+        }]]) : new Set(),
+        level_1: developerMap
+    }
+} 

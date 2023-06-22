@@ -8,6 +8,7 @@ import { getAllDevelopers } from '../helper/discussion';
 import { BasicModal } from './BasicModal';
 import { Config } from "../db/Config";
 import { ToastNotify } from "./ToastNotify";
+import { createDictionaryOfTagsWithDeveloperListAndAddTags } from "../helper/TrieClass";
 // import { removeToast, setToastState } from "../store/reducers/toast";
 
 const storeName = 'iTwinData';
@@ -27,9 +28,13 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
 
       //save iTwin dat in localStorage
       getAllDiscussionData(owner, repositories[0]).then((data) => {
+
+        //extracting tags for repo data and build dictionary of tags with developer list
+        const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
+
         const repoData = {
           repositoryName: repositories[0],
-          discussionData: data,
+          discussionData: repoDataWithTags,
           totalCount: data.length,
           lastUpdate: currentTime
         }
@@ -82,7 +87,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       {
         // fetch all data that is stored in localStorage if available
         const iTwinData = JSON.parse(localStorage.getItem(storeName))
-        if (!iTwinData || (Config.AUTO_REFRESH && ((iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000)) < currentTime)) {
+        if (!iTwinData || !iTwinData.repositories || (Config.AUTO_REFRESH && ((iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000)) < currentTime)) {
           if (repositories.length > 0) {
             console.log('Downloading latest data for repository : ', repositories[0])
             setTitle(`Downloading latest data... `)

@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { iTwinDetails } from '../db/local-database';
 import { removeToast, setToastState } from '../store/reducers/toast';
 import { getAllDiscussionData } from '../helper/GitHubAPIs';
+import { createDictionaryOfTagsWithDeveloperListAndAddTags } from '../helper/TrieClass';
 
 function Main() {
 
@@ -61,9 +62,13 @@ function Main() {
 
         //save iTwin dat in localStorage
         getAllDiscussionData(owner, reposName).then((data) => {
+
+          //extracting tags for repo data and build dictionary of tags with developer list
+          const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
+
           const latestData = {
             repositoryName: reposName,
-            discussionData: data,
+            discussionData: repoDataWithTags,
             totalCount: data.length,
             lastUpdate: currentTime
           }
@@ -85,7 +90,6 @@ function Main() {
 
 
             // find data for active repository 
-            console.log(activeRepo);
             const selectedRepo = newITwinData.repositories.filter(repoDetails => repoDetails.repositoryName === activeRepo);
             dispatch(setDiscussionData({ discussionData: selectedRepo[0].discussionData }))
 
