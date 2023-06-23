@@ -1,0 +1,41 @@
+.main-container {
+    width: 100%;
+    height: 100%;
+
+    div {
+        .title-header {
+            font-size: large;
+            margin: 0 0 -23px 0;
+            text-align: center;
+        }
+
+        .sub-heading {
+            font-size: 1rem;
+            margin-bottom: 0px;
+        }
+
+        .list-block {
+            border: 1px solid skyblue;
+            border-radius: 4px;
+            padding: 0px 4px;
+
+            .title-link {
+                margin: 0px;
+                font-size: 1rem;
+            }
+        }
+
+
+    }
+
+    .no-match-container {
+        text-align: center;
+
+        .no-match {
+            color: red;
+            font-size: 1rem;
+        }
+    }
+
+
+}

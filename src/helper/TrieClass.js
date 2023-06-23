@@ -87,6 +87,7 @@ class Trie {
         }
         if (node !== null && node.isEndOfWord)
             return node;
+        else return false
     }
 
     wordMatchingPrefix(prefix) {
