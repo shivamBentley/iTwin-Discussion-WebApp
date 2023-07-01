@@ -4,7 +4,7 @@ import { useState } from 'react';
 import '../styles/tagGenerator.scss'
 
 function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
-    const { bodyTags, titleTags } = tagsAndUrl;
+    const { titleTags } = tagsAndUrl;
     const [isOpen, setIsOpen] = useState(false)
     const [match, setMatch] = useState(null)
 
@@ -60,6 +60,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
 
             const { ListLevel_0, ListLevel_1 } = DictionaryOfTagsWithDeveloperList[dictionaryType].search(searchKey)
             if (ListLevel_0)
+                // eslint-disable-next-line
                 for (const [key, value] of ListLevel_0) {
                     const { answeredUrl, otherUrl } = value;
                     // if exist then merge
@@ -67,6 +68,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
                     createUrlMap(type + '.level_1', tag, otherUrl);
                 }
             if (ListLevel_1)
+                // eslint-disable-next-line
                 for (const [key, value] of ListLevel_1) {
                     const { answeredUrl, otherUrl } = value;
                     // if exist then merge
@@ -104,6 +106,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
         for (const key1 in discussionData) {
             const obj = discussionData[key1];
             for (const key2 in obj) {
+                 // eslint-disable-next-line
                 for (const [key, value] of urlMap[key1][key2]) {
                     discussionData[key1][key2].push(DictionaryOfDiscussionData.search(key.toLowerCase()).data);
                 }
