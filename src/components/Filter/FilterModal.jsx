@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Dialog } from '@itwin/itwinui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDevelopers, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
+import { setDateRangeFilter, setDevelopers, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
 import MultiInputFilter from './MultiInputFilter'
 import './MultiInputFilter.scss'
 import { useCallback } from 'react';
@@ -9,6 +9,12 @@ import { useCallback } from 'react';
 export const FilterModal = () => {
     const [isOpen, setIsOpen] = React.useState(false);
     const developers = useSelector((state) => state.discussions.developers)
+    const [isDateRangeEnable, setDateRangeEnable] = useState(false);
+    const [dateRange, setDateRange] = useState({
+        startDate: new Date(),
+        endDate: new Date()
+    });
+
 
     //Type filter 
     const [types, setTypes] = useState([
@@ -57,6 +63,12 @@ export const FilterModal = () => {
                 isSelectAllFilter: false
             }
         }))
+
+        // Resetting Date Range Filter 
+        dispatch(setDateRangeFilter({ isDateRangeFilter: false }));
+        setDateRangeEnable(false)
+
+        // Flushing Filtered Data from filteredDiscussionData
         dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }));
         dispatch(setLoading({ isLoading: true }));
 
@@ -78,10 +90,20 @@ export const FilterModal = () => {
 
                 style={{}}
             >
-                <Dialog.Main style={{ Width: '250px', height: '480px' }}>
+                <Dialog.Main style={{ Width: '250px', height: '530px' }}>
                     <Dialog.TitleBar titleText='Filter discussion data' />
                     <Dialog.Content>
-                        <MultiInputFilter selectInAll={selectInAll} setSelectInAll={setSelectInAll} types={types} setTypes={setTypes} resetButtonHandle={resetButtonHandle} />
+                        <MultiInputFilter
+                            selectInAll={selectInAll}
+                            setSelectInAll={setSelectInAll}
+                            types={types}
+                            setTypes={setTypes}
+                            resetButtonHandle={resetButtonHandle}
+                            isDateRangeEnable={isDateRangeEnable}
+                            setDateRangeEnable={setDateRangeEnable}
+                            dateRange={dateRange}
+                            setDateRange={setDateRange}
+                        />
                     </Dialog.Content>
                     <Dialog.ButtonBar>
                         {/* <Button styleType='high-visibility' onClick={filterButtonHandle}>Filter</Button> */}

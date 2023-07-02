@@ -7,6 +7,7 @@ function ExportToExcel() {
 
     const discussionData = useSelector((state) => state.discussions.discussionData);
     const filteredData = useSelector((state) => state.discussions.filteredDiscussionData);
+    const isDateRangeFilter = useSelector((state) => state.discussions.isDateRangeFilter);
     const isFiltered = useSelector((state) => state.discussions.filter);
     const repositoryName = useSelector((state) => state.discussions.repositoryName);
 
@@ -25,13 +26,13 @@ function ExportToExcel() {
     }
 
     useEffect(() => {
-        if (isFiltered.isAny) {
+        if (isFiltered.isAny || isDateRangeFilter) {
             setData(filteredData);
         } else {
             setData(discussionData);
         }
 
-    }, [filteredData, discussionData, isFiltered])
+    }, [filteredData, discussionData, isFiltered, isDateRangeFilter])
 
     return (
         <div>

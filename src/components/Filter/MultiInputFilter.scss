@@ -5,8 +5,8 @@
     margin: -10px 10px;
 
     .first-div {
-        width: 50%;
-        
+        width: 45%;
+
         div {
             .filter-checkBox {
                 margin-top: -25px;
@@ -20,21 +20,39 @@
     }
 
     .second-div {
-        width: 50%;
+        width: 55%;
         border-left: 1px solid skyblue;
         padding-left: 10px;
-
-        div {
-            .filter-checkBox {
-                // margin-top: -25px;
-            }
-        }
 
         .developer-filter-checkBox {
             border: 1px solid skyblue;
             padding-left: 10px;
             max-height: 200px;
             overflow: hidden scroll;
+        }
+
+        .flex-parent-2 {
+            display: flex;
+            flex-direction: column;
+            margin-top: -20px;
+        }
+
+        .date-range-container {
+            display: inline-block;
+            margin-bottom: 30px;
+
+            .date-range-subtitle {
+                display: inline-block;
+                font-size: 1.25rem;
+            }
+
+            .date-enable-button {
+                margin: 0 10px;
+            }
+
+            .date-range-picker {
+                margin: -25px 0 20px 0;
+            }
         }
     }
 
@@ -51,6 +69,8 @@
             text-align: center;
             margin-left: 10px;
             margin-top: 10px;
+           
         }
+        margin-bottom: -30px;
     }
 }

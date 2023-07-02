@@ -3,16 +3,28 @@ import './MultiInputFilter'
 import {
     Checkbox, Headline, DropdownButton,
     MenuItem,
-    Input
+    Input,
+    Button
 } from '@itwin/itwinui-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Teams, iTwinDetails } from '../../db/local-database'
-import { setDevelopers, setDiscussionData, setFilteredDiscussionData, setLoading, setRepositoryName } from '../../store/reducers/discussions'
-import { GetNoRepliedData, GetUnAnsweredData, getAllDevelopers, getFilteredDataOnFilter } from '../../helper/discussion'
+import { setDateRangeFilter, setDevelopers, setDiscussionData, setFilteredDiscussionData, setLoading, setRepositoryName } from '../../store/reducers/discussions'
+import { GetNoRepliedData, GetUnAnsweredData, filteredDiscussionDataByDateRange, getAllDevelopers, getFilteredDataOnFilter } from '../../helper/discussion'
 import { setFilter } from '../../store/reducers/discussions'
 import { useCallback } from 'react'
+import { DateRangePicker } from '../DateRangePicker'
 
-function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetButtonHandle }) {
+function MultiInputFilter({
+    types,
+    setTypes,
+    selectInAll,
+    setSelectInAll,
+    resetButtonHandle,
+    isDateRangeEnable,
+    setDateRangeEnable,
+    dateRange,
+    setDateRange
+}) {
 
     const activeRepository = useSelector((state) => state.discussions.repositoryName);
     const filter = useSelector(state => state.discussions.filter)
@@ -21,7 +33,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
     const developers = useSelector((state) => state.discussions.developers)
     const [activeTeam, setTeam] = useState('Select Team')
     const dispatch = useDispatch();
-    const discussionData = useSelector((state) => (state.discussions.discussionData))
+    const discussionData = useSelector((state) => (state.discussions.discussionData));
 
     //menuItem list 
     const getMenuItemsForRepo = useCallback((close, currFilter) => {
@@ -65,7 +77,7 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
                         developerFilterKey: devFilterKeys,
                         isAny: devFilterKeys.length !== 0 || isAnyOtherFilter('isTeamFilter', currFilter),
                         isTeamFilter: devFilterKeys !== 0,
-                        isSelectAllFilter: false
+                        isSelectAllFilter: false,
                     }
                 }))
 
@@ -227,13 +239,28 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
                 } else {
                     data = GetNoRepliedData(discussionData);
                 }
-                dispatch(setFilteredDiscussionData({ filteredDiscussionData: data }))
+                // filter by date Range 
+                const res = filteredDiscussionDataByDateRange(data, dateRange.startDate, dateRange.endDate)
+                dispatch(setFilteredDiscussionData({ filteredDiscussionData: isDateRangeEnable ? res : data }))
                 return;
             } else {
-                dispatch(setFilteredDiscussionData({ filteredDiscussionData: getFilteredDataOnFilter(discussionData, filter.developerFilterKey, filter.typeFilterKey) }))
+                const data = getFilteredDataOnFilter(discussionData, filter.developerFilterKey, filter.typeFilterKey)
+                const res = filteredDiscussionDataByDateRange(data, dateRange.startDate, dateRange.endDate)
+
+                dispatch(setFilteredDiscussionData({ filteredDiscussionData: isDateRangeEnable ? res : data }))
             }
+        } else if (isDateRangeEnable) {
+            const res = filteredDiscussionDataByDateRange(discussionData, dateRange.startDate, dateRange.endDate)
+            dispatch(setFilteredDiscussionData({ filteredDiscussionData: res }))
         } else {
             dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }))
+        }
+
+        //if DateRange is Enable then update store
+        if (isDateRangeEnable)
+            dispatch(setDateRangeFilter({ isDateRangeFilter: true }));
+        else {
+            dispatch(setDateRangeFilter({ isDateRangeFilter: false }));
         }
     }
 
@@ -243,6 +270,16 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
         // update developers
         const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo[0].discussionData)).map((obj) => ({ isChecked: false, name: obj }))
         dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox } }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    // updating date range
+    const onDateRangeChange = useCallback((startDate, endDate) => {
+        const newDateRange = {
+            startDate,
+            endDate
+        }
+        setDateRange(newDateRange);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -261,17 +298,17 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
         }
 
         // update filteredDiscussionData if any
-        if (filter.isAny) {
+        if (filter.isAny || isDateRangeEnable) {
             filterDiscussionData(selectedRepo[0].discussionData);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeRepository, filter])
+    }, [activeRepository, isDateRangeEnable, filter, dateRange])
 
     useEffect(() => {
         filterDiscussionData(discussionData);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter])
+    }, [filter, isDateRangeEnable, dateRange])
 
 
     useEffect(() => {
@@ -285,80 +322,97 @@ function MultiInputFilter({ types, setTypes, selectInAll, setSelectInAll, resetB
 
     let count = 0;
     return (
-        <div >
-            <div className="filter-main-container">
-                <div className="first-div">
-                    <div className='select-repo'>
-                        <Headline className="filter-subtitle  ">Select Repository</Headline>
+        <>
+
+            <div >
+                <div className="filter-main-container">
+                    <div className="first-div">
+                        <div className='select-repo'>
+                            <Headline className="filter-subtitle  ">Select Repository</Headline>
+                            <div>
+                                <DropdownButton size='small' menuItems={(close) => getMenuItemsForRepo(close, filter)}>
+                                    {activeRepository}
+                                </DropdownButton>
+                            </div>
+                        </div>
+                        <div className='selectType-div'>
+                            <Headline className="filter-subtitle" style={{ marginTop: '-25px' }}>Select Type</Headline>
+                            <div className="filter-checkBox">
+                                {types.map((obj, index) => <Checkbox key={obj.id} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={(e) => handelTypeClick(e, types)} style={{ marginRight: '10px' }} />)}
+                            </div>
+                        </div>
                         <div>
-                            <DropdownButton size='small' menuItems={(close) => getMenuItemsForRepo(close, filter)}>
-                                {activeRepository}
-                            </DropdownButton>
+                            <Headline className="filter-subtitle">Select In All</Headline>
+                            <div className="filter-checkBox">
+                                {selectInAll.map((obj, index) => <Checkbox key={obj.id} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelSelectInAllClick} style={{ marginRight: '10px' }} />)}
+                            </div>
                         </div>
-                    </div>
-                    <div className='selectType-div'>
-                        <Headline className="filter-subtitle" style={{ marginTop: '-25px' }}>Select Type</Headline>
-                        <div className="filter-checkBox">
-                            {types.map((obj, index) => <Checkbox key={obj.id} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={(e) => handelTypeClick(e, types)} style={{ marginRight: '10px' }} />)}
-                        </div>
-                    </div>
-                    <div>
-                        <Headline className="filter-subtitle">Select In All</Headline>
-                        <div className="filter-checkBox">
-                            {selectInAll.map((obj, index) => <Checkbox key={obj.id} label={obj.label} name={obj.name} checked={obj.isChecked} onChange={handelSelectInAllClick} style={{ marginRight: '10px' }} />)}
-                        </div>
-                    </div>
-                    <div >
-                        <Headline className="filter-subtitle" >Selected Developers</Headline>
-                        {
-                            developers.isAny && developers.dataWithCheckBox.length !== 0 ?
-                                <>
-                                    <div style={{ maxWidth: '200px', maxHeight: '100px', overflow: 'scroll', marginTop: '-30px', border: '1px solid lightgray', paddingLeft: '5px' }}>
-                                        {
-                                            developers.dataWithCheckBox.map((obj, index) => {
-                                                if (obj.isChecked) {
-                                                    count++;
-                                                    return <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={(e) => handelDevClick(e, filter)} />
-                                                } else return null
-                                            })
-                                        }
-                                    </div>
-                                    <p style={{ marginTop: '-1px' }}> Selected Developers:  {count}</p>
-                                </>
-                                : <div style={{ height: '50px', width: '180px', border: '0.5px solid red', textAlign: 'center', color: 'red', fontSize: '0.7rem', marginTop: '-30px', paddingTop: '10px' }}>No Developer</div>
-                        }
-                    </div>
-                </div>
-                <div className="second-div">
-                    <div className='select-repo'>
-                        <Headline className="filter-subtitle  ">Select Team</Headline>
-                        <div className="">
-                            <DropdownButton size='small' menuItems={(close) => getMenuItemsForTeam(close, filter)}>
-                                {activeTeam}
-                            </DropdownButton>
-                        </div>
-                    </div>
-                    <div >
-                        <Headline className="filter-subtitle" style={{ marginTop: '-25px' }}>Select developer</Headline>
-                        <div style={{ marginTop: '-25px' }} >
-                            <Input placeholder='Search developer' size="medium" name={'inputFilter'} value={filterKey} onChange={handleSearch} />
-                            {filteredDevList.length === 0 ? <div style={{ height: '100px', border: '1px solid red', textAlign: 'center', paddingTop: '35px', color: 'red', fontSize: '0.7rem' }}>No Developer</div>
-                                : <>
-                                    <div style={{ maxHeight: '190px', overflow: 'scroll', border: '1px solid skyblue', paddingLeft: '5px' }}>
-                                        {
-                                            filteredDevList.map((obj, index) => (
-                                                <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={(e) => handelDevClick(e, filter)} />
-                                            ))
-                                        }
-                                    </div>
-                                    <p style={{ marginTop: '-1px' }}>Total Developers: {developers?.dataWithCheckBox?.length}</p>
-                                </>
+                        <div >
+                            <Headline className="filter-subtitle" >Selected Developers</Headline>
+                            {
+                                developers.isAny && developers.dataWithCheckBox.length !== 0 ?
+                                    <>
+                                        <div style={{ maxWidth: '200px', maxHeight: '100px', overflow: 'scroll', marginTop: '-30px', border: '1px solid lightgray', paddingLeft: '5px' }}>
+                                            {
+                                                developers.dataWithCheckBox.map((obj, index) => {
+                                                    if (obj.isChecked) {
+                                                        count++;
+                                                        return <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={(e) => handelDevClick(e, filter)} />
+                                                    } else return null
+                                                })
+                                            }
+                                        </div>
+                                        <p style={{ marginTop: '-1px' }}> Selected Developers:  {count}</p>
+                                    </>
+                                    : <div style={{ height: '50px', width: '180px', border: '0.5px solid red', textAlign: 'center', color: 'red', fontSize: '0.7rem', marginTop: '-30px', paddingTop: '10px' }}>No Developer</div>
                             }
                         </div>
                     </div>
+                    <div className="second-div">
+
+                        <div className='select-repo'>
+                            <Headline className="filter-subtitle  ">Select Team</Headline>
+                            <div className="">
+                                <DropdownButton size='small' menuItems={(close) => getMenuItemsForTeam(close, filter)}>
+                                    {activeTeam}
+                                </DropdownButton>
+                            </div>
+                        </div>
+                        <div className='flex-parent-2'>
+                            <div className='date-range-container' >
+                                <Headline className="date-range-subtitle  " >Select Date Range</Headline>
+                                <Button size='small' styleType={isDateRangeEnable ? 'cta' : 'high-visibility'} className='date-enable-button' onClick={() => { setDateRangeEnable(!isDateRangeEnable) }} > {isDateRangeEnable ? 'ON' : 'OFF'}</Button>
+
+                                <div className='date-range-picker'>
+                                    {
+                                        isDateRangeEnable && <DateRangePicker startD={dateRange.startDate} endD={dateRange.endDate} onChange={onDateRangeChange} />
+                                    }
+                                </div>
+
+                            </div>
+                            <div className='select-dev-container' >
+                                <Headline className="filter-subtitle" style={{ marginTop: '-25px' }}>Select developer</Headline>
+                                <div style={{ marginTop: '-25px' }} >
+                                    <Input placeholder='Search developer' size="medium" name={'inputFilter'} value={filterKey} onChange={handleSearch} />
+                                    {filteredDevList.length === 0 ? <div style={{ height: '100px', border: '1px solid red', textAlign: 'center', paddingTop: '35px', color: 'red', fontSize: '0.7rem' }}>No Developer</div>
+                                        : <>
+                                            <div style={{ maxHeight: '190px', overflow: 'scroll', border: '1px solid skyblue', paddingLeft: '5px' }}>
+                                                {
+                                                    filteredDevList.map((obj, index) => (
+                                                        <Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={(e) => handelDevClick(e, filter)} />
+                                                    ))
+                                                }
+                                            </div>
+                                            <p style={{ marginTop: '-1px' }}>Total Developers: {developers?.dataWithCheckBox?.length}</p>
+                                        </>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div >
+            </div >
+        </>
     )
 }
 

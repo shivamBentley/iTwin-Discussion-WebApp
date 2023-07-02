@@ -10,6 +10,7 @@ export const BasicTable = () => {
     const discussionData = useSelector((state) => state.discussions.discussionData);
     const filteredData = useSelector((state) => state.discussions.filteredDiscussionData);
     const isFiltered = useSelector((state) => state.discussions.filter);
+    const isDateRangeFilter = useSelector((state) => state.discussions.isDateRangeFilter);
     const isLoading = useSelector((state) => state.discussions.isLoading);
     const isSmartSearch = useSelector((state) => state.discussions.isSmartSearch);
     const dispatch = useDispatch();
@@ -103,7 +104,7 @@ export const BasicTable = () => {
             updateData(isSmartSearch.data)
         }
 
-        else if (isFiltered.isAny) {
+        else if (isFiltered.isAny || isDateRangeFilter) {
             setDataLength(filteredData.length)
             updateData(filteredData)
         } else {

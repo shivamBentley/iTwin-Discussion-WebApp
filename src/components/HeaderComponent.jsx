@@ -25,7 +25,7 @@ function HeaderComponent({ filterKey, handleSearch, handleButtonClick }) {
                 <div className='header-child download'><ExportToExcel /></div>
                 <div className='header-child last-update'><>Last Updated: {new Date(lastUpdated).toLocaleString()}</></div>
                 <div className='header-child remaining'><>Remaining Points: {rateLimit.remaining}</></div>
-                <div className='header-child reset-time'><>Reset Time: {new Date(rateLimit.resetAt).toLocaleString().substr(9, 12)}</></div>
+                <div className='header-child reset-time'><>Token Reset Time: {new Date(rateLimit.resetAt).toLocaleString().substr(9, 12)}</></div>
             </div>
         </div>
     )

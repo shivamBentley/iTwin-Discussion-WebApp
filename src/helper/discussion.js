@@ -393,7 +393,15 @@ export const getFilteredDataOnFilter = (discussionData, devFilter, typeFilter) =
     else return sortByDate(discussionData);
 }
 
+export const filteredDiscussionDataByDateRange = (discussionData, start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
 
+    // Filter the array based on the date range
+    const filteredData = discussionData.filter(data => {
+        const itemDate = new Date(data.createdAt);
+        return itemDate >= startDate && itemDate <= endDate;
+    });
 
-
-
+    return filteredData;
+}
