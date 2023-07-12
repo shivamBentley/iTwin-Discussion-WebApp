@@ -49,8 +49,9 @@ function ExportToExcel() {
                         <th width={'2%'}>SL</th>
                         <th width={'23%'}>Title</th>
                         <th width={'15%'}>Question By</th>
-                        <th width={'10%'}>Comments</th>
-                        <th width={'10%'}>Replies</th>
+                        <th width={'10%'}>Category</th>
+                        <th width={'5%'}>Comments</th>
+                        <th width={'5%'}>Replies</th>
                         <th width={'10%'}>Status</th>
                         <th width={'10%'}>Closed</th>
                         <th width={'10%'}>Updated</th>
@@ -82,8 +83,9 @@ function ExportToExcel() {
                                 <td width={'2%'}>{index + 1}</td>
                                 <td width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
                                 <td className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
-                                <td className="align-col-text-center" width={'10%'} >{totalComment}</td>
-                                <td className="align-col-text-center" width={'10%'}>{totalReplies}</td>
+                                <td className="align-col-text-center" width={'10%'} >{data.category.categoryName}</td>
+                                <td className="align-col-text-center" width={'5%'} >{totalComment}</td>
+                                <td className="align-col-text-center" width={'5%'}>{totalReplies}</td>
                                 <td width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
                                 <td width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
                                 <td width={'10%'}>{createdAt}</td>

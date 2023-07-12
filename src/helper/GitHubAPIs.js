@@ -69,6 +69,7 @@ const createQuery = (owner, repositoryName, filter) => {
     
               category {
                 categoryName: name
+                emojiHTML
               }
     
               answer {
