@@ -24,8 +24,8 @@ function HeaderComponent({ filterKey, handleSearch, handleButtonClick }) {
                 <div className='header-child filter-modal'><FilterModal /></div>
                 <div className='header-child download'><ExportToExcel /></div>
                 <div className='header-child last-update'><>Last Updated: {new Date(lastUpdated).toLocaleString()}</></div>
-                <div className='header-child remaining'><>Remaining Points: {rateLimit.remaining}</></div>
-                <div className='header-child reset-time'><>Reset Time: {new Date(rateLimit.resetAt).toLocaleTimeString()}</></div>
+                <div className='header-child remaining'><>Remaining Points: {rateLimit?.remaining}</></div>
+                <div className='header-child reset-time'><>Reset Time: {new Date(rateLimit?.resetAt).toLocaleTimeString()}</></div>
             </div>
         </div>
     )

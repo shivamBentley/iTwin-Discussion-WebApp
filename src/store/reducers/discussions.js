@@ -19,8 +19,9 @@ const initialState = {
         typeFilterKey: [],
         developerFilterKey: [],
         isTeamFilter: false,
-        isSelectAllFilter: false
+        isSelectAllFilter: false,
     },
+    isDateRangeFilter: false,
     isSmartSearch: {
         col: 0,
         status: false,
@@ -67,6 +68,10 @@ const discussions = createSlice({
             const { filter } = action.payload;
             state.filter = filter;
         },
+        setDateRangeFilter(state, action) {
+            const { isDateRangeFilter } = action.payload;
+            state.isDateRangeFilter = isDateRangeFilter;
+        },
         setLoading(state, action) {
             const { isLoading } = action.payload;
             state.isLoading = isLoading;
@@ -80,7 +85,7 @@ const discussions = createSlice({
             state.lastUpdated = lastUpdated;
         },
         setSmartSearch(state, action) {
-            const {  searchDetails } = action.payload;
+            const { searchDetails } = action.payload;
             state.isSmartSearch = searchDetails;
         }
     }
@@ -96,6 +101,7 @@ export const {
     setExportToExcelData,
     setFilteredDiscussionData,
     setFilter,
+    setDateRangeFilter,
     setLoading,
     setRateLimit,
     setLastUpdated,

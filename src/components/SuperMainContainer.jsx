@@ -86,8 +86,9 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       dispatch(setRateLimit({ rateLimit: data.data?.rateLimit }));
       {
         // fetch all data that is stored in localStorage if available
-        const iTwinData = JSON.parse(localStorage.getItem(storeName))
-        if (!iTwinData || !iTwinData.repositories || (Config.AUTO_REFRESH && ((iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000)) < currentTime)) {
+        const iTwinData = JSON.parse(localStorage.getItem(storeName));
+        const allRepoIsInLocalStorage = iTwinData.repositories.length !== iTwinDetails.repositories.length
+        if (!iTwinData || allRepoIsInLocalStorage || (Config.AUTO_REFRESH && ((iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000)) < currentTime)) {
           if (repositories.length > 0) {
             console.log('Downloading latest data for repository : ', repositories[0])
             setTitle(`Downloading latest data... `)

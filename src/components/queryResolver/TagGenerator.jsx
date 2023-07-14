@@ -152,7 +152,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
                                                         match.title.level_0.map((data, index) => {
                                                             return <p className='title-link' >
                                                                 <span>{index + 1}. </span>
-                                                                <Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor>
+                                                                <Anchor href={data?.DiscussionUrl} target="_blank">{data?.title}</Anchor>
                                                             </p>
                                                         })
                                                     }
@@ -167,7 +167,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
                                                         match.title.level_1.map((data, index) => {
                                                             return <p className='title-link' >
                                                                 <span>{index + 1}. </span>
-                                                                <Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor>
+                                                                <Anchor href={data?.DiscussionUrl} target="_blank">{data?.title}</Anchor>
                                                             </p>
                                                         })
                                                     }
@@ -190,7 +190,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
                                                         match.body.level_0.map((data, index) => {
                                                             return <p className='title-link' >
                                                                 <span>{index + 1}. </span>
-                                                                <Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor>
+                                                                <Anchor href={data?.DiscussionUrl} target="_blank">{data?.title}</Anchor>
                                                             </p>
                                                         })
                                                     }
