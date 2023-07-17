@@ -203,10 +203,14 @@ export const BasicTable = () => {
                                                 return <tr key={index} className="data-row">
                                                     <td width={'2%'}>{(currentIndex - 1) * rowsPerPage + index + 1}</td>
                                                     <td width={'23%'}>
-                                                        <tr style={{ display: 'flex', justifyContent: 'space-around' }}>
-                                                            <td className="title-tags-col" style={{ backgroundColor: `${isSmartSearch.col === 2 ? '#edfaff' : 'none'} ` }} width='90%'><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
-                                                            <td width='10%' className="title-tags-col"> <Button size="small" onClick={() => intelligenceDialogAction(data.DiscussionUrl, data.tagsAndUrl, data.title)}>Show</Button>  </td>
-                                                        </tr>
+                                                        <table>
+                                                            <tbody>
+                                                                <tr style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                                                    <td className="title-tags-col" style={{ backgroundColor: `${isSmartSearch.col === 2 ? '#edfaff' : 'none'} ` }} width='90%'><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
+                                                                    <td width='10%' className="title-tags-col"> <Button styleType= 'default' size="small"  onClick={() => intelligenceDialogAction(data.DiscussionUrl, data.tagsAndUrl, data.title)}>Show</Button>  </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </td>
                                                     <td style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
                                                     <td style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {EmojiHTML}</td>
