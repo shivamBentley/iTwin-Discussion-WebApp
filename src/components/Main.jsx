@@ -11,6 +11,7 @@ import { iTwinDetails } from '../db/local-database';
 import { removeToast, setToastState } from '../store/reducers/toast';
 import { getAllDiscussionData } from '../helper/GitHubAPIs';
 import { createDictionaryOfTagsWithDeveloperListAndAddTags } from '../helper/TrieClass';
+import TagGenerator from './queryResolver/TagGenerator';
 
 function Main() {
 
@@ -132,6 +133,7 @@ function Main() {
       <div style={{ height: '85%', width: '100vw' }}>
         <BasicTable />
       </div>
+      <TagGenerator />
     </div>
   )
 }

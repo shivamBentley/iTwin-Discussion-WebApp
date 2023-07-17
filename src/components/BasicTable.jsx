@@ -1,11 +1,11 @@
-import { Anchor, DropdownButton, MenuItem } from "@itwin/itwinui-react";
+import { Anchor, Button, DropdownButton, MenuItem } from "@itwin/itwinui-react";
 import { useDispatch, useSelector } from "react-redux";
 import './styles/basicTable.scss'
 import { useState } from "react";
 import { useEffect } from "react";
 import { setLoading, setRateLimit } from "../store/reducers/discussions";
 import { getRateLimitData } from "../helper/GitHubAPIs";
-import TagGenerator from "./queryResolver/TagGenerator";
+import { DIALOGSTATEACTION } from "../store/reducers/dialog";
 export const BasicTable = () => {
 
     const discussionData = useSelector((state) => state.discussions.discussionData);
@@ -99,6 +99,18 @@ export const BasicTable = () => {
         }, (newDataSet.length * 1.5));
     }
 
+    const intelligenceDialogAction = (currDiscussionUrl, tagsAndUrl, title) => {
+        dispatch(DIALOGSTATEACTION({
+            newState: {
+                id: 'intelligenceDialog',
+                title,
+                currDiscussionUrl,
+                tagsAndUrl,
+                isOpen: true
+            }
+        }))
+    }
+
     useEffect(() => {
         if (isSmartSearch.status) {
             setDataLength(isSmartSearch.data.length)
@@ -185,7 +197,7 @@ export const BasicTable = () => {
 
                                                 //emoji 
                                                 const emojiString = data.category.emojiHTML;
-                                                const EmojiHTML = <span style={{display:'flex'}} ><span dangerouslySetInnerHTML={{ __html: emojiString }} /><span style={{marginLeft:'10px'}}>{data.category.categoryName}</span></span>
+                                                const EmojiHTML = <span style={{ display: 'flex' }} ><span dangerouslySetInnerHTML={{ __html: emojiString }} /><span style={{ marginLeft: '10px' }}>{data.category.categoryName}</span></span>
 
 
                                                 return <tr key={index} className="data-row">
@@ -193,7 +205,7 @@ export const BasicTable = () => {
                                                     <td width={'23%'}>
                                                         <tr style={{ display: 'flex', justifyContent: 'space-around' }}>
                                                             <td className="title-tags-col" style={{ backgroundColor: `${isSmartSearch.col === 2 ? '#edfaff' : 'none'} ` }} width='90%'><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
-                                                            <td width='10%' className="title-tags-col"> <TagGenerator currDiscussionUrl={data.DiscussionUrl} tagsAndUrl={data.tagsAndUrl} /> </td>
+                                                            <td width='10%' className="title-tags-col"> <Button size="small" onClick={() => intelligenceDialogAction(data.DiscussionUrl, data.tagsAndUrl, data.title)}>Show</Button>  </td>
                                                         </tr>
                                                     </td>
                                                     <td style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>

@@ -1,12 +1,16 @@
 import { DictionaryOfDiscussionData, DictionaryOfTagsWithDeveloperList } from '../../helper/TrieClass';
-import { Anchor, Button, Dialog, Headline } from '@itwin/itwinui-react';
-import { useState } from 'react';
+import { Anchor, Dialog, Headline } from '@itwin/itwinui-react';
+import { useCallback, useState } from 'react';
 import '../styles/tagGenerator.scss'
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { DIALOGSTATEACTION } from '../../store/reducers/dialog';
 
-function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
-    const { titleTags } = tagsAndUrl;
-    const [isOpen, setIsOpen] = useState(false)
+function TagGenerator() {
     const [match, setMatch] = useState(null)
+    const { currDiscussionUrl, tagsAndUrl, isOpen, title } = useSelector((state) => state.dialog.dialogState);
+    const { titleTags } = tagsAndUrl
+    const dispatch = useDispatch();
 
     const urlMap = {
         title: {
@@ -78,7 +82,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
         })
     }
 
-    const findBodyAndTitleMatch = () => {
+    const findBodyAndTitleMatch = useCallback(() => {
         findMatch('title', 'titleDic', titleTags);
         findMatch('body', 'bodyDic', titleTags)
 
@@ -106,37 +110,46 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
         for (const key1 in discussionData) {
             const obj = discussionData[key1];
             for (const key2 in obj) {
-                 // eslint-disable-next-line
+                // eslint-disable-next-line
                 for (const [key, value] of urlMap[key1][key2]) {
                     discussionData[key1][key2].push(DictionaryOfDiscussionData.search(key.toLowerCase()).data);
                 }
             }
         }
-
         return discussionData
-    }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [titleTags])
+
+    useEffect(() => {
+        if (isOpen) {
+            const currentMatch = findBodyAndTitleMatch();
+            setMatch(currentMatch);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, title])
 
     return (
-        <>
-            <Button styleType='' size='small' onClick={() => {
-                const currentMatch = findBodyAndTitleMatch();
-                setMatch(currentMatch);
-                setIsOpen(true);
-            }}>
-                Show
-            </Button>
+        <div>
             <Dialog
                 isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
+                onClose={() => dispatch(DIALOGSTATEACTION({
+                    newState: {
+                        id: 'intelligenceDialog',
+                        currDiscussionUrl,
+                        tagsAndUrl,
+                        isOpen: false
+                    }
+                }))}
                 closeOnEsc
-                // isDismissible
-                // isDraggable
-                // isResizable
+                isDismissible
+                isDraggable
+                isResizable
 
-                style={{ zIndex: 999 }}
+
             >
-                <Dialog.Main >
-                    <Dialog.TitleBar titleText='Suggestion List' />
+                <Dialog.Main style={{ minHeight: '40%', minWidth: '40%' }} >
+                    <Dialog.TitleBar titleText={`Suggestion List for - ${title}`} />
                     <Dialog.Content>
                         <div className='main-container'>
 
@@ -225,7 +238,7 @@ function TagGenerator({ currDiscussionUrl, tagsAndUrl }) {
                     </Dialog.Content>
                 </Dialog.Main>
             </Dialog>
-        </>
+        </div >
     )
 }
 
