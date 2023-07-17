@@ -19,11 +19,12 @@ function MultiInputFilter({
     setTypes,
     selectInAll,
     setSelectInAll,
-    resetButtonHandle,
     isDateRangeEnable,
     setDateRangeEnable,
     dateRange,
-    setDateRange
+    setDateRange,
+    setTeam,
+    activeTeam
 }) {
 
     const activeRepository = useSelector((state) => state.discussions.repositoryName);
@@ -31,7 +32,7 @@ function MultiInputFilter({
     const [filterKey, setFilterKey] = useState('');
     const [filteredDevList, setFilterDevList] = useState([]);
     const developers = useSelector((state) => state.discussions.developers)
-    const [activeTeam, setTeam] = useState('Select Team')
+    // const [activeTeam, setTeam] = useState('Select Team')
     const dispatch = useDispatch();
     const discussionData = useSelector((state) => (state.discussions.discussionData));
 
@@ -41,7 +42,16 @@ function MultiInputFilter({
             return <MenuItem key={index} onClick={() => {
                 dispatch(setRepositoryName({ repositoryName: repo }));
                 updateDeveloperDataInStore(repo);
-                resetButtonHandle();
+
+                // reset Team filter when repos changing 
+                dispatch(setFilter({
+                    filter: {
+                        ...currFilter,
+                        developerFilterKey: [],
+                        isAny: isAnyOtherFilter('isTeamFilter', currFilter),
+                        isTeamFilter: false,
+                    }
+                }))
                 setTeam('Select Team');
                 close();
             }}
@@ -226,7 +236,8 @@ function MultiInputFilter({
         setFilterDevList(filteredDevList);
     }
 
-    const filterDiscussionData = (discussionData) => {
+    const filterDiscussionData = (LatestDiscussionData) => {
+
         if (filter.isAny) {
             // if isSelectAll filter 
             const isSelectAllFilterTrue = filter.isSelectAllFilter;
@@ -235,22 +246,22 @@ function MultiInputFilter({
             if (isSelectAllFilterTrue) {
                 let data = [];
                 if (selectInAll[0].isChecked) {
-                    data = GetUnAnsweredData(discussionData);
+                    data = GetUnAnsweredData(LatestDiscussionData);
                 } else {
-                    data = GetNoRepliedData(discussionData);
+                    data = GetNoRepliedData(LatestDiscussionData);
                 }
                 // filter by date Range 
                 const res = filteredDiscussionDataByDateRange(data, dateRange.startDate, dateRange.endDate)
                 dispatch(setFilteredDiscussionData({ filteredDiscussionData: isDateRangeEnable ? res : data }))
                 return;
             } else {
-                const data = getFilteredDataOnFilter(discussionData, filter.developerFilterKey, filter.typeFilterKey)
+                const data = getFilteredDataOnFilter(LatestDiscussionData, filter.developerFilterKey, filter.typeFilterKey)
                 const res = filteredDiscussionDataByDateRange(data, dateRange.startDate, dateRange.endDate)
 
                 dispatch(setFilteredDiscussionData({ filteredDiscussionData: isDateRangeEnable ? res : data }))
             }
         } else if (isDateRangeEnable) {
-            const res = filteredDiscussionDataByDateRange(discussionData, dateRange.startDate, dateRange.endDate)
+            const res = filteredDiscussionDataByDateRange(LatestDiscussionData, dateRange.startDate, dateRange.endDate)
             dispatch(setFilteredDiscussionData({ filteredDiscussionData: res }))
         } else {
             dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }))
@@ -303,12 +314,6 @@ function MultiInputFilter({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeRepository, isDateRangeEnable, filter, dateRange])
-
-    useEffect(() => {
-        filterDiscussionData(discussionData);
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter, isDateRangeEnable, dateRange])
 
 
     useEffect(() => {

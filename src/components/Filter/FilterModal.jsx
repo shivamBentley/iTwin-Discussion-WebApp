@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Button, Dialog } from '@itwin/itwinui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDateRangeFilter, setDevelopers, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
+import { setDateRangeFilter, setDevelopers, setDiscussionData, setFilter, setFilteredDiscussionData, setLoading, setRepositoryName } from '../../store/reducers/discussions';
 import MultiInputFilter from './MultiInputFilter'
 import './MultiInputFilter.scss'
 import { useCallback } from 'react';
+import { iTwinDetails } from '../../db/local-database';
 
 export const FilterModal = () => {
     const [isOpen, setIsOpen] = React.useState(false);
@@ -14,6 +15,7 @@ export const FilterModal = () => {
         startDate: new Date(),
         endDate: new Date()
     });
+    const [activeTeam, setTeam] = useState('Select Team')
 
 
     //Type filter 
@@ -41,6 +43,14 @@ export const FilterModal = () => {
     };
 
     const resetButtonHandle = useCallback(() => {
+
+        // reset discussion data to primary repo discussion data.
+        if (iTwinDetails.primaryRepo !== '')
+            dispatch(setRepositoryName({ repositoryName: iTwinDetails.primaryRepo }));
+
+        // reset active team to none
+        setTeam('Select Team')
+
         // reset type filter
         const newTypeFilter = types.map((obj) => ({ ...obj, isChecked: false }));
         setTypes(newTypeFilter);
@@ -86,9 +96,7 @@ export const FilterModal = () => {
                 closeOnEsc
                 isDismissible
                 isDraggable
-                // isResizable
-
-                style={{}}
+            // isResizable
             >
                 <Dialog.Main style={{ Width: '250px', height: '530px' }}>
                     <Dialog.TitleBar titleText='Filter discussion data' />
@@ -98,16 +106,17 @@ export const FilterModal = () => {
                             setSelectInAll={setSelectInAll}
                             types={types}
                             setTypes={setTypes}
-                            resetButtonHandle={resetButtonHandle}
+                            // resetButtonHandle={resetButtonHandle}
                             isDateRangeEnable={isDateRangeEnable}
                             setDateRangeEnable={setDateRangeEnable}
                             dateRange={dateRange}
                             setDateRange={setDateRange}
+                            activeTeam = {activeTeam}
+                            setTeam = {setTeam}
                         />
                     </Dialog.Content>
                     <Dialog.ButtonBar>
-                        {/* <Button styleType='high-visibility' onClick={filterButtonHandle}>Filter</Button> */}
-                        <Button onClick={resetButtonHandle}>Reset</Button>
+                        <Button styleType='high-visibility' onClick={resetButtonHandle}>Reset</Button>
                     </Dialog.ButtonBar>
                 </Dialog.Main>
             </Dialog>

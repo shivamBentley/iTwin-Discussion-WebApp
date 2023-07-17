@@ -18,13 +18,15 @@ export const Teams = [
         id: 3,
         teamName: 'TestTwo',
         teamMembers: [
-            { GitHubLogin: "neuralmax" }
+            { GitHubLogin: "pmconne" }
         ]
     }
 ]
 
 export const iTwinDetails = {
     owner: 'iTwin',
+    // Insure if you are assigning primaryRepo, it must present in repositories list.
+    primaryRepo: 'community',
     repositories: ['community', 'itwinjs-core', 'iTwinUI']
 }
 
