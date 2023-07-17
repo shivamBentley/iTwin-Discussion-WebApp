@@ -61,8 +61,8 @@ repositories: It is array container repositories names.
 
     Example : 
         iTwinDetails = {
-            owner: 'iTwin',
-            repositories: ['community', 'itwinjs-core', 'iTwinUI']
+          primaryRepo: 'community',
+          repositories: ['community', 'itwinjs-core', 'iTwinUI']
         }
 
 
