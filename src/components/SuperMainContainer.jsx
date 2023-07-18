@@ -54,13 +54,16 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
   //update data in store 
   const setDefaultDataInStore = useCallback((isOldDataUpdate) => {
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
-    const discussionData = iTwinData.repositories[0].discussionData;
+
+    const primaryRepo = iTwinData.repositories.filter(repoDetails => repoDetails.repositoryName === iTwinDetails.primaryRepo);
+
+    const discussionData = primaryRepo[0].discussionData;
     const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(discussionData)).map((developer) => ({ isChecked: false, name: developer }));
     const devFilter = { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox }
 
     //dispatch default data to store ...
     dispatch(setDiscussionData({ discussionData: discussionData }));
-    dispatch(setRepositoryName({ repositoryName: iTwinData.repositories[0].repositoryName }));
+    dispatch(setRepositoryName({ repositoryName: iTwinDetails.primaryRepo }));
     dispatch(setOwner({ owner: iTwinData.owner }));
     dispatch(setDevelopers({ developers: devFilter }));
     dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
@@ -87,7 +90,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       {
         // fetch all data that is stored in localStorage if available
         const iTwinData = JSON.parse(localStorage.getItem(storeName));
-        const allRepoIsInLocalStorage = iTwinData.repositories.length !== iTwinDetails.repositories.length
+        const allRepoIsInLocalStorage = iTwinData?.repositories.length !== iTwinDetails?.repositories.length
         if (!iTwinData || allRepoIsInLocalStorage || (Config.AUTO_REFRESH && ((iTwinData.lastUpdate + Config.TIME_TO_REFRESH_DATA * 60 * 1000)) < currentTime)) {
           if (repositories.length > 0) {
             console.log('Downloading latest data for repository : ', repositories[0])
