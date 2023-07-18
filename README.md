@@ -12,7 +12,10 @@ This App is designed to Analyze Discussion Data on Github Account.
 Clone the Repository from here: [https://github.com/shivamBentley/iTwin-Discussion-WebApp](https://github.com/shivamBentley/iTwin-Discussion-WebApp).
 
 ### Install dependencies
-To install packages or dependencies use the npm command: [npm install](https://docs.npmjs.com/cli/v8/commands/npm-install)
+To install packages or dependencies use the npm command: [npm install](https://docs.npmjs.com/cli/v8/commands/npm-install). If you get errors while installing dependencies follow steps - 
+
+    STEP 1: Delete packgae-lock.json from repository if available.
+    STEP 2: Run Command : npm install --force  
 
 ## Setting up with files
 
