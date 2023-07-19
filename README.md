@@ -93,3 +93,16 @@ repositories: It is array container repositories names.
 ## Run Application
 
 Use [npm start](https://create-react-app.dev/docs/getting-started/#scripts) to run the project.
+
+# Errors & Suggestion
+
+## Note 
+```diff
+! Please clean 'iTwinDatta' from Local Storage if you have already used this webapp previously.
+
+     follow steps to clean Local Storage data from browser.
+
+        STEP 1: Open dev tool > Application > Local Stroage > http://localhost:3000/
+        STEP 2: search key 'iTwinData'
+        STEP 3: if iTwinData key is present > right click on it and delete the iTwinData key.
+```
