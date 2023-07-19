@@ -96,7 +96,7 @@ Use [npm start](https://create-react-app.dev/docs/getting-started/#scripts) to r
 
 # Errors & Suggestion
 
-## Note 
+
 ```diff
 ! Please clean 'iTwinDatta' from Local Storage if you have already used this webapp previously.
 
