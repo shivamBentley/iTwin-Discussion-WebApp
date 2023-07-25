@@ -17,10 +17,10 @@ function HeaderComponent({ filterKey, handleSearch, handleButtonClick }) {
             <div className='header-parent'>
                 <Title className='header-title'>{repoName.charAt(0).toUpperCase() + repoName.slice(1)}</Title>
                 <div className='header-child smart-search'>
-                    <div size='small' className='search-button'>Search</div>
-                    <Input className='search-input' size="small" placeholder='Ex. @col n: text' name={'inputFilter'} value={filterKey} onChange={(e) => handleSearch(e)} />
+                    <Button styleType='high-visibility' className='search-button'>Search</Button>
+                    <Input className='search-input' placeholder='Ex. @col n: text' name={'inputFilter'} value={filterKey} onChange={(e) => handleSearch(e)} />
                 </div>
-                <div className='header-child refresh-button'><Button styleType={'cta'} size="small" onClick={() => handleButtonClick()}>Refresh</Button></div>
+                <div className='header-child refresh-button'><Button styleType={'cta'} onClick={() => handleButtonClick()}>Refresh</Button></div>
                 <div className='header-child filter-modal'><FilterModal /></div>
                 <div className='header-child download'><ExportToExcel /></div>
                 <div className='header-child last-update'><>Last Updated: {new Date(lastUpdated).toLocaleString()}</></div>

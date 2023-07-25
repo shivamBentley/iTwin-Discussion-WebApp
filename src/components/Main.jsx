@@ -120,7 +120,7 @@ function Main() {
 
   return (
     <div style={{ height: '100vh' }}>
-      <div style={{ height: '15%', width: '100vw', }}>
+      <div style={{ height: '18%', width: '100vw', }}>
         <HeaderComponent
           filterKey={filterKey}
           handleSearch={handleSearch}
@@ -130,7 +130,7 @@ function Main() {
             downloadLatestData();
           }} />
       </div>
-      <div style={{ height: '85%', width: '100vw' }}>
+      <div style={{ height: '82%', width: '100vw' }}>
         <BasicTable />
       </div>
       <TagGenerator />

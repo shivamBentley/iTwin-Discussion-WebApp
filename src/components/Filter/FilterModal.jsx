@@ -87,7 +87,7 @@ export const FilterModal = () => {
 
     return (
         <>
-            <Button styleType='high-visibility' size='small' onClick={() => setIsOpen(true)}>
+            <Button styleType='high-visibility' onClick={() => setIsOpen(true)}>
                 Filter
             </Button>
             <Dialog
@@ -111,12 +111,18 @@ export const FilterModal = () => {
                             setDateRangeEnable={setDateRangeEnable}
                             dateRange={dateRange}
                             setDateRange={setDateRange}
-                            activeTeam = {activeTeam}
-                            setTeam = {setTeam}
+                            activeTeam={activeTeam}
+                            setTeam={setTeam}
                         />
                     </Dialog.Content>
-                    <Dialog.ButtonBar>
+                    <Dialog.ButtonBar
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}
+                    >
                         <Button styleType='high-visibility' onClick={resetButtonHandle}>Reset</Button>
+                        <Button onClick={onClose} >Close</Button>
                     </Dialog.ButtonBar>
                 </Dialog.Main>
             </Dialog>
