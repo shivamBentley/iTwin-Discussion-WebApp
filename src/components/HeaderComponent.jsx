@@ -8,7 +8,7 @@ import './styles/ExportToExcel.scss'
 
 function HeaderComponent({ filterKey, handleSearch, handleButtonClick }) {
 
-    const repoName = useSelector((state) => state.discussions.repositoryName);
+    const repoName = 'iTwin GitHub Query' //useSelector((state) => state.discussions.repositoryName);
     const lastUpdated = useSelector((state) => state.discussions.lastUpdated);
     const rateLimit = useSelector((state) => state.discussions.rateLimit)
 

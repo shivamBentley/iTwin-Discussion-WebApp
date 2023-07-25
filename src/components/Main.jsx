@@ -18,7 +18,7 @@ function Main() {
   const [filterKey, setFilterKey] = useState('');
   const dispatch = useDispatch();
   const toastState = useSelector((state) => state.toast.toastState);
-  const activeRepo = useSelector((state) => state.discussions.repositoryName);
+  const activeRepositories = useSelector((state) => state.discussions.activeRepositories);
   const rateLimit = useSelector((state) => state.discussions.rateLimit);
 
   const data = useSelector((state) => {
@@ -67,9 +67,12 @@ function Main() {
           //extracting tags for repo data and build dictionary of tags with developer list
           const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
 
+          // Adding repoName in each discussions.
+          const discussionDataWithRepoName = repoDataWithTags.map((data) => ({ ...data, repoName: reposName }));
+
           const latestData = {
             repositoryName: reposName,
-            discussionData: repoDataWithTags,
+            discussionData: discussionDataWithRepoName,
             totalCount: data.length,
             lastUpdate: currentTime
           }
@@ -90,9 +93,16 @@ function Main() {
             dispatch(setToastState({ newState: { id: 'downloadingLatestData', title: `Latest data downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
 
 
-            // find data for active repository 
-            const selectedRepo = newITwinData.repositories.filter(repoDetails => repoDetails.repositoryName === activeRepo);
-            dispatch(setDiscussionData({ discussionData: selectedRepo[0].discussionData }))
+            // find data for active repositories & merge all repo data.
+            let selectedRepo = [];
+            const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
+            iTwinData.repositories.forEach(repoDetails => {
+              if (activeRepositories.find((ele) => ele === repoDetails.repositoryName)) {
+                selectedRepo = [...selectedRepo, ...repoDetails.discussionData];
+              }
+            });
+
+            dispatch(setDiscussionData({ discussionData: selectedRepo }));
 
           }
 
@@ -116,7 +126,7 @@ function Main() {
       clearInterval(t)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toastState, activeRepo])
+  }, [toastState, activeRepositories])
 
   return (
     <div style={{ height: '100vh' }}>

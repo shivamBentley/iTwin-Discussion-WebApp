@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { getAllDiscussionData, getRateLimitData } from '../helper/GitHubAPIs';
 import { iTwinDetails } from '../db/local-database';
 import { useDispatch } from 'react-redux';
-import { setDevelopers, setDiscussionData, setLastUpdated, setLoading, setOwner, setRateLimit, setRepositoryName } from '../store/reducers/discussions';
+import { setActiveRepos, setDevelopers, setDiscussionData, setLastUpdated, setLoading, setOwner, setRateLimit } from '../store/reducers/discussions';
 import { getAllDevelopers } from '../helper/discussion';
 import { BasicModal } from './BasicModal';
 import { Config } from "../db/Config";
@@ -27,23 +27,22 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
     if (repositories.length > 0) {
       const currentTime = new Date().getTime();
 
-      //save iTwin dat in localStorage
+      //save iTwin dat in localStorage.
       getAllDiscussionData(owner, repositories[0]).then((data) => {
 
-        //extracting tags for repo data and build dictionary of tags with developer list
+        //extracting tags for repo data and build dictionary of tags with developer list.
         const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
+
+        // Adding repoName in each discussions.
+        const discussionDataWithRepoName = repoDataWithTags.map((data) => ({ ...data, repoName: repositories[0] }));
 
         const repoData = {
           repositoryName: repositories[0],
-          discussionData: repoDataWithTags,
+          discussionData: discussionDataWithRepoName,
           totalCount: data.length,
           lastUpdate: currentTime
         }
         removeRepoFromReposListAndUpdateITwindData(repositories[0], repoData);
-
-        // show Toast data is updated in store
-        // dispatch(removeToast({ id: `${repositories[0]}` }));
-        // dispatch(setToastState({ newState: { id: `${repositories[0]}`, title: `${repositories[0]} downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
 
       })
         .catch((err) => {
@@ -64,7 +63,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
 
     //dispatch default data to store ...
     dispatch(setDiscussionData({ discussionData: discussionData }));
-    dispatch(setRepositoryName({ repositoryName: iTwinDetails.primaryRepo }));
+    dispatch(setActiveRepos({ activeRepositories: [iTwinDetails.primaryRepo] }));
     dispatch(setOwner({ owner: iTwinData.owner }));
     dispatch(setDevelopers({ developers: devFilter }));
     dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
