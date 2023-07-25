@@ -34,7 +34,6 @@ function MultiInputFilter({
     const [filterKey, setFilterKey] = useState('');
     const [filteredDevList, setFilterDevList] = useState([]);
     const developers = useSelector((state) => state.discussions.developers)
-    // const [activeTeam, setTeam] = useState('Select Team')
     const dispatch = useDispatch();
 
     //menuItem list 
@@ -62,7 +61,7 @@ function MultiInputFilter({
         })
         return menuItems;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter, developers, selectRepos])
+    }, [filter, developers, selectRepos]);
 
     const getMenuItemsForTeam = useCallback((close, currFilter) => {
         const menuItems = Teams.map((obj) => {
@@ -230,7 +229,7 @@ function MultiInputFilter({
             else return obj
         })
 
-        //check if any developer is selected 
+        //check if any developer is selected
         const developerKeys = [];
         let isAnyStatus = false;
         newDevFilter.forEach((dev) => {
@@ -365,13 +364,8 @@ function MultiInputFilter({
                         <div className='select-repo'>
                             <Headline className="filter-subtitle  ">Select Repository</Headline>
                             <div>
-                                <DropdownButton size='small' menuItems={(close) => {
-                                    const t = getMenuItemsForRepo(close, filter)
-                                    console.log('This is the menuItem for dropdown-----------', t)
-                                    return t;
-
-                                }}>
-                                    {`${activeRepositories.length}  Selected` }
+                                <DropdownButton size='small' menuItems={(close) => getMenuItemsForRepo(close, filter)}>
+                                    {`${activeRepositories.length}  Selected`}
                                 </DropdownButton>
                             </div>
                         </div>
