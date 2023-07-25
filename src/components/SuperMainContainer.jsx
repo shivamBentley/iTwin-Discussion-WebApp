@@ -16,7 +16,8 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
 
   const owner = iTwinDetails.owner;
   const dispatch = useDispatch();
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState('');
+  const [isModalOpen, setModel] = useState(true);
 
   const updateDataInLocalStorage = () => {
 
@@ -76,6 +77,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       setTimeout(() => {
         setRepoStatus(newReposStatus);
         setTitle(`Ready for use.`)
+        setModel(false)
       }, 3000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,7 +132,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       <Main />
       <ToastNotify />
       <BasicModal
-        isOpen={true}
+        isOpen={isModalOpen}
         title={title}
         messages={repoStatus}
       />

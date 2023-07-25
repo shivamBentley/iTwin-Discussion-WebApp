@@ -166,8 +166,8 @@ export const BasicTable = () => {
                             <th width={'5%'}>Replies</th>
                             <th width={'10%'}>Status</th>
                             <th width={'10%'}>Closed</th>
-                            <th width={'10%'}>Created</th>
                             <th width={'10%'}>Updated</th>
+                            <th width={'10%'}>Created</th>
 
                         </tr>
                     </thead>{
