@@ -10,7 +10,7 @@ const initialState = {
         isAny: false,
         dataWithCheckBox: []
     },
-    repositoryName: '',
+    activeRepositories: [],
     owner: 'iTwin',
     filteredDiscussionData: [],
     isLoading: true,
@@ -46,9 +46,9 @@ const discussions = createSlice({
             state.developers = developers;
         },
 
-        setRepositoryName(state, action) {
-            const { repositoryName } = action.payload;
-            state.repositoryName = repositoryName;
+        setActiveRepos(state, action) {
+            const { activeRepositories } = action.payload;
+            state.activeRepositories = activeRepositories;
         },
         setOwner(state, action) {
             const { owner } = action.payload;
@@ -96,7 +96,7 @@ export default discussions.reducer;
 export const {
     setDiscussionData,
     setDevelopers,
-    setRepositoryName,
+    setActiveRepos,
     setOwner,
     setExportToExcelData,
     setFilteredDiscussionData,

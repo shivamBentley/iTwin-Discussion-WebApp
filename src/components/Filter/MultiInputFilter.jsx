@@ -7,8 +7,8 @@ import {
     Button
 } from '@itwin/itwinui-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Teams, iTwinDetails } from '../../db/local-database'
-import { setDateRangeFilter, setDevelopers, setDiscussionData, setFilteredDiscussionData, setLoading, setRepositoryName } from '../../store/reducers/discussions'
+import { Teams } from '../../db/local-database'
+import { setActiveRepos, setDateRangeFilter, setDevelopers, setDiscussionData, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions'
 import { GetNoRepliedData, GetUnAnsweredData, filteredDiscussionDataByDateRange, getAllDevelopers, getFilteredDataOnFilter } from '../../helper/discussion'
 import { setFilter } from '../../store/reducers/discussions'
 import { useCallback } from 'react'
@@ -24,24 +24,25 @@ function MultiInputFilter({
     dateRange,
     setDateRange,
     setTeam,
-    activeTeam
+    activeTeam,
+    selectRepos,
+    selectedRepos
 }) {
 
-    const activeRepository = useSelector((state) => state.discussions.repositoryName);
+    const activeRepositories = useSelector((state) => state.discussions.activeRepositories);
     const filter = useSelector(state => state.discussions.filter)
     const [filterKey, setFilterKey] = useState('');
     const [filteredDevList, setFilterDevList] = useState([]);
     const developers = useSelector((state) => state.discussions.developers)
     // const [activeTeam, setTeam] = useState('Select Team')
     const dispatch = useDispatch();
-    const discussionData = useSelector((state) => (state.discussions.discussionData));
 
     //menuItem list 
     const getMenuItemsForRepo = useCallback((close, currFilter) => {
-        const menuItems = iTwinDetails.repositories.map((repo, index) => {
+        const menuItems = selectedRepos.map((obj, index) => {
             return <MenuItem key={index} onClick={() => {
-                dispatch(setRepositoryName({ repositoryName: repo }));
-                updateDeveloperDataInStore(repo);
+                // dispatch(setRepositoryName({ repositoryName: obj.name }));
+                updateDeveloperDataInStore(obj.name);
 
                 // reset Team filter when repos changing 
                 dispatch(setFilter({
@@ -51,16 +52,17 @@ function MultiInputFilter({
                         isAny: isAnyOtherFilter('isTeamFilter', currFilter),
                         isTeamFilter: false,
                     }
-                }))
+                }));
                 setTeam('Select Team');
-                close();
+                // close();
             }}
 
-            >{repo}</MenuItem>
+            ><Checkbox key={index} label={obj.name} name={obj.name} checked={obj.isChecked} onChange={(e) => handelReposListClick(e, activeRepositories)} />
+            </MenuItem>
         })
         return menuItems;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filter, developers])
+    }, [filter, developers, selectRepos])
 
     const getMenuItemsForTeam = useCallback((close, currFilter) => {
         const menuItems = Teams.map((obj) => {
@@ -129,6 +131,30 @@ function MultiInputFilter({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const handelReposListClick = (e, currActiveRepositories) => {
+        // const selectedRepoToUpdateStore = [];
+        const newSelectedRepos = selectedRepos.map((obj) => {
+            if (obj.name === e.target.name) {
+                return ({ ...obj, isChecked: e.target.checked });
+            } else return obj;
+        })
+
+        const selectedRepoToUpdateStore = [];
+        newSelectedRepos.forEach((obj) => {
+            if (obj.isChecked) {
+                selectedRepoToUpdateStore.push(obj.name)
+            }
+        })
+
+        // update store
+        dispatch(setActiveRepos({ activeRepositories: selectedRepoToUpdateStore }));
+
+        selectRepos(newSelectedRepos);
+
+        //clear select in all filter
+        clearSelectInAllFilter();
+    }
+
     const handelTypeClick = (e, typeCheckBox) => {
         const newTypes = typeCheckBox.map((obj) => {
             if (obj.name === e.target.name) {
@@ -153,7 +179,6 @@ function MultiInputFilter({
 
         //clear select in all filter 
         clearSelectInAllFilter();
-
     }
 
     // clearing filter of type and developer 
@@ -196,8 +221,6 @@ function MultiInputFilter({
             dispatch(setFilter({ filter: { ...filter, isAny: isAnyOtherFilter('isSelectAllFilter', filter), isSelectAllFilter: false } }));
         }
     }
-
-
 
     const handelDevClick = (e, currFilter) => {
         const newDevFilter = developers.dataWithCheckBox.map((obj) => {
@@ -296,24 +319,31 @@ function MultiInputFilter({
 
     // update store
     useEffect(() => {
-        // update discussion data 
         const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
-        const selectedRepo = iTwinData.repositories.filter(repoDetails => repoDetails.repositoryName === activeRepository);
 
-        dispatch(setDiscussionData({ discussionData: selectedRepo[0].discussionData }));
+        // merge all selected repo data.
+        let selectedRepo = [];
+        iTwinData.repositories.forEach(repoDetails => {
+            if (activeRepositories.find((ele) => ele === repoDetails.repositoryName)) {
+                selectedRepo = [...selectedRepo, ...repoDetails.discussionData];
+            }
+        });
+
+        // update discussion data 
+        dispatch(setDiscussionData({ discussionData: selectedRepo }));
 
         // update developers
         if (!developers.isAny) {
-            const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo[0].discussionData)).map((obj) => ({ isChecked: false, name: obj }))
+            const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo)).map((obj) => ({ isChecked: false, name: obj }))
             dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox } }));
         }
 
         // update filteredDiscussionData if any
         if (filter.isAny || isDateRangeEnable) {
-            filterDiscussionData(selectedRepo[0].discussionData);
+            filterDiscussionData(selectedRepo);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeRepository, isDateRangeEnable, filter, dateRange])
+    }, [activeRepositories, isDateRangeEnable, filter, dateRange])
 
 
     useEffect(() => {
@@ -335,8 +365,13 @@ function MultiInputFilter({
                         <div className='select-repo'>
                             <Headline className="filter-subtitle  ">Select Repository</Headline>
                             <div>
-                                <DropdownButton size='small' menuItems={(close) => getMenuItemsForRepo(close, filter)}>
-                                    {activeRepository}
+                                <DropdownButton size='small' menuItems={(close) => {
+                                    const t = getMenuItemsForRepo(close, filter)
+                                    console.log('This is the menuItem for dropdown-----------', t)
+                                    return t;
+
+                                }}>
+                                    {`${activeRepositories.length}  Selected` }
                                 </DropdownButton>
                             </div>
                         </div>

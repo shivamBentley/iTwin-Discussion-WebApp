@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Dialog } from '@itwin/itwinui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDateRangeFilter, setDevelopers, setDiscussionData, setFilter, setFilteredDiscussionData, setLoading, setRepositoryName } from '../../store/reducers/discussions';
+import { setActiveRepos, setDateRangeFilter, setDevelopers, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
 import MultiInputFilter from './MultiInputFilter'
 import './MultiInputFilter.scss'
 import { useCallback } from 'react';
@@ -9,7 +9,8 @@ import { iTwinDetails } from '../../db/local-database';
 
 export const FilterModal = () => {
     const [isOpen, setIsOpen] = React.useState(false);
-    const developers = useSelector((state) => state.discussions.developers)
+    const developers = useSelector((state) => state.discussions.developers);
+    const activeRepositories = useSelector((state) => state.discussions.activeRepositories);
     const [isDateRangeEnable, setDateRangeEnable] = useState(false);
     const [dateRange, setDateRange] = useState({
         startDate: new Date(),
@@ -32,6 +33,11 @@ export const FilterModal = () => {
         { id: 2, isChecked: false, name: 'noReply', label: 'No Reply' },
     ])
 
+    // Active Repositories
+    const [selectedRepos, selectRepos] = useState(() => iTwinDetails.repositories.map((repoName) => (
+        { id: repoName, isChecked: false, name: repoName, label: repoName }
+    )), [])
+
     const dispatch = useDispatch();
 
     const closeDialog = () => {
@@ -45,8 +51,15 @@ export const FilterModal = () => {
     const resetButtonHandle = useCallback(() => {
 
         // reset discussion data to primary repo discussion data.
-        if (iTwinDetails.primaryRepo !== '')
-            dispatch(setRepositoryName({ repositoryName: iTwinDetails.primaryRepo }));
+        if (iTwinDetails.primaryRepo !== '') {
+            const newSelectedRepos = selectedRepos.map((obj) => {
+                if (obj.name !== iTwinDetails.primaryRepo) {
+                    return { id: obj.name, isChecked: false, name: obj.name, label: obj.name }
+                } else return { id: obj.name, isChecked: true, name: obj.name, label: obj.name }
+            });
+            selectRepos(newSelectedRepos);
+            dispatch(setActiveRepos({ activeRepositories: [iTwinDetails.primaryRepo] }));
+        }
 
         // reset active team to none
         setTeam('Select Team')
@@ -85,6 +98,19 @@ export const FilterModal = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+
+    useEffect(() => {
+        //get primary repo
+        const newSelectedRepos = selectedRepos.map((obj) => {
+            if (activeRepositories.find(element => element === obj.name)) {
+                return { id: obj.name, isChecked: true, name: obj.name, label: obj.name }
+            } else return obj
+        });
+
+        selectRepos(newSelectedRepos);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeRepositories])
+
     return (
         <>
             <Button styleType='high-visibility' onClick={() => setIsOpen(true)}>
@@ -113,6 +139,9 @@ export const FilterModal = () => {
                             setDateRange={setDateRange}
                             activeTeam={activeTeam}
                             setTeam={setTeam}
+                            selectedRepos={selectedRepos}
+                            selectRepos={selectRepos}
+
                         />
                     </Dialog.Content>
                     <Dialog.ButtonBar

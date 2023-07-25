@@ -160,14 +160,15 @@ export const BasicTable = () => {
                         <tr>
                             <th width={'2%'}>SL</th>
                             <th width={'23%'}>Title</th>
+                            <th width={'10%'}>Repository</th>
                             <th width={'15%'}>Question By</th>
                             <th width={'10%'} > Category</th>
                             <th width={'5%'}>Comments</th>
                             <th width={'5%'}>Replies</th>
-                            <th width={'10%'}>Status</th>
-                            <th width={'10%'}>Closed</th>
-                            <th width={'10%'}>Updated</th>
-                            <th width={'10%'}>Created</th>
+                            <th width={'9%'}>Status</th>
+                            <th width={'7%'}>Closed</th>
+                            <th width={'7%'}>Updated</th>
+                            <th width={'7%'}>Created</th>
 
                         </tr>
                     </thead>{
@@ -203,23 +204,25 @@ export const BasicTable = () => {
                                                 return <tr key={index} className="data-row">
                                                     <td width={'2%'}>{(currentIndex - 1) * rowsPerPage + index + 1}</td>
                                                     <td width={'23%'}>
-                                                        <table>
+                                                        <table style={{ width: '100%' }}>
                                                             <tbody>
-                                                                <tr style={{ display: 'flex', justifyContent: 'space-around' }}>
-                                                                    <td className="title-tags-col" style={{ backgroundColor: `${isSmartSearch.col === 2 ? '#edfaff' : 'none'} ` }} width='90%'><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
-                                                                    <td width='10%' className="title-tags-col"> <Button styleType= 'default' size="small"  onClick={() => intelligenceDialogAction(data.DiscussionUrl, data.tagsAndUrl, data.title)}>Show</Button>  </td>
+                                                                <tr style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                    <td className="title-tags-col" style={{ backgroundColor: `${isSmartSearch.col === 2 ? '#edfaff' : 'none'} ` }} width='80%'><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
+                                                                    <td className="title-tags-col"> <Button styleType='cta' size="small" onClick={() => intelligenceDialogAction(data.DiscussionUrl, data.tagsAndUrl, data.title)}>Matches</Button>  </td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
                                                     </td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {EmojiHTML}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 5 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'} >{totalComment}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 6 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'}>{totalReplies}</td>
-                                                    <td /*style={{ backgroundColor: `${isSmartSearch.col === 7 ? '#edfaff' : 'none'} ` }}*/ width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 8 ? '#edfaff' : 'none'} ` }} width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 9 ? '#edfaff' : 'none'} ` }} width={'10%'}>{updatedAt}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 10 ? '#edfaff' : 'none'} ` }} width={'10%'}>{createdAt}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {data.repoName}</td>
+
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 5 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {EmojiHTML}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 6 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'} >{totalComment}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 7 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'}>{totalReplies}</td>
+                                                    <td /*style={{ backgroundColor: `${isSmartSearch.col === 8 ? '#edfaff' : 'none'} ` }}*/ width={'9%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 9 ? '#edfaff' : 'none'} ` }} width={'7%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 10 ? '#edfaff' : 'none'} ` }} width={'7%'}>{updatedAt}</td>
+                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 11 ? '#edfaff' : 'none'} ` }} width={'7%'}>{createdAt}</td>
 
                                                 </tr>
                                             })
