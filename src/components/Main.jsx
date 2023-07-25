@@ -68,7 +68,7 @@ function Main() {
           const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
 
           // Adding repoName in each discussions.
-          const discussionDataWithRepoName = repoDataWithTags.map((data) => ({ ...data, repoName: repositories[0] }));
+          const discussionDataWithRepoName = repoDataWithTags.map((data) => ({ ...data, repoName: reposName }));
 
           const latestData = {
             repositoryName: reposName,
