@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { setLoading, setRateLimit } from "../store/reducers/discussions";
 import { getRateLimitData } from "../helper/GitHubAPIs";
 import { DIALOGSTATEACTION } from "../store/reducers/dialog";
+import ColumnHider from "./ColumnHider";
 export const BasicTable = () => {
 
     const discussionData = useSelector((state) => state.discussions.discussionData);
@@ -15,6 +16,8 @@ export const BasicTable = () => {
     const isLoading = useSelector((state) => state.discussions.isLoading);
     const isSmartSearch = useSelector((state) => state.discussions.isSmartSearch);
     const dispatch = useDispatch();
+    const columnState = useSelector((state) => state.column.columnState);
+    const lastCol = useSelector((state) => state.column.lastCol);
 
     const [data, setData] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(50)
@@ -159,16 +162,17 @@ export const BasicTable = () => {
                     <thead>
                         <tr>
                             <th width={'2%'}>SL</th>
-                            <th width={'23%'}>Title</th>
-                            <th width={'10%'}>Repository</th>
-                            <th width={'15%'}>Question By</th>
-                            <th width={'10%'} > Category</th>
-                            <th width={'5%'}>Comments</th>
-                            <th width={'5%'}>Replies</th>
-                            <th width={'9%'}>Status</th>
-                            <th width={'7%'}>Closed</th>
-                            <th width={'7%'}>Updated</th>
-                            <th width={'7%'}>Created</th>
+                            {columnState.title && <th width={'23%'}>Title</th>}
+                            {columnState.repository && <th width={'10%'}>Repository</th>}
+                            {columnState.questionBy && <th width={'13%'}>Question By</th>}
+                            {columnState.category && <th width={'9%'} > Category</th>}
+                            {columnState.comments && <th width={'5%'}>Comments</th>}
+                            {columnState.replies && <th width={'5%'}>Replies</th>}
+                            {columnState.status && <th width={'9%'}>Status</th>}
+                            {columnState.closed && <th width={'7%'}>Closed</th>}
+                            {columnState.updated && <th width={'7%'}>Updated</th>}
+                            {columnState.created && <th width={'7%'}>Created</th>}
+                            <th style={{ textAlign: 'end' }} width={'1%'}><ColumnHider ></ColumnHider></th>
 
                         </tr>
                     </thead>{
@@ -202,8 +206,8 @@ export const BasicTable = () => {
 
 
                                                 return <tr key={index} className="data-row">
-                                                    <td width={'2%'}>{(currentIndex - 1) * rowsPerPage + index + 1}</td>
-                                                    <td width={'23%'}>
+                                                    <td  width={'2%'}>{(currentIndex - 1) * rowsPerPage + index + 1}</td>
+                                                    {columnState.title && <td colSpan={lastCol === 'title' ? 2 : 1} width={'23%'}>
                                                         <table style={{ width: '100%' }}>
                                                             <tbody>
                                                                 <tr style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -212,17 +216,16 @@ export const BasicTable = () => {
                                                                 </tr>
                                                             </tbody>
                                                         </table>
-                                                    </td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {data.repoName}</td>
-
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 5 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {EmojiHTML}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 6 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'} >{totalComment}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 7 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'}>{totalReplies}</td>
-                                                    <td /*style={{ backgroundColor: `${isSmartSearch.col === 8 ? '#edfaff' : 'none'} ` }}*/ width={'9%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 9 ? '#edfaff' : 'none'} ` }} width={'7%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 10 ? '#edfaff' : 'none'} ` }} width={'7%'}>{updatedAt}</td>
-                                                    <td style={{ backgroundColor: `${isSmartSearch.col === 11 ? '#edfaff' : 'none'} ` }} width={'7%'}>{createdAt}</td>
+                                                    </td>}
+                                                    {columnState.repository && <td colSpan={lastCol === 'repository' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {data.repoName}</td>}
+                                                    {columnState.questionBy && <td colSpan={lastCol === 'questionBy' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>}
+                                                    {columnState.category && <td colSpan={lastCol === 'category' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 5 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {EmojiHTML}</td>}
+                                                    {columnState.comments && <td colSpan={lastCol === 'comments' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 6 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'} >{totalComment}</td>}
+                                                    {columnState.replies && <td colSpan={lastCol === 'replies' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 7 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'}>{totalReplies}</td>}
+                                                    {columnState.status && <td colSpan={lastCol === 'status' ? 2 : 1} /*style={{ backgroundColor: `${isSmartSearch.col === 8 ? '#edfaff' : 'none'} ` }}*/ width={'9%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>}
+                                                    {columnState.closed && <td colSpan={lastCol === 'closed' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 9 ? '#edfaff' : 'none'} ` }} width={'7%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>}
+                                                    {columnState.updated && <td colSpan={lastCol === 'updated' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 10 ? '#edfaff' : 'none'} ` }} width={'7%'}>{updatedAt}</td>}
+                                                    {columnState.created && <td colSpan={lastCol === 'created' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 11 ? '#edfaff' : 'none'} ` }} width={'7%'}>{createdAt}</td>}
 
                                                 </tr>
                                             })

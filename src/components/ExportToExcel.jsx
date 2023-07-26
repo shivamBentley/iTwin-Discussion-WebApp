@@ -9,7 +9,7 @@ function ExportToExcel() {
     const filteredData = useSelector((state) => state.discussions.filteredDiscussionData);
     const isDateRangeFilter = useSelector((state) => state.discussions.isDateRangeFilter);
     const isFiltered = useSelector((state) => state.discussions.filter);
-    const repositoryName = useSelector((state) => state.discussions.repositoryName);
+    const columnState = useSelector((state) => state.column.columnState);
 
 
     const [data, setData] = useState([]);
@@ -40,22 +40,23 @@ function ExportToExcel() {
                 id="test-table-xls-button"
                 className="download-table-xls-button"
                 table="table-to-xls"
-                filename={`${repositoryName}`}
+                filename={`iTwinGitHubQueryData(${new Date().toLocaleDateString()})`}
                 sheet="tablexls"
                 buttonText="Download" />
             <table id="table-to-xls" style={{ display: 'none' }}>
                 <thead>
                     <tr>
                         <th width={'2%'}>SL</th>
-                        <th width={'23%'}>Title</th>
-                        <th width={'15%'}>Question By</th>
-                        <th width={'10%'}>Category</th>
-                        <th width={'5%'}>Comments</th>
-                        <th width={'5%'}>Replies</th>
-                        <th width={'10%'}>Status</th>
-                        <th width={'10%'}>Closed</th>
-                        <th width={'10%'}>Updated</th>
-                        <th width={'10%'}>Created</th>
+                        {columnState.title && <th width={'23%'}>Title</th>}
+                        {columnState.repository && <th width={'10%'}>Repository</th>}
+                        {columnState.questionBy && <th width={'13%'}>Question By</th>}
+                        {columnState.category && <th width={'9%'} > Category</th>}
+                        {columnState.comments && <th width={'5%'}>Comments</th>}
+                        {columnState.replies && <th width={'5%'}>Replies</th>}
+                        {columnState.status && <th width={'9%'}>Status</th>}
+                        {columnState.closed && <th width={'7%'}>Closed</th>}
+                        {columnState.updated && <th width={'7%'}>Updated</th>}
+                        {columnState.created && <th width={'7%'}>Created</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -81,15 +82,16 @@ function ExportToExcel() {
 
                             return <tr key={index}>
                                 <td width={'2%'}>{index + 1}</td>
-                                <td width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>
-                                <td className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>
-                                <td className="align-col-text-center" width={'10%'} >{data.category.categoryName}</td>
-                                <td className="align-col-text-center" width={'5%'} >{totalComment}</td>
-                                <td className="align-col-text-center" width={'5%'}>{totalReplies}</td>
-                                <td width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>
-                                <td width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>
-                                <td width={'10%'}>{createdAt}</td>
-                                <td width={'10%'}>{updatedAt}</td>
+                                {columnState.title && <td width={'23%'}><Anchor href={data.DiscussionUrl} target="_blank">{data.title}</Anchor></td>}
+                                {columnState.repository && <td className="align-col-text-center" width={'10%'} > {data.repoName}</td>}
+                                {columnState.questionBy && <td className="align-col-text-center" width={'15%'}><Anchor href={data.author.DeveloperQuestionedGithubUrl} target="_blank">{data.author.DeveloperQuestioned}</Anchor></td>}
+                                {columnState.category && <td className="align-col-text-center" width={'10%'} >{data.category.categoryName}</td>}
+                                {columnState.comments && <td className="align-col-text-center" width={'5%'} >{totalComment}</td>}
+                                {columnState.replies && <td className="align-col-text-center" width={'5%'}>{totalReplies}</td>}
+                                {columnState.answeredBy && <td width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>}
+                                {columnState.closed && <td width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>}
+                                {columnState.updated && <td width={'10%'}>{createdAt}</td>}
+                                {columnState.created && <td width={'10%'}>{updatedAt}</td>}
                             </tr>
                         })
                     }
