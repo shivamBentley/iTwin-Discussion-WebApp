@@ -48,6 +48,12 @@ There two file to setup
    
                AUTO_REFRESH: true - enable auto refreshing 
                AUTO_REFRESH: false - disable auto refresing
+4. FIND_MATCH:
+
+   it is use to enable/disable intellisense for finding similar query by comparing specific tags included in query.
+
+               FIND_MATCH: true - eanable intellisense and provide a match button in each query.
+               FIND_MATCH: false - disable intellisense and remove match button in each query.   
 
 ### local-databases.js ( /src/db/local-database.js)
 
