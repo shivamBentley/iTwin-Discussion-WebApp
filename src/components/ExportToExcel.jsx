@@ -88,10 +88,10 @@ function ExportToExcel() {
                                 {columnState.category && <td className="align-col-text-center" width={'10%'} >{data.category.categoryName}</td>}
                                 {columnState.comments && <td className="align-col-text-center" width={'5%'} >{totalComment}</td>}
                                 {columnState.replies && <td className="align-col-text-center" width={'5%'}>{totalReplies}</td>}
-                                {columnState.answeredBy && <td width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>}
+                                {columnState.status && <td width={'10%'} style={{ backgroundColor: `${getCellColor(statusCell)}` }}>{answeredBy ? <Anchor href={data.answer?.AnswerUrl} target="_blank">{answeredBy}</Anchor> : statusCell}</td>}
                                 {columnState.closed && <td width={'10%'}>{answeredCreatedAy !== 'Invalid Date' ? answeredCreatedAy : ''}</td>}
-                                {columnState.updated && <td width={'10%'}>{createdAt}</td>}
-                                {columnState.created && <td width={'10%'}>{updatedAt}</td>}
+                                {columnState.updated && <td width={'10%'}>{updatedAt}</td>}
+                                {columnState.created && <td width={'10%'}>{createdAt}</td>}
                             </tr>
                         })
                     }

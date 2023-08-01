@@ -35,9 +35,7 @@ const column = createSlice({
                     lastCol = key;
                 }
             });
-            if (lastCol !== 'created') {
-                state.lastCol = lastCol;
-            }
+            state.lastCol = lastCol;
         },
     }
 });

@@ -15,7 +15,7 @@ function HeaderComponent({ filterKey, handleSearch, handleButtonClick }) {
     return (
         <div className='header-main' >
             <div className='header-parent'>
-                <Title className='header-title'>{repoName.charAt(0).toUpperCase() + repoName.slice(1)}</Title>
+                <Title className='header-title'>{repoName}</Title>
                 <div className='header-child smart-search'>
                     <Button styleType='high-visibility' className='search-button'>Search</Button>
                     <Input className='search-input' placeholder='Ex. @col n: text' name={'inputFilter'} value={filterKey} onChange={(e) => handleSearch(e)} />
