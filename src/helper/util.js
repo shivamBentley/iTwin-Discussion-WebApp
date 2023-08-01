@@ -188,3 +188,87 @@ export const mergeObjectMap = (mapA, mapB) => {
     }
     return result;
 }
+
+export const sortFunc = (arr, key, order, type) => {
+    if (order === 'ACE') {
+        arr.sort((a, b) => {
+            if (type === 'string') {
+                const keyA = a[key].toUpperCase();
+                const keyB = b[key].toUpperCase();
+
+                if (keyA < keyB) {
+                    return -1;
+                }
+                if (keyA > keyB) {
+                    return 1;
+                }
+                return 0;
+            }
+            else if (type === 'number') {
+                return (a[key] - b[key]);
+            }
+            else if (type === 'date') {
+                if (key === 'closeDate') {
+                    const dateA = a[key] === '' ? new Date() : new Date(a[key])
+                    const dateB = b[key] === '' ? new Date() : new Date(b[key])
+                    return dateA - dateB
+                }
+                return (new Date(a[key]) - new Date(b[key]));
+            }
+        });
+        return arr;
+    }
+    else {
+        arr.sort((a, b) => {
+            if (type === 'string') {
+                const keyA = a[key].toUpperCase();
+                const keyB = b[key].toUpperCase();
+
+                if (keyA > keyB) {
+                    return -1;
+                }
+                if (keyA < keyB) {
+                    return 1;
+                }
+                return 0;
+            }
+            else if (type === 'number') {
+                return (b[key] - a[key]);
+            }
+            else if (type === 'date') {
+                if (key === 'closeDate') {
+                    const dateA = a[key] === '' ? new Date() : new Date(a[key])
+                    const dateB = b[key] === '' ? new Date() : new Date(b[key])
+                    return dateB - dateA
+                } else
+                    return (new Date(b[key]) - new Date(a[key]));
+            }
+        });
+        return arr;
+    }
+}
+
+export const sortDataAceOrDCE = (arr, key, order) => {
+    switch (key) {
+        case 'title':
+        case 'repoName':
+        case 'developerQuestioned':
+        case 'category':
+        case 'status':
+            return sortFunc(arr, key, order, 'string')
+
+        case 'totalComment':
+        case 'totalReplies':
+            return sortFunc(arr, key, order, 'number')
+
+        case 'closeDate':
+        case 'updatedAt':
+        case 'createdAt':
+            return sortFunc(arr, key, order, 'date')
+
+        default:
+            return arr;
+    }
+
+
+}

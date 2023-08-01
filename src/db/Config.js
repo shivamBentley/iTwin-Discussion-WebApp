@@ -16,8 +16,18 @@ export const Config = {
     /**
      * TIME_TO_REFRESH_DATA is a number in minute 
      * This ensure if data is older that this much time it will automatically download latest data and save in local storage.
-     * Default time is 60 Minute. 
+     * Default time is 15 Minute. 
      */
     TIME_TO_REFRESH_DATA: 15,
-    AUTO_REFRESH : false
+
+    /**
+     * AUTO_REFRESH button enable to auto refresh feature. By enabling this feature latest date will be downloaded and save autometicall in local storage. 
+     * Refresh time can be set by TIME_TO_REFRESH_DATA (line number - 21).
+    */
+    AUTO_REFRESH: false,
+
+    /**
+     * FIND_MATCH is intellisense button which find the similar type of query by comparing tags involve in query. 
+     */
+    FIND_MATCH: false,
 }
