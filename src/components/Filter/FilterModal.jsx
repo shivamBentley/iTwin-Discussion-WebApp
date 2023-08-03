@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Dialog } from '@itwin/itwinui-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveRepos, setDateRangeFilter, setDevelopers, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
+// import { setActiveRepos, setDateRangeFilter, setDevelopers, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
 import MultiInputFilter from './MultiInputFilter'
 import './MultiInputFilter.scss'
 import { useCallback } from 'react';
 import { iTwinDetails } from '../../db/local-database';
+import userConfiguration from '../../db/userConfig.json'
+import { setActiveRepos, setDateRangeFilter, setDevelopers, setDiscussionData, setFilter, setFilteredDiscussionData, setLoading } from '../../store/reducers/discussions';
+import { GetNoRepliedData, GetUnAnsweredData, filteredDiscussionDataByDateRange, getAllDevelopers, getFilteredDataOnFilter } from '../../helper/discussion';
+import { arrayUnion, comparatorFunc } from '../../helper/util';
 
-export const FilterModal = () => {
+export const FilterModal = ({ setDateRangeForUserConfig }) => {
     const [isOpen, setIsOpen] = React.useState(false);
     const developers = useSelector((state) => state.discussions.developers);
     const activeRepositories = useSelector((state) => state.discussions.activeRepositories);
@@ -16,6 +20,8 @@ export const FilterModal = () => {
         startDate: new Date(),
         endDate: new Date()
     });
+    const filter = useSelector((state) => state.discussions.filter);
+    const [reset, forceReset] = useState(false);
     const [activeTeam, setTeam] = useState('Select Team')
 
 
@@ -48,52 +54,150 @@ export const FilterModal = () => {
         closeDialog();
     };
 
+    const handleDateRange = (selectedDateRange) => {
+        setDateRangeForUserConfig(selectedDateRange);
+        setDateRange(selectedDateRange);
+    }
+
     const resetButtonHandle = useCallback(() => {
+        if (userConfiguration.isUserConfigEnable) {
+            // check selected repositories
+            const selectedRepositories = userConfiguration.userConfig.filter.repositories;
+            //updating repositories in active repositories
+            dispatch(setActiveRepos({ activeRepositories: selectedRepositories }))
 
-        // reset discussion data to primary repo discussion data.
-        if (iTwinDetails.primaryRepo !== '') {
-            const newSelectedRepos = selectedRepos.map((obj) => {
-                if (obj.name !== iTwinDetails.primaryRepo) {
-                    return { id: obj.name, isChecked: false, name: obj.name, label: obj.name }
-                } else return { id: obj.name, isChecked: true, name: obj.name, label: obj.name }
+            const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
+
+            // merge all selected repo data.
+            let selectedRepo = [];
+            iTwinData.repositories.forEach(repoDetails => {
+                if (selectedRepositories.find((ele) => ele === repoDetails.repositoryName)) {
+                    selectedRepo = [...selectedRepo, ...repoDetails.discussionData];
+                }
             });
-            selectRepos(newSelectedRepos);
-            dispatch(setActiveRepos({ activeRepositories: [iTwinDetails.primaryRepo] }));
-        }
 
-        // reset active team to none
-        setTeam('Select Team')
+            // update discussion data in store 
+            dispatch(setDiscussionData({ discussionData: selectedRepo }));
 
-        // reset type filter
-        const newTypeFilter = types.map((obj) => ({ ...obj, isChecked: false }));
-        setTypes(newTypeFilter);
+            let filteredData = [];
 
-        // reset devFilter 
-        const resetDataWithCheckBox = developers.dataWithCheckBox.map((obj) => ({ ...obj, isChecked: false }));
-        dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: resetDataWithCheckBox } }));
-
-        // reset selectInAllFilter 
-        const newSelectInAllFilter = selectInAll.map((obj) => ({ ...obj, isChecked: false }));
-        setSelectInAll(newSelectInAllFilter);
-
-        //Resetting filter in store
-        dispatch(setFilter({
-            filter: {
-                isAny: false,
-                typeFilterKey: [],
-                developerFilterKey: [],
-                isTeamFilter: false,
-                isSelectAllFilter: false
+            // check either selectType filter or selectInAll filter applied or not
+            const isAnyTypeOrSelectInAllFilter = userConfiguration.userConfig.filter.selectInAll.length > 0 || userConfiguration.userConfig.filter.selectType.length > 0;
+            if (!isAnyTypeOrSelectInAllFilter) {
+                filteredData = selectedRepo;
             }
-        }))
 
-        // Resetting Date Range Filter 
-        dispatch(setDateRangeFilter({ isDateRangeFilter: false }));
-        setDateRangeEnable(false)
+            // if selectInAll Enabled 
+            if (userConfiguration.userConfig.filter.selectInAll.length > 0) {
+                const keys = userConfiguration.userConfig.filter.selectInAll;
+                keys.forEach((key) => {
+                    if (key === "unanswered") {
+                        const unansweredData = GetUnAnsweredData(selectedRepo);
+                        filteredData = arrayUnion(filteredData, unansweredData, comparatorFunc);
+                    } else {
+                        const noRepliedData = GetNoRepliedData(selectedRepo);
+                        filteredData = arrayUnion(filteredData, noRepliedData, comparatorFunc);
+                    }
+                })
+            }
+            // if selectType or developer filter Enabled
+            else if (userConfiguration.userConfig.filter.selectType.length > 0 || userConfiguration.userConfig.filter.selectedDevelopers.length > 0) {
+                const typeFilterKeys = userConfiguration.userConfig.filter.selectType;
+                const selectedDevelopers = userConfiguration.userConfig.filter.selectedDevelopers;
+                filteredData = getFilteredDataOnFilter(selectedRepo, selectedDevelopers, typeFilterKeys)
 
-        // Flushing Filtered Data from filteredDiscussionData
-        dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }));
-        dispatch(setLoading({ isLoading: true }));
+            }
+
+            // set Developers in store with checkBox 
+            if (filteredData.length > 0) {
+                let isAnyDevSelected = false;
+                const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo)).map((obj) => ({ isChecked: false, name: obj }));
+                const updatedAllDeveLopersWithCheckBox = allDeveLopersWithCheckBox.map((obj) => {
+                    if (userConfiguration.userConfig.filter.selectedDevelopers.find((element) => element === obj.name)) {
+                        isAnyDevSelected = true;
+                        return ({ ...obj, isChecked: true });
+                    }
+                    else return obj
+                })
+                dispatch(setDevelopers({ developers: { isAny: isAnyDevSelected, dataWithCheckBox: updatedAllDeveLopersWithCheckBox } }));
+            }
+
+            // set filter in store 
+            const filterObj = userConfiguration.userConfig.filter;
+            const isAnyFilter = filterObj.selectType.length > 0 || filterObj.selectedDevelopers.length > 0 || filterObj.selectInAll.length > 0;
+
+            if (isAnyFilter) {
+                const currFilterStatus = {
+                    isAny: isAnyFilter,
+                    typeFilterKey: filterObj.selectType,
+                    developerFilterKey: filterObj.selectedDevelopers,
+                    isTeamFilter: false,
+                    isSelectAllFilter: filterObj.selectInAll.length > 0,
+                }
+
+                dispatch(setFilter({ filter: currFilterStatus }));
+            }
+
+            // Apply date filter if enabled
+            if (userConfiguration.userConfig.filter.dateRange.isEnable) {
+                const { startDate, endDate } = userConfiguration.userConfig.filter.dateRange;
+
+                // set store filed for date range - isDateRange
+                filteredData = filteredDiscussionDataByDateRange(filteredData, startDate, endDate);
+                dispatch(setDateRangeFilter({ isDateRangeFilter: true }));
+            }
+
+            // update filteredDiscussionData in store data in store 
+            if (isAnyFilter || userConfiguration.userConfig.filter.dateRange.isEnable)
+                dispatch(setFilteredDiscussionData({ filteredDiscussionData: filteredData }));
+            forceReset(!reset);
+
+        } else {
+            // reset discussion data to primary repo discussion data.
+            if (iTwinDetails.primaryRepo !== '') {
+                const newSelectedRepos = selectedRepos.map((obj) => {
+                    if (obj.name !== iTwinDetails.primaryRepo) {
+                        return { id: obj.name, isChecked: false, name: obj.name, label: obj.name }
+                    } else return { id: obj.name, isChecked: true, name: obj.name, label: obj.name }
+                });
+                selectRepos(newSelectedRepos);
+                dispatch(setActiveRepos({ activeRepositories: [iTwinDetails.primaryRepo] }));
+            }
+
+            // reset active team to none
+            setTeam('Select Team')
+
+            // reset type filter
+            const newTypeFilter = types.map((obj) => ({ ...obj, isChecked: false }));
+            setTypes(newTypeFilter);
+
+            // reset devFilter 
+            const resetDataWithCheckBox = developers.dataWithCheckBox.map((obj) => ({ ...obj, isChecked: false }));
+            dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: resetDataWithCheckBox } }));
+
+            // reset selectInAllFilter 
+            const newSelectInAllFilter = selectInAll.map((obj) => ({ ...obj, isChecked: false }));
+            setSelectInAll(newSelectInAllFilter);
+
+            //Resetting filter in store
+            dispatch(setFilter({
+                filter: {
+                    isAny: false,
+                    typeFilterKey: [],
+                    developerFilterKey: [],
+                    isTeamFilter: false,
+                    isSelectAllFilter: false
+                }
+            }))
+
+            // Resetting Date Range Filter 
+            dispatch(setDateRangeFilter({ isDateRangeFilter: false }));
+            setDateRangeEnable(false)
+
+            // Flushing Filtered Data from filteredDiscussionData
+            dispatch(setFilteredDiscussionData({ filteredDiscussionData: [] }));
+            dispatch(setLoading({ isLoading: true }));
+        }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -106,10 +210,53 @@ export const FilterModal = () => {
                 return { id: obj.name, isChecked: true, name: obj.name, label: obj.name }
             } else return obj
         });
-
         selectRepos(newSelectedRepos);
+
+
+
+        // Updating UI filter Dialog corresponding to userConfiguration.userConfig.json 
+        if (filter.isAny) {
+            const { typeFilterKey, developerFilterKey } = filter;
+
+            if (userConfiguration.userConfig.filter.selectInAll.length > 0) {
+                const newSelectInAll = selectInAll.map((obj) => {
+                    if (userConfiguration.userConfig.filter.selectInAll.find(element => element === obj.name)) {
+                        return { id: obj.name, isChecked: true, name: obj.name, label: obj.name }
+                    } else return obj;
+                })
+                setSelectInAll(newSelectInAll)
+            } else if (userConfiguration.userConfig.filter.selectType.length > 0) {
+                const newTypes = types.map((obj) => {
+                    if (typeFilterKey.find(element => element === obj.name)) {
+                        return { id: obj.name, isChecked: true, name: obj.name, label: obj.name }
+                    } else return obj;
+                })
+                setTypes(newTypes)
+            }
+
+            if (developerFilterKey.length > 0) {
+                const devloperListWithCheckBox = developers.dataWithCheckBox.map((obj) => {
+                    if (developerFilterKey.find(element => element === obj.name)) {
+                        return ({ ...obj, isChecked: true })
+                    } else return ({ ...obj, isChecked: false })
+                });
+                dispatch(setDevelopers({ developers: { isAny: true, dataWithCheckBox: devloperListWithCheckBox } }));
+            }
+
+            if (userConfiguration.userConfig.filter.dateRange.isEnable) {
+                const { startDate, endDate } = userConfiguration.userConfig.filter.dateRange;
+                setDateRange({
+                    startDate: new Date(startDate),
+                    endDate: new Date(endDate)
+                })
+                setDateRangeEnable(true);
+                dispatch(setDateRangeFilter({ isDateRangeFilter: true }));
+            }
+        }
+
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeRepositories])
+    }, [activeRepositories, reset])
 
     return (
         <>
@@ -136,7 +283,7 @@ export const FilterModal = () => {
                             isDateRangeEnable={isDateRangeEnable}
                             setDateRangeEnable={setDateRangeEnable}
                             dateRange={dateRange}
-                            setDateRange={setDateRange}
+                            setDateRange={handleDateRange}
                             activeTeam={activeTeam}
                             setTeam={setTeam}
                             selectedRepos={selectedRepos}

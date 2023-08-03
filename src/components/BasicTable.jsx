@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import './styles/basicTable.scss'
 import { useState } from "react";
 import { useEffect } from "react";
-import { setLoading, setRateLimit } from "../store/reducers/discussions";
+import { setLoading, setRateLimit, setSorting } from "../store/reducers/discussions";
 import { getRateLimitData } from "../helper/GitHubAPIs";
 import { DIALOGSTATEACTION } from "../store/reducers/dialog";
 import ColumnHider from "./ColumnHider";
 import { Config } from "../db/Config";
-import { sortDataAceOrDCE } from "../helper/util";
+import { sortDataAscOrDsc } from "../helper/util";
+
 export const BasicTable = () => {
 
     let discussionData = useSelector((state) => state.discussions.discussionData);
@@ -17,6 +18,7 @@ export const BasicTable = () => {
     const isDateRangeFilter = useSelector((state) => state.discussions.isDateRangeFilter);
     const isLoading = useSelector((state) => state.discussions.isLoading);
     const isSmartSearch = useSelector((state) => state.discussions.isSmartSearch);
+    const sorting = useSelector((state) => state.discussions.sorting);
     const dispatch = useDispatch();
     const columnState = useSelector((state) => state.column.columnState);
     const lastCol = useSelector((state) => state.column.lastCol);
@@ -144,9 +146,6 @@ export const BasicTable = () => {
         const end = currentIndex * rowsPerPage;
         const start = end - rowsPerPage;
         const newDataSet = data.slice(start, end);
-
-
-
         setData(newDataSet);
 
         // When Repository changes then set currentIndex to 1 
@@ -170,8 +169,13 @@ export const BasicTable = () => {
     }
 
     useEffect(() => {
-        updateData(sortedData)
-    }, [sortedData, currentIndex, rowsPerPage])
+        const { key, order, isEnable } = sorting;
+        if (isEnable) {
+            const newSortedData = sortDataAscOrDsc(sortedData, key, order)
+            updateData([...newSortedData])
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sortedData, currentIndex, rowsPerPage, sorting])
 
     useEffect(() => {
         if (isSmartSearch.status) {
@@ -179,6 +183,7 @@ export const BasicTable = () => {
             const simplifiedData = simplifyDataForTable(isSmartSearch.data);
             setSortedData(simplifiedData);
         }
+
         else if (isFiltered.isAny || isDateRangeFilter) {
             setDataLength(filteredData.length);
             const simplifiedData = simplifyDataForTable(filteredData);
@@ -216,8 +221,14 @@ export const BasicTable = () => {
     }, [dataLength, rowsPerPage])
 
     const sortData = (accessor, order) => {
-        const newSortedData = sortDataAceOrDCE(sortedData, accessor, order);
-        setSortedData([...newSortedData])
+        dispatch(setSorting({
+            sortingStatus: {
+                isEnable: true,
+                key: accessor,
+                order: order
+            }
+        }))
+
     }
 
     const incrementAndDecrementColumnHeader = (colName, accessor) => {
@@ -226,8 +237,9 @@ export const BasicTable = () => {
                 <th ><div >{colName}</div></th>
                 <th style={{ position: 'relative', top: '-10px' }}>
                     <tr style={{ display: 'flex', flexDirection: 'column', marginLeft: '8px' }}>
-                        <th onClick={() => sortData(accessor, 'ACE')} style={{ cursor: 'pointer', fontSize: '10px', margin: '-8px 0' }} > &#9650;</th>
-                        <th onClick={() => sortData(accessor, 'DCE')} style={{ cursor: 'pointer', fontSize: '10px', }} > &#9660;</th>
+                        <th onClick={() => sortData(accessor, 'ASC')} style={{ cursor: 'pointer', fontSize: '10px', margin: '-8px 0' }} > &#9650;</th>
+                        <th onClick={() => sortData(accessor, 'DSC')} style={{ cursor: 'pointer', fontSize: '10px', }} > &#9660;</th>
+
                     </tr>
                 </th>
             </tr>

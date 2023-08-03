@@ -415,7 +415,11 @@ function MultiInputFilter({
                         <div className='flex-parent-2'>
                             <div className='date-range-container' >
                                 <Headline className="date-range-subtitle  " >Select Date Range</Headline>
-                                <Button size='small' styleType={isDateRangeEnable ? 'cta' : 'high-visibility'} className='date-enable-button' onClick={() => { setDateRangeEnable(!isDateRangeEnable) }} > {isDateRangeEnable ? 'ON' : 'OFF'}</Button>
+                                <Button size='small' styleType={isDateRangeEnable ? 'cta' : 'high-visibility'} className='date-enable-button' onClick={() => {
+                                    // update store 
+                                    dispatch(setDateRangeFilter({ isDateRangeFilter: !isDateRangeEnable }));
+                                    setDateRangeEnable(!isDateRangeEnable)
+                                }} > {isDateRangeEnable ? 'ON' : 'OFF'}</Button>
 
                                 <div className='date-range-picker'>
                                     {

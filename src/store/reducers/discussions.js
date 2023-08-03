@@ -22,6 +22,11 @@ const initialState = {
         isSelectAllFilter: false,
     },
     isDateRangeFilter: false,
+    sorting: {
+        isEnable: true,
+        key: 'createdAt',
+        order: 'ASC'
+    },
     isSmartSearch: {
         col: 0,
         status: false,
@@ -87,6 +92,10 @@ const discussions = createSlice({
         setSmartSearch(state, action) {
             const { searchDetails } = action.payload;
             state.isSmartSearch = searchDetails;
+        },
+        setSorting(state, action) {
+            const { sortingStatus } = action.payload;
+            state.sorting = sortingStatus;
         }
     }
 });
@@ -105,5 +114,6 @@ export const {
     setLoading,
     setRateLimit,
     setLastUpdated,
-    setSmartSearch
+    setSmartSearch,
+    setSorting
 } = discussions.actions;

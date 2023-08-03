@@ -1,0 +1,33 @@
+{
+  "isUserConfigEnable": false,
+  "userConfig": {
+    "filter": {
+      "repositories": [
+        "community",
+        "itwinjs-core",
+        "iTwinUI"
+      ],
+      "selectType": [
+        "answer"
+      ],
+      "selectedDevelopers": [
+        "fatalstar",
+        "aruniverse",
+        "mayank99",
+        "dsmailys",
+        "veekeys"
+      ],
+      "selectInAll": false,
+      "dateRange": {
+        "isEnable": false,
+        "startDate": "2023-08-03T06:40:05.514Z",
+        "endDate": "2023-08-03T06:40:05.514Z"
+      }
+    },
+    "sorting": {
+      "isEnable": true,
+      "key": "totalReplies",
+      "order": "ASC"
+    }
+  }
+}

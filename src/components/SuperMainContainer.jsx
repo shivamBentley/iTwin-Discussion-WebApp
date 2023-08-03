@@ -3,12 +3,16 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { getAllDiscussionData, getRateLimitData } from '../helper/GitHubAPIs';
 import { iTwinDetails } from '../db/local-database';
 import { useDispatch } from 'react-redux';
-import { setActiveRepos, setDevelopers, setDiscussionData, setLastUpdated, setLoading, setOwner, setRateLimit } from '../store/reducers/discussions';
-import { getAllDevelopers } from '../helper/discussion';
+import { setActiveRepos, setDateRangeFilter, setDevelopers, setDiscussionData, setFilter, setFilteredDiscussionData, setLastUpdated, setLoading, setOwner, setRateLimit, setSorting } from '../store/reducers/discussions';
+import { GetNoRepliedData, GetUnAnsweredData, filteredDiscussionDataByDateRange, getAllDevelopers, getFilteredDataOnFilter } from '../helper/discussion';
 import { BasicModal } from './BasicModal';
 import { Config } from "../db/Config";
 import { ToastNotify } from "./ToastNotify";
 import { createDictionaryOfTagsWithDeveloperListAndAddTags } from "../helper/TrieClass";
+import userConfiguration from '../db/userConfig.json'
+import { arrayUnion, comparatorFunc } from "../helper/util";
+import { removeToast, setToastState } from "../store/reducers/toast";
+
 // import { removeToast, setToastState } from "../store/reducers/toast";
 
 const storeName = 'iTwinData';
@@ -51,33 +55,146 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
     }
   }
 
+
+  const updateUserConfiguration = (userConfig) => {
+    // notify using toast that userConfiguration setup is in process
+    dispatch(setToastState({ newState: { id: 'userConfigSetup', title: `User Configuration in process...`, status: 'downloading', autoClose: false, isOpen: true } }))
+
+    // check selected repositories
+    const selectedRepositories = userConfig.filter.repositories;
+    //updating repositories in active repositories
+    dispatch(setActiveRepos({ activeRepositories: selectedRepositories }))
+
+    const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
+
+    // merge all selected repo data.
+    let selectedRepo = [];
+    iTwinData.repositories.forEach(repoDetails => {
+      if (selectedRepositories.find((ele) => ele === repoDetails.repositoryName)) {
+        selectedRepo = [...selectedRepo, ...repoDetails.discussionData];
+      }
+    });
+
+    // update discussion data in store 
+    dispatch(setDiscussionData({ discussionData: selectedRepo }));
+
+    let filteredData = [];
+
+    // check either selectType filter or selectInAll filter applied or not
+    const isAnyTypeOrSelectInAllFilter = userConfig.filter.selectInAll.length > 0 || userConfig.filter.selectType.length > 0;
+    if (!isAnyTypeOrSelectInAllFilter) {
+      filteredData = selectedRepo;
+    }
+
+    // if selectInAll Enabled 
+    if (userConfig.filter.selectInAll.length > 0) {
+      const keys = userConfig.filter.selectInAll;
+      keys.forEach((key) => {
+        if (key === "unanswered") {
+          const unansweredData = GetUnAnsweredData(selectedRepo);
+          filteredData = arrayUnion(filteredData, unansweredData, comparatorFunc);
+        } else {
+          const noRepliedData = GetNoRepliedData(selectedRepo);
+          filteredData = arrayUnion(filteredData, noRepliedData, comparatorFunc);
+        }
+      })
+    }
+    // if selectType or developer filter Enabled
+    else if (userConfig.filter.selectType.length > 0 || userConfig.filter.selectedDevelopers.length > 0) {
+      const typeFilterKeys = userConfig.filter.selectType;
+      const selectedDevelopers = userConfig.filter.selectedDevelopers;
+      filteredData = getFilteredDataOnFilter(selectedRepo, selectedDevelopers, typeFilterKeys)
+
+    }
+
+    // set Developers in store with checkBox 
+    if (filteredData.length > 0) {
+      const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(selectedRepo)).map((obj) => ({ isChecked: false, name: obj }))
+      dispatch(setDevelopers({ developers: { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox } }));
+    }
+
+    // set filter in store 
+    const filterObj = userConfig.filter;
+    const isAnyFilter = filterObj.selectType.length > 0 || filterObj.selectedDevelopers.length > 0 || filterObj.selectInAll.length > 0;
+
+    if (isAnyFilter) {
+      const currFilterStatus = {
+        isAny: isAnyFilter,
+        typeFilterKey: filterObj.selectType,
+        developerFilterKey: filterObj.selectedDevelopers,
+        isTeamFilter: false,
+        isSelectAllFilter: filterObj.selectInAll.length > 0,
+      }
+
+      dispatch(setFilter({ filter: currFilterStatus }));
+    }
+
+    // Apply date filter if enabled
+    if (userConfig.filter.dateRange.isEnable) {
+      const { startDate, endDate } = userConfig.filter.dateRange;
+
+      // set store filed for date range - isDateRange
+      filteredData = filteredDiscussionDataByDateRange(filteredData, startDate, endDate);
+      dispatch(setDateRangeFilter({ isDateRangeFilter: true }));
+    }
+
+    // update filteredDiscussionData in store data in store 
+    if (isAnyFilter || userConfig.filter.dateRange.isEnable)
+      dispatch(setFilteredDiscussionData({ filteredDiscussionData: filteredData }));
+
+    if (userConfig.sorting.isEnable) {
+      const { key, order } = userConfig.sorting;
+      dispatch(setSorting({
+        sortingStatus: {
+          isEnable: true,
+          order: order,
+          key: key
+        }
+      }))
+    }
+  }
+
   //update data in store 
   const setDefaultDataInStore = useCallback((isOldDataUpdate) => {
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
+    /**
+     * Setting userConfig as default 
+     */
 
-    const primaryRepo = iTwinData.repositories.filter(repoDetails => repoDetails.repositoryName === iTwinDetails.primaryRepo);
+    const { userConfig, isUserConfigEnable } = userConfiguration;
+    if (isUserConfigEnable)
+      updateUserConfiguration(userConfig);
+    else {
 
-    const discussionData = primaryRepo[0].discussionData;
-    const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(discussionData)).map((developer) => ({ isChecked: false, name: developer }));
-    const devFilter = { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox }
+      const primaryRepo = iTwinData.repositories.filter(repoDetails => repoDetails.repositoryName === iTwinDetails.primaryRepo);
 
-    //dispatch default data to store ...
-    dispatch(setDiscussionData({ discussionData: discussionData }));
-    dispatch(setActiveRepos({ activeRepositories: [iTwinDetails.primaryRepo] }));
-    dispatch(setOwner({ owner: iTwinData.owner }));
-    dispatch(setDevelopers({ developers: devFilter }));
-    dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
+      const discussionData = primaryRepo[0].discussionData;
+      const allDeveLopersWithCheckBox = Array.from(getAllDevelopers(discussionData)).map((developer) => ({ isChecked: false, name: developer }));
+      const devFilter = { isAny: false, dataWithCheckBox: allDeveLopersWithCheckBox }
 
-    //updating repoStatus for modal
+      //dispatch default data to store ...
+      dispatch(setDiscussionData({ discussionData: discussionData }));
+      dispatch(setActiveRepos({ activeRepositories: [iTwinDetails.primaryRepo] }));
+      dispatch(setOwner({ owner: iTwinData.owner }));
+      dispatch(setDevelopers({ developers: devFilter }));
+      dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
+    }
+
+    //updating repoStatus for modal & toast
     if (isOldDataUpdate) {
       const newReposStatus = iTwinData.repositories.map((rep) => {
         return ({ status: 'positive', name: rep.repositoryName });
       })
       setTimeout(() => {
         setRepoStatus(newReposStatus);
+        if (isUserConfigEnable) {
+          // remove userConfiguration toast when userConfiguration setup is done.
+          dispatch(removeToast({ id: 'userConfigSetup' }));
+          dispatch(setToastState({ newState: { id: 'userConfigSetup', title: `User Configuration applied successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
+        }
         setTitle(`Ready for use.`)
         setModel(false)
-      }, 3000);
+      }, 2000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

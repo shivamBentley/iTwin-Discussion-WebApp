@@ -168,12 +168,12 @@ export const insertObjInMap = (map, data) => {
     const key = data.developerName;
     const found = map.get(key);
     if (found) {
-        
+
         map.set(key, {
             ...found,
-             // eslint-disable-next-line
+            // eslint-disable-next-line
             ['answeredUrl']: new Set([...found['answeredUrl'], ...data['answeredUrl']]),
-             // eslint-disable-next-line
+            // eslint-disable-next-line
             ['otherUrl']: new Set([...found['otherUrl'], ...data['otherUrl']])
         })
     } else {
@@ -190,7 +190,8 @@ export const mergeObjectMap = (mapA, mapB) => {
 }
 
 export const sortFunc = (arr, key, order, type) => {
-    if (order === 'ACE') {
+    if (order === 'ASC') {
+
         arr.sort((a, b) => {
             if (type === 'string') {
                 const keyA = a[key].toUpperCase();
@@ -207,7 +208,9 @@ export const sortFunc = (arr, key, order, type) => {
             else if (type === 'number') {
                 return (a[key] - b[key]);
             }
-            else if (type === 'date') {
+            //type === 'date'
+            else {
+
                 if (key === 'closeDate') {
                     const dateA = a[key] === '' ? new Date() : new Date(a[key])
                     const dateB = b[key] === '' ? new Date() : new Date(b[key])
@@ -235,7 +238,9 @@ export const sortFunc = (arr, key, order, type) => {
             else if (type === 'number') {
                 return (b[key] - a[key]);
             }
-            else if (type === 'date') {
+            // type === 'date'
+            else {
+
                 if (key === 'closeDate') {
                     const dateA = a[key] === '' ? new Date() : new Date(a[key])
                     const dateB = b[key] === '' ? new Date() : new Date(b[key])
@@ -248,7 +253,8 @@ export const sortFunc = (arr, key, order, type) => {
     }
 }
 
-export const sortDataAceOrDCE = (arr, key, order) => {
+export const sortDataAscOrDsc = (arr, key, order) => {
+
     switch (key) {
         case 'title':
         case 'repoName':
