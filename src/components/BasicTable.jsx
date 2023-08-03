@@ -9,6 +9,7 @@ import { DIALOGSTATEACTION } from "../store/reducers/dialog";
 import ColumnHider from "./ColumnHider";
 import { Config } from "../db/Config";
 import { sortDataAscOrDsc } from "../helper/util";
+
 export const BasicTable = () => {
 
     let discussionData = useSelector((state) => state.discussions.discussionData);
@@ -145,7 +146,6 @@ export const BasicTable = () => {
         const end = currentIndex * rowsPerPage;
         const start = end - rowsPerPage;
         const newDataSet = data.slice(start, end);
-
         setData(newDataSet);
 
         // When Repository changes then set currentIndex to 1 
@@ -183,6 +183,7 @@ export const BasicTable = () => {
             const simplifiedData = simplifyDataForTable(isSmartSearch.data);
             setSortedData(simplifiedData);
         }
+
         else if (isFiltered.isAny || isDateRangeFilter) {
             setDataLength(filteredData.length);
             const simplifiedData = simplifyDataForTable(filteredData);
@@ -227,6 +228,7 @@ export const BasicTable = () => {
                 order: order
             }
         }))
+
     }
 
     const incrementAndDecrementColumnHeader = (colName, accessor) => {
@@ -237,6 +239,7 @@ export const BasicTable = () => {
                     <tr style={{ display: 'flex', flexDirection: 'column', marginLeft: '8px' }}>
                         <th onClick={() => sortData(accessor, 'ASC')} style={{ cursor: 'pointer', fontSize: '10px', margin: '-8px 0' }} > &#9650;</th>
                         <th onClick={() => sortData(accessor, 'DSC')} style={{ cursor: 'pointer', fontSize: '10px', }} > &#9660;</th>
+
                     </tr>
                 </th>
             </tr>

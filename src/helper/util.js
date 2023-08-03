@@ -191,6 +191,7 @@ export const mergeObjectMap = (mapA, mapB) => {
 
 export const sortFunc = (arr, key, order, type) => {
     if (order === 'ASC') {
+
         arr.sort((a, b) => {
             if (type === 'string') {
                 const keyA = a[key].toUpperCase();
@@ -209,6 +210,7 @@ export const sortFunc = (arr, key, order, type) => {
             }
             //type === 'date'
             else {
+
                 if (key === 'closeDate') {
                     const dateA = a[key] === '' ? new Date() : new Date(a[key])
                     const dateB = b[key] === '' ? new Date() : new Date(b[key])
@@ -238,6 +240,7 @@ export const sortFunc = (arr, key, order, type) => {
             }
             // type === 'date'
             else {
+
                 if (key === 'closeDate') {
                     const dateA = a[key] === '' ? new Date() : new Date(a[key])
                     const dateB = b[key] === '' ? new Date() : new Date(b[key])
@@ -251,6 +254,7 @@ export const sortFunc = (arr, key, order, type) => {
 }
 
 export const sortDataAscOrDsc = (arr, key, order) => {
+
     switch (key) {
         case 'title':
         case 'repoName':
