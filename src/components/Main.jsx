@@ -3,7 +3,7 @@ import { BasicTable } from './BasicTable';
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDiscussionData, setSmartSearch } from '../store/reducers/discussions';
+import { setDiscussionData, setLastUpdated, setSmartSearch } from '../store/reducers/discussions';
 import { smartFilter, validateSmartKey } from '../helper/util';
 import { Config } from '../db/Config';
 import { useEffect } from 'react';
@@ -48,7 +48,7 @@ function Main() {
     }
   }
 
-  const downloadLatestData = () => {
+  const downloadLatestData = (dateRange) => {
     if (rateLimit.remaining) {
       // get all repository and owner name 
       const owner = iTwinDetails.owner
@@ -62,7 +62,7 @@ function Main() {
       repositories.forEach(reposName => {
 
         //save iTwin dat in localStorage
-        getAllDiscussionData(owner, reposName).then((data) => {
+        getAllDiscussionData(owner, reposName, dateRange).then((data) => {
 
           //extracting tags for repo data and build dictionary of tags with developer list
           const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
@@ -78,6 +78,7 @@ function Main() {
           }
           //updating latestRepositoryData
           latestRepositoryData.push(latestData);
+          console.log('Latest data downloaded for repository: ', reposName);
 
           //updating localStorage when all repos data is downloaded
           if (repositories.length === latestRepositoryData.length) {
@@ -92,21 +93,21 @@ function Main() {
             dispatch(removeToast({ id: 'downloadingLatestData' }));
             dispatch(setToastState({ newState: { id: 'downloadingLatestData', title: `Latest data downloaded successfully`, status: 'successfullyDownloaded', autoClose: 5000, isOpen: false } }))
 
-
             // find data for active repositories & merge all repo data.
             let selectedRepo = [];
-            const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
-            iTwinData.repositories.forEach(repoDetails => {
+            // const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
+            newITwinData.repositories.forEach(repoDetails => {
               if (activeRepositories.find((ele) => ele === repoDetails.repositoryName)) {
                 selectedRepo = [...selectedRepo, ...repoDetails.discussionData];
               }
             });
 
             dispatch(setDiscussionData({ discussionData: selectedRepo }));
+            dispatch(setLastUpdated({ lastUpdated: newITwinData.lastUpdate }));
 
           }
 
-          console.log('Latest data downloaded for repository: ', reposName);
+
         })
       });
     }
@@ -134,10 +135,11 @@ function Main() {
         <HeaderComponent
           filterKey={filterKey}
           handleSearch={handleSearch}
-          handleButtonClick={() => {
+          handleButtonClick={({ START_DATE, END_DATE }) => {
             if (rateLimit.remaining === 0)
               dispatch(setToastState({ newState: { id: 'noRemainingPoint', title: `You have ${rateLimit.remaining} point`, status: 'danger', autoClose: 5000, isOpen: false } }))
-            downloadLatestData();
+            // console.log({START_DATE, END_DATE})
+            downloadLatestData({ START_DATE, END_DATE });
           }} />
       </div>
       <div style={{ height: '82%', width: '100vw' }}>

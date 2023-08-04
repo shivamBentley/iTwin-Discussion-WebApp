@@ -33,7 +33,8 @@ function MultiInputFilter({
     const filter = useSelector(state => state.discussions.filter)
     const [filterKey, setFilterKey] = useState('');
     const [filteredDevList, setFilterDevList] = useState([]);
-    const developers = useSelector((state) => state.discussions.developers)
+    const developers = useSelector((state) => state.discussions.developers);
+    const lastUpdated = useSelector((state) => state.discussions.lastUpdated)
     const dispatch = useDispatch();
 
     //menuItem list 
@@ -319,7 +320,6 @@ function MultiInputFilter({
     // update store
     useEffect(() => {
         const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
-
         // merge all selected repo data.
         let selectedRepo = [];
         iTwinData.repositories.forEach(repoDetails => {
@@ -342,7 +342,7 @@ function MultiInputFilter({
             filterDiscussionData(selectedRepo);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeRepositories, isDateRangeEnable, filter, dateRange])
+    }, [activeRepositories, isDateRangeEnable, filter, dateRange, lastUpdated])
 
 
     useEffect(() => {

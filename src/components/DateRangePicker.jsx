@@ -1,13 +1,14 @@
-import { DatePicker, IconButton } from "@itwin/itwinui-react";
+import { Button, DatePicker, IconButton } from "@itwin/itwinui-react";
 import { SvgCalendar } from "@itwin/itwinui-react/cjs/core/utils";
 import React from "react";
 
-export const DateRangePicker = ({ startD, endD, onChange }) => {
+export const DateRangePicker = ({ startD, endD, onChange, textVisible, handleDownloadLatestData }) => {
     const [opened, setOpened] = React.useState(false);
     return (
         <div style={{ position: 'absolute', zIndex: 100, }}>
-            <IconButton size="small" onClick={() => setOpened(!opened)} id='picker-button'><SvgCalendar /></IconButton>
-            <span style={{
+            {!textVisible && <IconButton size="small" onClick={() => setOpened(!opened)} id='picker-button'><SvgCalendar /></IconButton>}
+            {textVisible && <span style={{ position: 'absolute', top: '-8px' }} onClick={() => setOpened(!opened)}>Custom Date</span>}
+            {!textVisible && <span style={{
                 borderLeft: 'none',
                 padding: '2px 4px',
                 fontWeight: '600',
@@ -32,7 +33,7 @@ export const DateRangePicker = ({ startD, endD, onChange }) => {
                 >
                     End Date: {endD?.toLocaleDateString()}
                 </span>
-            </span>
+            </span>}
 
             {opened && (
                 <div style={{ marginTop: 4 }}>
@@ -42,6 +43,11 @@ export const DateRangePicker = ({ startD, endD, onChange }) => {
                         endDate={endD}
                         onChange={onChange}
                     />
+                    {textVisible && <div style={{ display: 'flex', justifyContent: 'space-between', borderRadius: '3px' }} >
+                        <span style={{ margin: '5px', paddingTop:'8px' }}>{startD?.toLocaleDateString()} - {endD?.toLocaleDateString()}</span>
+                        <Button style={{ margin: '5px' }} styleType="high-visibility" onClick={handleDownloadLatestData}> Okay</Button>
+
+                    </div>}
                 </div>
             )}
         </div>
