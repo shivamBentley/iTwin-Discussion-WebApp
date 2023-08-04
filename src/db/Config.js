@@ -27,6 +27,19 @@ export const Config = {
     AUTO_REFRESH: false,
 
     /**
+     * DATA_DOWNLOAD_DATE_RANGE is used to download discusssion which falls under given date range.
+     * if DATA_DOWNLOAD_DATE_RANGE.STATUS = FALSE, Then it will download all repositories data 
+     * 
+     */
+    DATA_DOWNLOAD_DATE_RANGE: {
+        STATUS: true,
+        DATE_RANGE: {
+            START_DATE: "2022-11-24",
+            END_DATE: "2024-08-03"
+        }
+    },
+
+    /**
      * FIND_MATCH is intellisense button which find the similar type of query by comparing tags involve in query. 
      */
     FIND_MATCH: false,

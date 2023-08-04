@@ -278,3 +278,22 @@ export const sortDataAscOrDsc = (arr, key, order) => {
 
 
 }
+
+export const getLastNthMonthDate = (n) => {
+    var currentDate = new Date(); // Get the current date
+    var currentMonth = currentDate.getMonth(); // Get the current month (0-indexed)
+    var currentYear = currentDate.getFullYear(); // Get the current year
+
+    var targetMonth = currentMonth - n; // Calculate the target month
+    var targetYear = currentYear; // Initialize target year with the current year
+
+    // If the target month is negative, adjust the year accordingly
+    while (targetMonth < 0) {
+        targetMonth += 12;
+        targetYear -= 1;
+    }
+
+    // Create a new date object with the target year and month (add 1 to month since it is 0-indexed)
+    var lastNthMonthDate = new Date(targetYear, targetMonth + 1, 0);
+    return lastNthMonthDate;
+}
