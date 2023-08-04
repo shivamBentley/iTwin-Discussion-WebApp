@@ -43,9 +43,10 @@ export const DateRangePicker = ({ startD, endD, onChange, textVisible, handleDow
                         endDate={endD}
                         onChange={onChange}
                     />
-                    {textVisible && <div>
-                        <Button onClick={handleDownloadLatestData}> Okay</Button>
-                        <span style={{ marginLeft: '10px' }}>{startD?.toLocaleDateString()} - {endD?.toLocaleDateString()}</span>
+                    {textVisible && <div style={{ display: 'flex', justifyContent: 'space-between', borderRadius: '3px' }} >
+                        <span style={{ margin: '5px', paddingTop:'8px' }}>{startD?.toLocaleDateString()} - {endD?.toLocaleDateString()}</span>
+                        <Button style={{ margin: '5px' }} styleType="high-visibility" onClick={handleDownloadLatestData}> Okay</Button>
+
                     </div>}
                 </div>
             )}
