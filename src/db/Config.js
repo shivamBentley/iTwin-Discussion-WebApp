@@ -11,7 +11,7 @@ export const Config = {
      *  step 5 : Paste copied token below at line 14. 
      */
 
-    ACCESS_TOKEN: "",
+    ACCESS_TOKEN: process.env.REACT_APP_ACCESS_TOKEN,
 
     /**
      * TIME_TO_REFRESH_DATA is a number in minute 
