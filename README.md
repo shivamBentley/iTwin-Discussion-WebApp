@@ -22,8 +22,9 @@ To install packages or dependencies use the npm command: [npm install](https://d
 There two file to setup 
 
 ### Config.js ( /src/db/Config.js)
-1. ACCESS_TOKEN:  Set access token. 
-    
+
+1. ACCESS_TOKEN:
+
     if you don't have github access token create new access token by following below steps.
         
         You can create an access token from here link - https://github.com/settings/tokens
@@ -37,49 +38,78 @@ There two file to setup
         step 4 : Please copy token, you won't be able to see this generated token again.
         step 5 : Paste copied token below at line 15. 
 
-2. TIME_TO_REFRESH_DATA: TIME_TO_REFRESH_DATA is a number in minute 
-    
-    This ensure if data is older than this much time when you refresh the page it will automatically download latest data and save in local storage.
-    Default time is 60 Minute. 
+    ``` js
+        ACCESS_TOKEN: "ghp_3S1gvYbnEaJc2vmP934RVEf92A0YVW3DKcVD", // this is sample token not valid token.
+    ``` 
+
+2.  TIME_TO_REFRESH_DATA:
+
+     This ensure if data is older than this much time when you refresh the page it will automatically download latest data and save in local storage.Default time is 60 Minute. 
+    ``` js
+         TIME_TO_REFRESH_DATA: 15, //it's number in minute
+    ```
     
 3. AUTO_REFRESH:
  
    it is use to enable/disable the auto refresh data.
+    ``` js
+        AUTO_REFRESH: true, // enable auto refreshing 
+        AUTO_REFRESH: false, // disable auto refresing
+    ```
+
+4. DATA_DOWNLOAD_DATE_RANGE:
+    
+    it is use to download data in with a date range, if you are running this Application first time or you have cleared you local-storage ( cache ). by setting this filed you will be able to download fresh date within a date range.
+    ``` js
+        DATA_DOWNLOAD_DATE_RANGE: {
+            STATUS: false,
+            DATE_RANGE: {
+            START_DATE: "2022-11-24",
+            END_DATE: "2024-08-03"
+            }
+        },
+
+    // NOTE: Data will be downloaded if only STATUS: true else it will download all data, and may take bit longer time.
+    ```
    
-               AUTO_REFRESH: true - enable auto refreshing 
-               AUTO_REFRESH: false - disable auto refresing
-4. FIND_MATCH:
+
+5. FIND_MATCH:
 
    it is use to enable/disable intellisense for finding similar query by comparing specific tags included in query.
-
-               FIND_MATCH: true - eanable intellisense and provide a match button in each query.
-               FIND_MATCH: false - disable intellisense and remove match button in each query.   
-
+     ``` js
+        FIND_MATCH: true, // enable intellisense and provide a match button in each query.
+        FIND_MATCH: false, // disable intellisense and remove match button in each query.   
+    ``` 
 ### local-databases.js ( /src/db/local-database.js)
 
 1. iTwinDetails : This contain the information about the github account ( owner & repositories ) names for which you want to Analyze the discussion data.
-owner: It's owner id 
 
-   step 1: Go to anyone's github profile page. 
-   
-   step 2: copy name from URL. 
-   
-   Example - [https://github.com/iTwin](https://github.com/iTwin) This is iTwin github account. Name after (https://github.com/) is iTwin that is owner. 
+    A. owner: It's owner id 
 
-repositories: It is array container repositories names.
+        step 1: Go to anyone's github profile page.
+        step 2: copy name from URL.   
+        
+        Example - [https://github.com/iTwin](https://github.com/iTwin) This is iTwin github account. Name after (https://github.com/) is iTwin that is owner. 
+    B. primaryRepo : select a repos from repositories and make on of them primaryRepo
 
-    Example : 
+    C. repositories: It is array container repositories names.
+
+    ``` js
         iTwinDetails = {
-          primaryRepo: 'community',
-          repositories: ['community', 'itwinjs-core', 'iTwinUI']
+            owner: 'iTwin',
+            primaryRepo: 'community',
+            repositories: ['community', 'itwinjs-core', 'iTwinUI']
         }
+        // Note : Insure if you are assigning primaryRepo, it must present in repositories list.
+
+    ```
 
 
 2. Teams : This is used to select multiple developer to Analyze discussion data. This will help to create group by giving name and by giving GitHubLogin id's.
 
-    Example:
-
-        Teams = [
+    
+``` js 
+    Teams = [
             {
                 teamName: 'Team 1',
                 teamMembers: [
@@ -94,7 +124,7 @@ repositories: It is array container repositories names.
                 ]
             }
         ]
-
+```
 
 ## Run Application
 
