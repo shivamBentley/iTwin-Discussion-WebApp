@@ -27,12 +27,12 @@ export const Config = {
     AUTO_REFRESH: false,
 
     /**
-     * DATA_DOWNLOAD_DATE_RANGE is used to download discusssion which falls under given date range.
+     * DATA_DOWNLOAD_DATE_RANGE is used to download discusssion data which falls under given date range, on fist time pageLoad if data is not available in local-storage( cache ).
      * if DATA_DOWNLOAD_DATE_RANGE.STATUS = FALSE, Then it will download all repositories data 
      * 
      */
     DATA_DOWNLOAD_DATE_RANGE: {
-        STATUS: true,
+        STATUS: false,
         DATE_RANGE: {
             START_DATE: "2022-11-24",
             END_DATE: "2024-08-03"
