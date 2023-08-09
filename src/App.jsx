@@ -3,6 +3,7 @@ import { iTwinDetails } from './db/local-database';
 import SuperMainContainer from './components/SuperMainContainer';
 import { createWordDictionary } from './helper/TrieClass';
 import { createDictionaryOfTagsWithDeveloperListAndAddTags } from './helper/TrieClass';
+import LandingPage from './components/LandingPage';
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
 
     const [repositories, setRepositories] = useState(iTwinDetails.repositories);
     const [repositoriesData, setRepositoriesData] = useState([])
+    const [mainPageAccess, setMainPageAccess] = useState(false);
 
     const removeRepoFromReposListAndUpdateITwindData = (repoName, repoData) => {
         const newRepoList = repositories.filter((rep) => rep !== repoName);
@@ -40,24 +42,33 @@ function App() {
     }
 
     useEffect(() => {
-        //creating Word Dictionary
-        createWordDictionary()
+        const currGitHubAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'));
 
-        const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
-        if (iTwinData) {
-            iTwinData.repositories.forEach(repo => createDictionaryOfTagsWithDeveloperListAndAddTags(repo.discussionData));
+        if (currGitHubAccessToken) {
+            //creating Word Dictionary
+            createWordDictionary()
+            setMainPageAccess(true)
+
+            const iTwinData = JSON.parse(localStorage.getItem('iTwinData'))
+            if (iTwinData) {
+                iTwinData.repositories.forEach(repo => createDictionaryOfTagsWithDeveloperListAndAddTags(repo.discussionData));
+            }
         }
-    }, [])
+
+    }, [mainPageAccess])
 
 
-    return (<>
-        <SuperMainContainer
-            removeRepoFromReposListAndUpdateITwindData={removeRepoFromReposListAndUpdateITwindData}
-            repositories={repositories}
-            repoStatus={repoStatus}
-            setRepoStatus={setRepoStatus}
-        />
-    </>
+    return (
+        <>
+            {!mainPageAccess ?
+                <LandingPage setMainPageAccess={setMainPageAccess} /> :
+                <SuperMainContainer
+                    removeRepoFromReposListAndUpdateITwindData={removeRepoFromReposListAndUpdateITwindData}
+                    repositories={repositories}
+                    repoStatus={repoStatus}
+                    setRepoStatus={setRepoStatus}
+                />}
+        </>
     )
 }
 

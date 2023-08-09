@@ -22,6 +22,7 @@ export const BasicTable = () => {
     const dispatch = useDispatch();
     const columnState = useSelector((state) => state.column.columnState);
     const lastCol = useSelector((state) => state.column.lastCol);
+    const gitHubPersonalAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'))
 
     const [data, setData] = useState([]);
     const [rowsPerPage, setRowsPerPage] = useState(50)
@@ -200,7 +201,7 @@ export const BasicTable = () => {
 
     useEffect(() => {
         // update RateLimits 
-        getRateLimitData().then((data) => {
+        getRateLimitData(gitHubPersonalAccessToken).then((data) => {
             dispatch(setRateLimit({ rateLimit: data.data?.rateLimit }));
         })
 

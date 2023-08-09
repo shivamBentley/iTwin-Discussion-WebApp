@@ -22,6 +22,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
   const dispatch = useDispatch();
   const [title, setTitle] = useState('');
   const [isModalOpen, setModel] = useState(true);
+  const gitHubPersonalAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'))
 
   const updateDataInLocalStorage = () => {
 
@@ -30,9 +31,8 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
 
     if (repositories.length > 0) {
       const currentTime = new Date().getTime();
-
       //save iTwin dat in localStorage.
-      getAllDiscussionData(owner, repositories[0]).then((data) => {
+      getAllDiscussionData(owner, repositories[0], gitHubPersonalAccessToken).then((data) => {
 
         //extracting tags for repo data and build dictionary of tags with developer list.
         const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
@@ -203,7 +203,7 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
     const currentTime = new Date().getTime();
     // update store with old data if available
     const iTwinData = JSON.parse(localStorage.getItem(storeName))
-    getRateLimitData().then((data) => {
+    getRateLimitData(gitHubPersonalAccessToken).then((data) => {
       dispatch(setRateLimit({ rateLimit: data.data?.rateLimit }));
       {
         // fetch all data that is stored in localStorage if available

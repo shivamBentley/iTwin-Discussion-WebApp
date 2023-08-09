@@ -6,9 +6,22 @@ const apiUrl = 'https://api.github.com/graphql';
  * GitHub GraphQL API has limitation so if from on accessToke it's not loading data try with other Token;
  * 
  */
-const variables = {
-  accessToken: Config.ACCESS_TOKEN
-};
+
+// const variables = {
+//   accessToken: JSON.parse(localStorage.getItem('gitAccessToken'))
+// };
+
+// validate token query 
+const getLoginQuery = () => {
+  return `
+  query { 
+    viewer { 
+      login
+    }
+  }
+ `;
+}
+
 
 // Query for RateLimit
 const rateLimitQuery = (filter) => {
@@ -112,17 +125,19 @@ const createQuery = (owner, repositoryName, filter) => {
     `;
 }
 
-const getNext_100_DiscussionData = (owner, repositoryName, filter) => {
+const getNext_100_DiscussionData = (owner, repositoryName, accessToken, filter) => {
   const query = createQuery(owner, repositoryName, filter);
   return fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${variables.accessToken}`,
+      'Authorization': `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       query,
-      variables,
+      variables: {
+        accessToken
+      },
     }),
   })
     .then(response => response.json())
@@ -132,7 +147,8 @@ const getNext_100_DiscussionData = (owner, repositoryName, filter) => {
 }
 
 
-export const getAllDiscussionData = async (owner, repositoryName, DateRange) => {
+export const getAllDiscussionData = async (owner, repositoryName, accessToken, DateRange) => {
+
   let allDiscussionData = [];
   let START_DATE = '2019-01-01', END_DATE = new Date().toJSON().slice(0, 10);
 
@@ -152,7 +168,7 @@ export const getAllDiscussionData = async (owner, repositoryName, DateRange) => 
   let FindNext = true;
   let currentData;
 
-  await getNext_100_DiscussionData(owner, repositoryName, `first:${100}, orderBy: { field:CREATED_AT, direction: DESC }`).then((data) => {
+  await getNext_100_DiscussionData(owner, repositoryName, accessToken, `first:${100}, orderBy: { field:CREATED_AT, direction: DESC }`).then((data) => {
     currentData = data.data.repository?.discussions
     pageInfo = data.data.repository?.discussions.pageInfo
   });
@@ -180,7 +196,7 @@ export const getAllDiscussionData = async (owner, repositoryName, DateRange) => 
     const filter = `first:${100},after:"${pageInfo.endCursor}", orderBy: { field:CREATED_AT, direction: DESC }`
 
     // eslint-disable-next-line
-    await getNext_100_DiscussionData(owner, repositoryName, filter).then((data) => {
+    await getNext_100_DiscussionData(owner, repositoryName, accessToken, filter).then((data) => {
       currentData = data.data.repository.discussions
       pageInfo = data.data.repository?.discussions.pageInfo
     })
@@ -207,17 +223,19 @@ export const getAllDiscussionData = async (owner, repositoryName, DateRange) => 
   return allDiscussionData;
 }
 
-export const getRateLimitData = () => {
+export const getRateLimitData = (accessToken) => {
   const query = rateLimitQuery();
   return fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${variables.accessToken}`,
+      'Authorization': `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       query,
-      variables,
+      variables: {
+        accessToken
+      },
     }),
   })
     .then(response => response.json())
@@ -227,17 +245,19 @@ export const getRateLimitData = () => {
 }
 
 
-export const getTotalDiscussionCount = () => {
+export const getTotalDiscussionCount = (accessToken) => {
   const query = discussionCountQuery();
   return fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${variables.accessToken}`,
+      'Authorization': `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       query,
-      variables,
+      variables: {
+        accessToken
+      },
     }),
   })
     .then(response => response.json())
@@ -246,3 +266,23 @@ export const getTotalDiscussionCount = () => {
     });
 }
 
+export const validateToken = async (accessToken) => {
+  const query = getLoginQuery();
+  return await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      query,
+      variables: {
+        accessToken
+      },
+    }),
+  })
+    .then(response => response.json())
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}

@@ -20,6 +20,7 @@ function Main() {
   const toastState = useSelector((state) => state.toast.toastState);
   const activeRepositories = useSelector((state) => state.discussions.activeRepositories);
   const rateLimit = useSelector((state) => state.discussions.rateLimit);
+  const gitHubPersonalAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'))
 
   const data = useSelector((state) => {
     let res;;
@@ -62,7 +63,7 @@ function Main() {
       repositories.forEach(reposName => {
 
         //save iTwin dat in localStorage
-        getAllDiscussionData(owner, reposName, dateRange).then((data) => {
+        getAllDiscussionData(owner, reposName, gitHubPersonalAccessToken, dateRange).then((data) => {
 
           //extracting tags for repo data and build dictionary of tags with developer list
           const repoDataWithTags = createDictionaryOfTagsWithDeveloperListAndAddTags(data);
