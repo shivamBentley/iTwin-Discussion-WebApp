@@ -27,9 +27,9 @@ There two file to setup
 
     if you don't have github access token create new access token by following below steps.
         
-        You can create an access token from here link - https://github.com/settings/tokens
+    You can create an access token from here link -  [Generate personal access token](https://github.com/settings/tokens](https://github.com/settings/tokens/new))
 
-                 OR
+    Or you can follow steps : 
     
         Go to : https://github.com
         step 1 : login
