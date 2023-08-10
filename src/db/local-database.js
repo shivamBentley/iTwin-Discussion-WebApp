@@ -3,20 +3,21 @@ export const Teams = [
         id: 1,
         teamName: 'iTwinPlatformDeveloperSuccess',
         teamMembers: [
+            { GitHubLogin: "tamanud" },
             { GitHubLogin: "pratikshan85" },
-            { GitHubLogin: "NancyMcCallB" }
+            { GitHubLogin: "ArnabGogoi" },
         ]
     },
     {
         id: 2,
-        teamName: 'TestOne',
+        teamName: 'Team A',
         teamMembers: [
             { GitHubLogin: "NancyMcCallB" }
         ]
     },
     {
         id: 3,
-        teamName: 'TestTwo',
+        teamName: 'Team B',
         teamMembers: [
             { GitHubLogin: "pmconne" }
         ]
