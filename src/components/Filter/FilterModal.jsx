@@ -59,7 +59,7 @@ export const FilterModal = ({ setDateRangeForUserConfig }) => {
         setDateRange(selectedDateRange);
     }
 
-    const resetButtonHandle = useCallback(() => {
+    const resetButtonHandle = () => {
         if (userConfiguration.isUserConfigEnable) {
             // check selected repositories
             const selectedRepositories = userConfiguration.userConfig.filter.repositories;
@@ -135,17 +135,17 @@ export const FilterModal = ({ setDateRangeForUserConfig }) => {
             const filterObj = userConfiguration.userConfig.filter;
             const isAnyFilter = filterObj.selectType.length > 0 || filterObj.selectedDevelopers.length > 0 || filterObj.selectInAll.length > 0;
 
-            if (isAnyFilter) {
-                const currFilterStatus = {
-                    isAny: isAnyFilter,
-                    typeFilterKey: filterObj.selectType,
-                    developerFilterKey: filterObj.selectedDevelopers,
-                    isTeamFilter: false,
-                    isSelectAllFilter: filterObj.selectInAll.length > 0,
-                }
 
-                dispatch(setFilter({ filter: currFilterStatus }));
+            const currFilterStatus = {
+                isAny: isAnyFilter,
+                typeFilterKey: filterObj.selectType,
+                developerFilterKey: filterObj.selectedDevelopers,
+                isTeamFilter: false,
+                isSelectAllFilter: filterObj.selectInAll.length > 0,
             }
+
+            dispatch(setFilter({ filter: currFilterStatus }));
+
 
             // Apply date filter if enabled
             if (userConfiguration.userConfig.filter.dateRange.isEnable) {
@@ -209,8 +209,7 @@ export const FilterModal = ({ setDateRangeForUserConfig }) => {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
+    }
 
     useEffect(() => {
         //get primary repo
