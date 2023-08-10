@@ -35,7 +35,7 @@ export const Config = {
         STATUS: false,
         DATE_RANGE: {
             START_DATE: "2022-11-24",
-            END_DATE: "2024-08-03"
+            END_DATE: new Date().toJSON().slice(0, 10)
         }
     },
 

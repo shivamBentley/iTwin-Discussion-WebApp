@@ -108,6 +108,15 @@ export const FilterModal = ({ setDateRangeForUserConfig }) => {
 
             }
 
+            if (userConfiguration.userConfig.filter.selectType.length === 0) {
+                const newTypeFilter = types.map((obj) => ({ ...obj, isChecked: false }));
+                setTypes(newTypeFilter);
+            }
+            if (userConfiguration.userConfig.filter.selectInAll.length === 0) {
+                const newSelectInAllFilter = selectInAll.map((obj) => ({ ...obj, isChecked: false }));
+                setSelectInAll(newSelectInAllFilter);
+            }
+
             // set Developers in store with checkBox 
             if (filteredData.length > 0) {
                 let isAnyDevSelected = false;

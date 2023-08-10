@@ -1,5 +1,5 @@
 {
-  "isUserConfigEnable": false,
+  "isUserConfigEnable": true,
   "userConfig": {
     "filter": {
       "repositories": [
@@ -7,17 +7,9 @@
         "itwinjs-core",
         "iTwinUI"
       ],
-      "selectType": [
-        "answer"
-      ],
-      "selectedDevelopers": [
-        "fatalstar",
-        "aruniverse",
-        "mayank99",
-        "dsmailys",
-        "veekeys"
-      ],
-      "selectInAll": false,
+      "selectType": [],
+      "selectedDevelopers": [],
+      "selectInAll": [],
       "dateRange": {
         "isEnable": false,
         "startDate": "2023-08-03T06:40:05.514Z",
@@ -26,7 +18,7 @@
     },
     "sorting": {
       "isEnable": true,
-      "key": "totalReplies",
+      "key": "createdAt",
       "order": "ASC"
     }
   }

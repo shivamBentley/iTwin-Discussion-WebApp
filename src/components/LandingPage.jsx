@@ -30,7 +30,7 @@ function LandingPage({ setMainPageAccess }) {
             <div  >
                 <div style={{
                     // backgroundColor: 'lightcyan',
-                    height: '80vh',
+                    height: '90vh',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',

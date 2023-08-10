@@ -15,7 +15,14 @@ function App() {
 
     const [repositories, setRepositories] = useState(iTwinDetails.repositories);
     const [repositoriesData, setRepositoriesData] = useState([])
-    const [mainPageAccess, setMainPageAccess] = useState(false);
+    const [mainPageAccess, setMainPageAccess] = useState(() => {
+        const currGitHubAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'));
+
+        // validate saved token
+        
+        if (currGitHubAccessToken) return true;
+        else return false
+    }, []);
 
     const removeRepoFromReposListAndUpdateITwindData = (repoName, repoData) => {
         const newRepoList = repositories.filter((rep) => rep !== repoName);
@@ -42,9 +49,7 @@ function App() {
     }
 
     useEffect(() => {
-        const currGitHubAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'));
-
-        if (currGitHubAccessToken) {
+        if (mainPageAccess) {
             //creating Word Dictionary
             createWordDictionary()
             setMainPageAccess(true)
