@@ -4,6 +4,7 @@ import SuperMainContainer from './components/SuperMainContainer';
 import { createWordDictionary } from './helper/TrieClass';
 import { createDictionaryOfTagsWithDeveloperListAndAddTags } from './helper/TrieClass';
 import LandingPage from './components/LandingPage';
+import { validateToken } from './helper/GitHubAPIs';
 
 function App() {
 
@@ -16,12 +17,13 @@ function App() {
     const [repositories, setRepositories] = useState(iTwinDetails.repositories);
     const [repositoriesData, setRepositoriesData] = useState([])
     const [mainPageAccess, setMainPageAccess] = useState(() => {
-        const currGitHubAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'));
-
-        // validate saved token
-        
-        if (currGitHubAccessToken) return true;
+        if (localStorage.getItem('gitAccessToken') !== "") {
+            const currGitHubAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'));
+            if (currGitHubAccessToken) return true;
+            else return false
+        }
         else return false
+
     }, []);
 
     const removeRepoFromReposListAndUpdateITwindData = (repoName, repoData) => {
@@ -62,6 +64,20 @@ function App() {
 
     }, [mainPageAccess])
 
+    useEffect(() => {
+        if (localStorage.getItem('gitAccessToken') !== "") {
+            const currGitHubAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'));
+            // validate saved token
+            validateToken(currGitHubAccessToken).then((res) => {
+                if (!res.data) {
+                    setMainPageAccess(false);
+                    localStorage.removeItem('gitAccessToken')
+                }
+            }).catch(() => {
+                setMainPageAccess(false);
+            })
+        }
+    }, [])
 
     return (
         <>
