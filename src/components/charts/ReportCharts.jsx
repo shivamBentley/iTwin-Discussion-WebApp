@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import CustomizedLabelLineChart from './CustomizedLabelLineChart'
 import CustomActiveShapePieChart from './CustomActiveShapePieChart'
-import BrushBarChart from './BrushBarChart'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
@@ -19,6 +18,8 @@ import {
 } from '@itwin/itwinui-react'
 import { sortFunc } from '../../helper/util'
 import { useEffect } from 'react'
+import VerticalComposedChart from './VerticalComposedChart'
+import { BENTLEY_DEVELOPERS_LIST } from '../../db/local-database'
 
 const getCategoryDetails = (discussionsData) => {
     // filtering by categories ...
@@ -62,10 +63,25 @@ const getDeveloperContribution = (discussionData) => {
     const developers = Array.from(getAllDevelopers(discussionData));
     const res = []
     developers.forEach((dev) => {
-        const devCommentedData = getCommentedOnlyDataByDeveloper(discussionData, dev).length;
-        const devAnsweredData = getAnsweredDataByDeveloper(discussionData, dev).length;
+        const devCommentedData = getCommentedOnlyDataByDeveloper(discussionData, dev);
+        const devAnsweredData = getAnsweredDataByDeveloper(discussionData, dev);
         // const devRepliedData = getRepliedDataByDeveloper(discussionData, dev).length;
-        res.push({ developer: dev, answered: devAnsweredData, commented: devCommentedData });
+
+        // Get developer location & company name
+        let developerDetails = null;
+        if (devAnsweredData.length > 0) {
+            developerDetails = { ...devAnsweredData[0].answer.author }
+        } else if (devCommentedData.length > 0) {
+            const comments = devCommentedData[0]?.comments;
+            if (comments.totalCount !== 0) {
+                comments.nodes.forEach((comment) => {
+                    if (comment.author.DeveloperCommented === dev)
+                        developerDetails = { ...comment.author }
+                })
+            }
+        }
+
+        res.push({ developer: dev, answered: devAnsweredData.length, commented: devCommentedData.length, developerDetails });
     })
     return res;
 }
@@ -207,7 +223,9 @@ function ReportCharts() {
     const getDevMenuItems = useCallback((close) => {
         const menuItems = [
             <MenuItem key={0} onClick={() => { setDevData('All Developers'); close(); }}>{"All Developers"}</MenuItem>,
-            <MenuItem key={1} onClick={() => { setDevData('Contributed Developer'); close(); }}>{'Contributed Developer'}</MenuItem>
+            <MenuItem key={1} onClick={() => { setDevData('Contributed Developer'); close(); }}>{'Contributed Developer'}</MenuItem>,
+            <MenuItem key={1} onClick={() => { setDevData('Bentley Developers'); close(); }}>{'Bentley Developers'}</MenuItem>
+
         ]
         return menuItems;
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -249,19 +267,31 @@ function ReportCharts() {
                 break;
         }
 
-        if (activeDevData !== "All Developers") {
+        if (activeDevData === "Contributed Developer") {
             filteredData = filteredData.filter(data => {
                 return data.answered !== 0 || data.commented !== 0
             })
+        } else if (activeDevData === 'Bentley Developers') {
+            const companies = new Set();
+            // filter bentley developers
+            filteredData = filteredData.filter((data) => {
+
+                companies.add(data.developerDetails?.company)
+
+                // check if developer exist in bentleyDeveloperList 
+                const isInBentleyDeveloperList = BENTLEY_DEVELOPERS_LIST.find(dev => (data.developer).toLowerCase() === dev.toLowerCase())
+                const isBentleyDev = (data.developerDetails?.company && (data.developerDetails.company).toLowerCase().includes('bentley'))
+                return isBentleyDev || isInBentleyDeveloperList
+
+            })
+            console.log(companies)
         }
-
         setDeveloperContribution(filteredData)
-
     }, [activeSort, activeDevData, discussionsData])
 
     return (
         <>
-            <div style={{ width: '100%', height: '125%' }}>
+            <div style={{ width: '100%', height: '120%' }}>
                 <div style={{ width: '100%', height: '350px', display: 'flex', border: '1px solid lightgray', marginBottom: '30px', position: 'relative' }}>
                     <div style={{ width: '50%', height: '350px', }}>
                         <Headline style={{ fontSize: '20px', padding: '0 20px', fontWeight: '400', position: 'absolute' }}>Contribution</Headline>
@@ -296,7 +326,7 @@ function ReportCharts() {
 
                             <span style={{ position: 'absolute', top: '50px', right: '20px' }}>Total Developer's : {devContribution.length}</span>
                         </div>
-                        <BrushBarChart data={devContribution} />
+                        <VerticalComposedChart data={devContribution} />
                     </div>
 
                 </div>

@@ -28,6 +28,7 @@ class CustomizedAxisTick extends PureComponent {
 
 
 function BrushBarChart({ data, bar1Color = "#8884d8", bar2Color = "#82ca9d", }) {
+    const initialRange = { start: 10, end: 20 };
     return (
         <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -40,7 +41,6 @@ function BrushBarChart({ data, bar1Color = "#8884d8", bar2Color = "#82ca9d", }) 
                     left: 20,
                     bottom: 5,
                 }}
-                layout="horizontal"
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="developer" tick={<CustomizedAxisTick />} />
@@ -48,7 +48,7 @@ function BrushBarChart({ data, bar1Color = "#8884d8", bar2Color = "#82ca9d", }) 
                 <Tooltip />
                 <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
                 <ReferenceLine y={0} stroke="#000" />
-                <Brush dataKey="developer" height={30} stroke="#8884d8" />
+                <Brush dataKey="developer" height={30} stroke="#8884d8" startIndex={initialRange.start} endIndex={initialRange.end} />
                 <Bar dataKey="commented" stackId="a" fill={`${bar1Color}`} />
                 <Bar dataKey="answered" stackId="a" fill={`${bar2Color}`} />
             </BarChart>
