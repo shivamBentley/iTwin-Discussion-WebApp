@@ -308,7 +308,7 @@ export const BasicTable = () => {
 
             </div >
 
-            <div className="table-nav" style={{ height: '10%', overflow: 'hidden', background: '#565e61' }}>
+            <div className="table-nav" style={{ height: '10%', overflow: 'hidden', background: '#3e4142' }}>
                 <div style={{ height: '100%', overflow: 'hidden' }}>
                     <nav style={{}}>
                         <ul className="pagination">
@@ -352,7 +352,7 @@ export const BasicTable = () => {
                                 menuItems={menuItems}
                                 size="small"
                                 style={{
-                                    backgroundColor: '#565e61',
+                                    backgroundColor: '#3e4142',
                                     color: 'white',
                                     border: '1px solid whitesmoke',
                                     marginLeft: '5px',
