@@ -177,8 +177,9 @@ function SuperMainContainer({ repoStatus, setRepoStatus, repositories, removeRep
       dispatch(setActiveRepos({ activeRepositories: [iTwinDetails.primaryRepo] }));
       dispatch(setOwner({ owner: iTwinData.owner }));
       dispatch(setDevelopers({ developers: devFilter }));
-      dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
     }
+
+    dispatch(setLastUpdated({ lastUpdated: iTwinData.lastUpdate }))
 
     //updating repoStatus for modal & toast
     if (isOldDataUpdate) {
