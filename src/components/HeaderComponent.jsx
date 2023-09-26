@@ -9,6 +9,7 @@ import { useState } from 'react';
 import userConfiguration from '../db/userConfig.json'
 import { getLastNthMonthDate } from '../helper/util';
 import { DateRangePicker } from './DateRangePicker';
+import { ReportModel } from './ReportModel';
 
 function HeaderComponent({ filterKey, handleSearch, handleButtonClick, }) {
 
@@ -26,6 +27,7 @@ function HeaderComponent({ filterKey, handleSearch, handleButtonClick, }) {
         startDate: new Date(),
         endDate: new Date()
     })
+    const [showReport, ] = useState(false);
 
     const downloadObjectAsJson = useCallback((objectData, filename) => {
         const jsonData = JSON.stringify(objectData, null, 2); // Convert object to formatted JSON string
@@ -139,6 +141,7 @@ function HeaderComponent({ filterKey, handleSearch, handleButtonClick, }) {
                 <div className='header-child last-update'><>Last Updated: {new Date(lastUpdated).toLocaleString()}</></div>
                 <div className='header-child remaining'><>Remaining Points: {rateLimit?.remaining}</></div>
                 <div className='header-child reset-time'><>Reset Time: {new Date(rateLimit?.resetAt).toLocaleTimeString()}</></div>
+                <div className='header-child report'><> <ReportModel showReport={showReport} />  </></div>
             </div>
         </div>
     )

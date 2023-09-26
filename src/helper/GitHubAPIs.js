@@ -75,6 +75,10 @@ const createQuery = (owner, repositoryName, filter) => {
               author {
                 DeveloperQuestioned: login
                 DeveloperQuestionedGithubUrl: url
+                ... on User {
+                  location
+                  company
+                }
               }
     
               updatedAt
@@ -89,6 +93,10 @@ const createQuery = (owner, repositoryName, filter) => {
                 author {
                   DeveloperAnswered: login
                   DeveloperAnsweredGithubUrl: url
+                  ... on User {
+                    location
+                    company
+                  }
                 }
                 AnswerCreatedAt: createdAt
                 AnswerUrl: url
@@ -109,10 +117,14 @@ const createQuery = (owner, repositoryName, filter) => {
                   }
                     totalCount
                   }
-    
+                  createdAt
                   author {
                     DeveloperCommented: login
                     DeveloperCommentedGitHubUrl: url
+                    ... on User {
+                      location
+                      company
+                    }
                   }
 
                   DeveloperCommentedUrl: url
