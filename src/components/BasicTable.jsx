@@ -30,11 +30,11 @@ export const BasicTable = () => {
     const getCellColor = (type) => {
         switch (type) {
             case 'Commented':
-                return 'skyblue'
+                return '#8884d8'
             case 'No Reply':
-                return '#ED2B2A'
+                return '#bf0000'
             default:
-                return '#82CD47'
+                return '#6DB56E'
         }
     }
 
