@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useSelector } from 'react-redux';
-import { CSVLink } from 'react-csv';
+// import { CSVLink } from 'react-csv';
 import { Anchor } from '@itwin/itwinui-react';
 
 function ExportToExcel() {
