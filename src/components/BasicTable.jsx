@@ -30,11 +30,11 @@ export const BasicTable = () => {
     const getCellColor = (type) => {
         switch (type) {
             case 'Commented':
-                return 'skyblue'
+                return '#8884d8'
             case 'No Reply':
-                return '#ED2B2A'
+                return '#bf0000'
             default:
-                return '#82CD47'
+                return '#6DB56E'
         }
     }
 
@@ -287,15 +287,15 @@ export const BasicTable = () => {
                                                             </tbody>
                                                         </table>
                                                     </td>}
-                                                    {columnState.repository && <td colSpan={lastCol === 'repository' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {data.repoName}</td>}
-                                                    {columnState.questionBy && <td colSpan={lastCol === 'questionBy' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.developerQuestionedUrl} target="_blank">{data.developerQuestioned}</Anchor></td>}
-                                                    {columnState.category && <td colSpan={lastCol === 'category' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 5 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {data.categoryWithEmoji}</td>}
-                                                    {columnState.comments && <td colSpan={lastCol === 'comments' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 6 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'} >{data.totalComment}</td>}
-                                                    {columnState.replies && <td colSpan={lastCol === 'replies' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 7 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'}>{data.totalReplies}</td>}
-                                                    {columnState.status && <td colSpan={lastCol === 'status' ? 2 : 1} /*style={{ backgroundColor: `${isSmartSearch.col === 8 ? '#edfaff' : 'none'} ` }}*/ width={'9%'} style={{ backgroundColor: `${data.statusBackgroundColor}` }}>{data.statusWithColorAndRef}</td>}
-                                                    {columnState.closed && <td colSpan={lastCol === 'closed' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 9 ? '#edfaff' : 'none'} ` }} width={'7%'}>{data.closeDate}</td>}
-                                                    {columnState.updated && <td colSpan={lastCol === 'updated' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 10 ? '#edfaff' : 'none'} ` }} width={'7%'}>{data.updatedAt}</td>}
-                                                    {columnState.created && <td colSpan={lastCol === 'created' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 11 ? '#edfaff' : 'none'} ` }} width={'7%'}>{data.createdAt}</td>}
+                                                    {columnState.repository && <td colSpan={lastCol === 'repository' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 2 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {data.repoName}</td>}
+                                                    {columnState.questionBy && <td colSpan={lastCol === 'questionBy' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 3 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'15%'}><Anchor href={data.developerQuestionedUrl} target="_blank">{data.developerQuestioned}</Anchor></td>}
+                                                    {columnState.category && <td colSpan={lastCol === 'category' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 4 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'10%'} > {data.categoryWithEmoji}</td>}
+                                                    {columnState.comments && <td colSpan={lastCol === 'comments' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 5 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'} >{data.totalComment}</td>}
+                                                    {columnState.replies && <td colSpan={lastCol === 'replies' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 6 ? '#edfaff' : 'none'} ` }} className="align-col-text-center" width={'5%'}>{data.totalReplies}</td>}
+                                                    {columnState.status && <td colSpan={lastCol === 'status' ? 2 : 1} /*style={{ backgroundColor: `${isSmartSearch.col === 7 ? '#edfaff' : 'none'} ` }}*/ width={'9%'} style={{ backgroundColor: `${data.statusBackgroundColor}` }}>{data.statusWithColorAndRef}</td>}
+                                                    {columnState.closed && <td colSpan={lastCol === 'closed' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 8 ? '#edfaff' : 'none'} ` }} width={'7%'}>{data.closeDate}</td>}
+                                                    {columnState.updated && <td colSpan={lastCol === 'updated' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 9 ? '#edfaff' : 'none'} ` }} width={'7%'}>{data.updatedAt}</td>}
+                                                    {columnState.created && <td colSpan={lastCol === 'created' ? 2 : 1} style={{ backgroundColor: `${isSmartSearch.col === 10 ? '#edfaff' : 'none'} ` }} width={'7%'}>{data.createdAt}</td>}
 
                                                 </tr>
                                             })
@@ -308,7 +308,7 @@ export const BasicTable = () => {
 
             </div >
 
-            <div className="table-nav" style={{ height: '10%', overflow: 'hidden', background: '#565e61' }}>
+            <div className="table-nav" style={{ height: '10%', overflow: 'hidden', background: '#3e4142' }}>
                 <div style={{ height: '100%', overflow: 'hidden' }}>
                     <nav style={{}}>
                         <ul className="pagination">
@@ -352,7 +352,7 @@ export const BasicTable = () => {
                                 menuItems={menuItems}
                                 size="small"
                                 style={{
-                                    backgroundColor: '#565e61',
+                                    backgroundColor: '#3e4142',
                                     color: 'white',
                                     border: '1px solid whitesmoke',
                                     marginLeft: '5px',

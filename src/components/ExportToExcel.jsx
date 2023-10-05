@@ -1,7 +1,9 @@
-import { Anchor } from '@itwin/itwinui-react';
+// import { Anchor } from '@itwin/itwinui-react';
 import React, { useEffect, useState } from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useSelector } from 'react-redux';
+// import { CSVLink } from 'react-csv';
+import { Anchor } from '@itwin/itwinui-react';
 
 function ExportToExcel() {
 
@@ -10,6 +12,7 @@ function ExportToExcel() {
     const isDateRangeFilter = useSelector((state) => state.discussions.isDateRangeFilter);
     const isFiltered = useSelector((state) => state.discussions.filter);
     const columnState = useSelector((state) => state.column.columnState);
+    const [csvData, setCsvData] = useState([]);
 
 
     const [data, setData] = useState([]);
@@ -25,13 +28,50 @@ function ExportToExcel() {
         }
     }
 
+    // const downloadInCSV = (data) => {
+    //     const csvInputData = data?.map((data, index) => {
+    //         //Comments & Replies 
+    //         const totalComment = data.comments.nodes.length;
+    //         let totalReplies = 0;
+    //         data.comments.nodes.forEach(comment => {
+    //             totalReplies += comment.replies.totalCount;
+    //         });
+
+    //         // Status 
+    //         const answeredBy = data.answer?.author.DeveloperAnswered;
+
+    //         // closed 
+    //         const answeredCreatedAy = new Date(data.answer?.AnswerCreatedAt).toLocaleString();
+    //         const createdAt = new Date(data.createdAt).toLocaleString();
+    //         const updatedAt = new Date(data.updatedAt).toLocaleString();
+
+    //         //cellColor 
+    //         const statusCell = data.answer ? answeredBy : (totalComment !== 0 ? 'Commented' : "No Reply")
+
+    //         return {
+    //             title: data.title,
+    //             repository: data.repoName,
+    //             author: data.author.DeveloperQuestioned,
+    //             category: data.category.categoryName,
+    //             comments: totalComment,
+    //             replies: totalReplies,
+    //             answeredBy: statusCell,
+    //             closedAt: answeredCreatedAy === "Invalid Date" ? "" : answeredCreatedAy,
+    //             updatedAt,
+    //             createdAt
+    //         }
+    //     })
+    //     setCsvData(csvInputData)
+    // }
+
     useEffect(() => {
         if (isFiltered.isAny || isDateRangeFilter) {
             setData(filteredData);
+            // downloadInCSV(filteredData)
         } else {
             setData(discussionData);
+            // downloadInCSV(discussionData)
         }
-
     }, [filteredData, discussionData, isFiltered, isDateRangeFilter])
 
     return (
@@ -97,6 +137,8 @@ function ExportToExcel() {
                     }
                 </tbody>
             </table>
+
+            {/* <CSVLink data={csvData}>Download CSV</CSVLink> */}
         </div>
     )
 }

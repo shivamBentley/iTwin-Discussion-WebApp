@@ -18,7 +18,7 @@ div {
                     th {
                         // align-items: end;
                         // padding: 15px 10px;
-                        background-color: #565e61;
+                        background-color: #3e4142;
                         color: whitesmoke;
                         font-weight: 400;
                         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -53,20 +53,20 @@ div {
                 }
 
                 .data-row:nth-child(even) {
-                    background-color: #f7f7f7;
+                    background-color: #fbfbfb;
 
                     tr {
-                        background-color: #f7f7f7;
+                        background-color: #fbfbfb;
                     }
 
                 }
 
                 .data-row:hover {
                     tr{
-                        background-color: hwb(197 89% 0%)
+                        background-color: #e3f7ff
                     }
                     td {
-                        background-color: hwb(197 89% 0%)
+                        background-color: #e3f7ff
                     }
 
                 }
@@ -160,7 +160,7 @@ div {
 
 /* Track */
 #main-table::-webkit-scrollbar-track {
-    background: #565e61;
+    background: #3e4142;
     // border-radius: 5px;
 }
 
@@ -171,6 +171,6 @@ div {
 
 /* Handle on hover */
 #main-table::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #3e4142;
 
 }
