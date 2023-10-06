@@ -1,26 +1,3 @@
-/**
- * This is the format we are using to store data in localStorage of web browser.
-    const iTwinData = {
-        owner: 'iTwin',
-        repositories: [
-            {
-                repositoryName: 'itwinjs-core',
-                discussionData: [],
-                totalCount: '',
-                lastUpdate: ''
-            },
-            {
-                repositoryName: 'iTwin-UI',
-                discussionData: [],
-                totalCount: '',
-                lastUpdate: ''
-            }
-        ],
-        lastUpdate:''
-    }
- */
-
-
 export const Teams = [
     {
         id: 1,
@@ -53,6 +30,28 @@ export const iTwinDetails = {
     primaryRepo: 'community',
     repositories: ['community', 'itwinjs-core', 'iTwinUI']
 }
+
+/**
+ * This is the format we are using to store data in localStorage of web browser.
+    const iTwinData = {
+        owner: 'iTwin',
+        repositories: [
+            {
+                repositoryName: 'itwinjs-core',
+                discussionData: [],
+                totalCount: '',
+                lastUpdate: ''
+            },
+            {
+                repositoryName: 'iTwin-UI',
+                discussionData: [],
+                totalCount: '',
+                lastUpdate: ''
+            }
+        ],
+        lastUpdate:''
+    }
+ */
 
 export const BENTLEY_DEVELOPERS_LIST = [
     "aruniverse",

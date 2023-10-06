@@ -1,10 +1,15 @@
-import { Button, Header, Headline, Input, Label, ToggleSwitch } from '@itwin/itwinui-react';
+import { Button, Header, Headline, Input, Label, ProgressLinear, ToggleSwitch } from '@itwin/itwinui-react';
 import bcrypt from 'bcryptjs';
 import React from 'react'
 import { useState } from 'react';
 import { validateToken } from '../helper/GitHubAPIs';
+import { decryptData } from '../helper/encryption';
 
 function LandingPage({ setMainPageAccess }) {
+    
+    const ENC_ACCESS_TOKEN = ''
+    const ENC_USERNAME = ''
+    const ENC_PASSWORD = ''
 
     const [token, setToken] = useState('');
     const [loginStatus, setLogin] = useState(false);
@@ -13,7 +18,10 @@ function LandingPage({ setMainPageAccess }) {
         password: ''
     });
     const [isError, setError] = useState(false);
-    const [isLoginError, setLoginError] = useState(false)
+    const [isLoginError, setLoginError] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+
+
 
     return (
         <div style={{
@@ -80,56 +88,61 @@ function LandingPage({ setMainPageAccess }) {
                             </div>
                             {isError && <p style={{ color: 'red', fontWeight: '600' }}>Either token is not <strong>Valid</strong> or <strong>Expired</strong></p>}
                         </> : <div style={{ display: 'flex', flexDirection: 'column', width: '20vw', }}>
+                            <Label for={"password"}>Username</Label>
                             <Input
                                 name="username"
                                 type="text"
                                 value={loginDetails.username}
                                 placeholder='Enter username'
                                 onChange={(e) => { setLoginError(false); setLoginDetails({ ...loginDetails, username: e.target.value }) }}
-                                style={{ margin: '20px 0 0 0' }}
+                                style={{ margin: '0 0 20px 0' }}
 
                             ></Input>
+                            <Label for={"password"}>Password</Label>
                             <Input
                                 name="password"
                                 type='password'
                                 value={loginDetails.password}
                                 placeholder='Enter password'
                                 onChange={(e) => { setLoginError(false); setLoginDetails({ ...loginDetails, password: e.target.value }) }}
-                                style={{ margin: '20px 0' }}
+                                style={{ margin: '0 0 20px 0' }}
 
                             ></Input>
                             <Button
                                 styleType='high-visibility'
                                 onClick={async () => {
-                                    // check username and password 
-                                    const USERNAME = process.env.REACT_APP_USERNAME?.replace(/_/g, '$')
-                                    const matchUsername = await bcrypt.compare(loginDetails.username, USERNAME);
+                                    setLoading(true);
+                                    const matchUsername = await bcrypt.compare(loginDetails.username, ENC_USERNAME);
 
                                     if (matchUsername) {
-                                        // if username match, check password
-                                        const PASSWORD = process.env.REACT_APP_PASSWORD?.replace(/_/g, '$')
-
-                                        const matchPassword = await bcrypt.compare(loginDetails.password, PASSWORD);
+                                        const matchPassword = await bcrypt.compare(loginDetails.password, ENC_PASSWORD);
                                         if (matchPassword) {
                                             // set userToken
                                             console.log('successfully loggedIn')
-                                            localStorage.setItem('gitAccessToken', JSON.stringify(process.env.REACT_APP_ACCESS_TOKEN));
+                                            // decrypt token to save ...
+                                            decryptData(ENC_ACCESS_TOKEN, loginDetails.username + loginDetails.password).then(decryptedData => {
+                                                localStorage.setItem('gitAccessToken', JSON.stringify(decryptedData));
+                                            })
                                             const checkTokeUpdated = setInterval(() => {
                                                 const currGitHubAccessToken = JSON.parse(localStorage.getItem('gitAccessToken'));
                                                 if (currGitHubAccessToken) {
                                                     setMainPageAccess(true)
+                                                    setLoading(false);
                                                     clearInterval(checkTokeUpdated);
                                                 }
                                             }, 500);
                                         }
                                         else {
                                             setLoginError(true)
+                                            setLoading(false);
                                         }
                                     } else {
                                         setLoginError(true)
+                                        setLoading(false);
                                     }
                                 }}>Login</Button>
                             {isLoginError && <p style={{ color: 'red', fontWeight: '600' }}>Incorrect username or password</p>}
+                            {isLoading && <div style={{ margin: '32px 0' }}> <ProgressLinear indeterminate /> Validating username & password</div>}
                         </div>
                     }
                 </div>

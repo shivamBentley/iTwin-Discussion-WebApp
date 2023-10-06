@@ -4,13 +4,15 @@ import './index.css';
 import { store } from './store'
 import { Provider } from 'react-redux'
 import App from './App';
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
+import EncryptDecrypt from './components/EncryptDecrypt';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <Route exact path="/" component={App} />
+      <Route path="/encrypt" component={EncryptDecrypt} />
     </BrowserRouter>
   </Provider>
 );
